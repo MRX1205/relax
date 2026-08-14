@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "用户端",
+  "usingComponents": {
+    "ui-state": "/components/ui-state/index"
+  }
+}
+

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "东莞到家",
+  "usingComponents": {
+    "ui-button": "/components/ui-button/index"
+  }
+}
+

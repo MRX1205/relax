@@ -1,0 +1,40 @@
+.state {
+  padding: 64rpx 32rpx;
+  text-align: center;
+}
+
+.state__mark {
+  display: flex;
+  width: 72rpx;
+  height: 72rpx;
+  margin: 0 auto 24rpx;
+  align-items: center;
+  justify-content: center;
+  background: #EEF2F6;
+  border-radius: 50%;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+}
+
+.state__mark--error {
+  background: #FDECEC;
+  color: var(--color-danger);
+}
+
+.state__mark--loading {
+  background: #EDF8F3;
+  color: var(--color-success);
+}
+
+.state__title {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.state__description {
+  margin-top: 12rpx;
+  color: var(--color-text-secondary);
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+

@@ -1,0 +1,8 @@
+<view class="page">
+  <view class="page-title">管理端工作台</view>
+  <view class="page-subtitle">当前仅验证管理员分包和公共组件加载。</view>
+  <view class="surface placeholder">
+    <ui-state title="阶段 1 骨架" description="项目、技师、订单和财务管理将在后续已确认阶段开发。" />
+  </view>
+</view>
+

@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/home/index"
+  ],
+  "subpackages": [
+    {
+      "root": "packageUser",
+      "name": "user",
+      "pages": ["pages/workbench/index"]
+    },
+    {
+      "root": "packageTech",
+      "name": "technician",
+      "pages": ["pages/workbench/index"]
+    },
+    {
+      "root": "packageAdmin",
+      "name": "admin",
+      "pages": ["pages/workbench/index"]
+    }
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "东莞到家",
+    "backgroundColor": "#F6F7F9",
+    "backgroundTextStyle": "dark"
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}
+

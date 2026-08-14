@@ -1,0 +1,15 @@
+<view class="field">
+  <view class="field__label">
+    <text wx:if="{{required}}" class="field__required">*</text>{{label}}
+  </view>
+  <input
+    class="field__input {{error ? 'field__input--error' : ''}}"
+    type="{{type}}"
+    value="{{value}}"
+    placeholder="{{placeholder}}"
+    aria-label="{{label}}"
+    bindinput="handleInput"
+  />
+  <view wx:if="{{error}}" class="field__error">{{error}}</view>
+</view>
+

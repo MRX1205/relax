@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.idea/
+.vscode/
+
+miniapp/node_modules/
+miniapp/miniprogram_npm/
+miniapp/project.private.config.json
+
+server/target/
+
+deploy/backups/
+

@@ -1,0 +1,55 @@
+<view class="page">
+  <view class="hero">
+    <view class="hero__city">东莞</view>
+    <view class="page-title">到家服务项目骨架</view>
+    <view class="page-subtitle">阶段 1 已建立三角色分包、统一请求层和基础交互组件，业务功能将在后续阶段开发。</view>
+  </view>
+
+  <view class="surface service-panel">
+    <view>
+      <view class="section-title">服务连接</view>
+      <view class="service-line">
+        <view class="service-dot service-dot--{{serviceState}}"></view>
+        <text>{{serviceMessage}}</text>
+      </view>
+      <view class="service-env">当前环境：{{environmentVersion}}</view>
+    </view>
+    <ui-button
+      label="检查服务"
+      variant="secondary"
+      loading="{{checking}}"
+      bind:action="checkService"
+    />
+  </view>
+
+  <view class="section-title roles-title">角色工作台</view>
+  <view class="role-list">
+    <navigator class="surface role-item" url="/packageUser/pages/workbench/index" hover-class="role-item--pressed">
+      <view class="role-item__code">用户</view>
+      <view class="role-item__content">
+        <view class="role-item__title">用户端</view>
+        <view class="role-item__description">浏览、预约和订单入口将在阶段 4-5 开发</view>
+      </view>
+      <view class="role-item__arrow">›</view>
+    </navigator>
+
+    <navigator class="surface role-item" url="/packageTech/pages/workbench/index" hover-class="role-item--pressed">
+      <view class="role-item__code role-item__code--tech">技师</view>
+      <view class="role-item__content">
+        <view class="role-item__title">技师端</view>
+        <view class="role-item__description">入驻、排班和履约入口将在阶段 3、6 开发</view>
+      </view>
+      <view class="role-item__arrow">›</view>
+    </navigator>
+
+    <navigator class="surface role-item" url="/packageAdmin/pages/workbench/index" hover-class="role-item--pressed">
+      <view class="role-item__code role-item__code--admin">管理</view>
+      <view class="role-item__content">
+        <view class="role-item__title">管理端</view>
+        <view class="role-item__description">项目、技师和订单管理将在阶段 3 起开发</view>
+      </view>
+      <view class="role-item__arrow">›</view>
+    </navigator>
+  </view>
+</view>
+

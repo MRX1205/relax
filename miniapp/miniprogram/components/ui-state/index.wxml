@@ -1,0 +1,6 @@
+<view class="state" role="status">
+  <view class="state__mark state__mark--{{kind}}">{{kind === "loading" ? "..." : "—"}}</view>
+  <view class="state__title">{{title}}</view>
+  <view wx:if="{{description}}" class="state__description">{{description}}</view>
+</view>
+

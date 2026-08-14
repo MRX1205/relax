@@ -1,0 +1,10 @@
+<button
+  class="button button--{{variant}}"
+  disabled="{{disabled || loading}}"
+  loading="{{loading}}"
+  aria-label="{{label}}"
+  bindtap="handleTap"
+>
+  {{loading ? "处理中" : label}}
+</button>
+

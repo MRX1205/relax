@@ -1,0 +1,10 @@
+{
+  "desc": "Stage 1 project skeleton",
+  "rules": [
+    {
+      "action": "allow",
+      "page": "*"
+    }
+  ]
+}
+

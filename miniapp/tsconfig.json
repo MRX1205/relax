@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2020",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["miniprogram-api-typings"],
+    "lib": ["ES2022", "DOM"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["miniprogram/**/*.ts", "miniprogram/**/*.d.ts", "tests/**/*.ts"]
+}

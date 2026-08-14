@@ -1,0 +1,16 @@
+{
+  "name": "relax-miniapp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dongguan home massage WeChat Mini Program",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "5.2.3",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}

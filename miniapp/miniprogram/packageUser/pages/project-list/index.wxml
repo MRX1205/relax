@@ -1,0 +1,46 @@
+<view class="page">
+  <scroll-view class="cat-bar" scroll-x>
+    <view class="cat-chips">
+      <view class="cat-chip {{selectedCategoryId === '' ? 'cat-chip--active' : ''}}" data-id="" bindtap="handleCategoryTap">全部</view>
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="cat-chip {{selectedCategoryId == item.id ? 'cat-chip--active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="handleCategoryTap"
+      >
+        {{item.name}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:else>
+    <view wx:if="{{projects.length === 0}}" class="empty-wrap">
+      <ui-state title="暂无项目" description="该分类下暂无可用项目" />
+    </view>
+    <view class="proj-list">
+      <view
+        wx:for="{{projects}}"
+        wx:key="id"
+        class="proj-card"
+        data-id="{{item.id}}"
+        bindtap="handleProjectTap"
+      >
+        <view class="proj-card__left">
+          <view class="proj-card__tag">{{item.categoryName}}</view>
+          <view class="proj-card__name">{{item.name}}</view>
+          <view class="proj-card__meta">{{item.durationMinutes}}分钟</view>
+        </view>
+        <view class="proj-card__right">
+          <view class="proj-card__price">
+            <text class="proj-card__symbol">¥</text>
+            <text class="proj-card__amount">{{item.basePrice}}</text>
+          </view>
+          <view class="proj-card__action">预约</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

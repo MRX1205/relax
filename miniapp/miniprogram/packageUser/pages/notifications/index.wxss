@@ -1,0 +1,46 @@
+.page { padding: 24rpx; }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+.unread-text { font-size: 26rpx; color: var(--color-text-secondary); }
+.mark-read { font-size: 26rpx; color: var(--color-primary); }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+}
+.empty__icon { font-size: 80rpx; margin-bottom: 24rpx; }
+.empty__text { font-size: 28rpx; color: var(--color-muted); }
+
+.notification-list { display: flex; flex-direction: column; gap: 16rpx; }
+.notification-item {
+  padding: 24rpx;
+  border-radius: var(--radius-md);
+}
+.notification-item.unread {
+  border-left: 4rpx solid var(--color-primary);
+}
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.notification-title { font-size: 28rpx; font-weight: 600; }
+.notification-time { font-size: 22rpx; color: var(--color-muted); }
+.notification-content {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+.notification-link {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--color-primary);
+}

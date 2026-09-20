@@ -1,0 +1,48 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <block wx:else>
+    <view class="list-header">
+      <view class="page-title">服务项目</view>
+      <view class="add-btn" bindtap="handleAdd">+ 新增</view>
+    </view>
+
+    <view wx:if="{{showForm}}" class="surface form-card">
+      <view class="field">
+        <view class="field__label">分类</view>
+        <picker range="{{categories}}" range-key="name" bindchange="handleCategoryChange">
+          <view class="picker-val">{{form.categoryId ? categories[0].name : '点击选择'}}</view>
+        </picker>
+      </view>
+      <ui-field label="项目名称" value="{{form.name}}" placeholder="如：全身推拿60分钟" bindinput="handleFormInput('name')" />
+      <ui-field label="时长(分钟)" value="{{form.durationMinutes}}" type="number" bindinput="handleFormInput('durationMinutes')" />
+      <ui-field label="基础价格" value="{{form.basePrice}}" type="digit" placeholder="元" bindinput="handleFormInput('basePrice')" />
+      <ui-field label="排序" value="{{form.sort}}" type="number" bindinput="handleFormInput('sort')" />
+      <ui-field label="简介" value="{{form.description}}" placeholder="项目介绍" bindinput="handleFormInput('description')" />
+      <ui-field label="须知" value="{{form.notice}}" placeholder="用户须知" bindinput="handleFormInput('notice')" />
+      <view class="field">
+        <view class="field__label">封面图</view>
+        <view class="cover-upload" bindtap="chooseCover">
+          <image wx:if="{{coverPath}}" src="{{coverPath}}" mode="aspectFill" class="cover-preview" />
+          <view wx:else class="cover-placeholder">点击上传</view>
+        </view>
+      </view>
+      <view class="form-actions">
+        <ui-button label="取消" variant="secondary" bind:action="handleCancel" />
+        <ui-button label="保存" loading="{{saving}}" bind:action="handleSave" />
+      </view>
+    </view>
+
+    <view class="proj-list">
+      <view wx:for="{{projects}}" wx:key="id" class="surface proj-item">
+        <view class="proj-main" data-item="{{item}}" bindtap="handleEdit">
+          <view class="proj-name">{{item.name}}</view>
+          <view class="proj-meta">{{item.categoryName}} · {{item.durationMinutes}}分钟 · ¥{{item.basePrice}}</view>
+        </view>
+        <view class="proj-status {{item.status === 'ON_SHELF' ? 'status-on' : 'status-off'}}" data-item="{{item}}" bindtap="handleToggleStatus">
+          {{item.status === 'ON_SHELF' ? '已上架' : item.status === 'OFF_SHELF' ? '已下架' : '草稿'}}
+        </view>
+      </view>
+      <view wx:if="{{projects.length === 0}}" class="empty-tip">暂无项目</view>
+    </view>
+  </block>
+</view>

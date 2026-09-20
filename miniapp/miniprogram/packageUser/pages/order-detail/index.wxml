@@ -1,0 +1,153 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:elif="{{detail}}">
+    <!-- 状态头部 -->
+    <view class="status-section status--{{detail.order.status}}">
+      <view class="status-content">
+        <view class="status-icon">
+          <text wx:if="{{detail.order.status === 'PENDING_PAYMENT'}}">⏳</text>
+          <text wx:elif="{{detail.order.status === 'PAID'}}">✅</text>
+          <text wx:elif="{{detail.order.status === 'ACCEPTED'}}">👍</text>
+          <text wx:elif="{{detail.order.status === 'DEPARTED'}}">🚗</text>
+          <text wx:elif="{{detail.order.status === 'ARRIVED'}}">📍</text>
+          <text wx:elif="{{detail.order.status === 'IN_SERVICE'}}">💆</text>
+          <text wx:elif="{{detail.order.status === 'COMPLETED'}}">🎉</text>
+          <text wx:elif="{{detail.order.status === 'CANCELLED'}}">❌</text>
+          <text wx:elif="{{detail.order.status === 'REJECTED'}}">🚫</text>
+          <text wx:else>📋</text>
+        </view>
+        <view class="status-info">
+          <view class="status-text">{{statusLabel(detail.order.status)}}</view>
+          <view class="status-no">订单号：{{detail.order.orderNo}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 服务信息 -->
+    <view wx:if="{{detail.projectSnapshot}}" class="card section">
+      <view class="card-title">
+        <text class="card-icon">💆</text>
+        <text>服务信息</text>
+      </view>
+      <view class="info-grid">
+        <view class="info-item">
+          <text class="info-label">项目</text>
+          <text class="info-value">{{detail.projectSnapshot.projectName}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">时长</text>
+          <text class="info-value">{{detail.projectSnapshot.durationMinutes}}分钟</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">时间</text>
+          <text class="info-value">{{detail.order.serviceDate}} {{detail.order.startTime}}-{{detail.order.endTime}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 服务地址 -->
+    <view wx:if="{{detail.addressSnapshot}}" class="card section">
+      <view class="card-title">
+        <text class="card-icon">📍</text>
+        <text>服务地址</text>
+      </view>
+      <view class="address-info">
+        <view class="address-contact">
+          <text class="contact-name">{{detail.addressSnapshot.contactName}}</text>
+          <text class="contact-phone">{{detail.addressSnapshot.contactPhone}}</text>
+        </view>
+        <view class="address-detail">{{detail.addressSnapshot.regionName}} {{detail.addressSnapshot.detail}}</view>
+      </view>
+    </view>
+
+    <!-- 费用明细 -->
+    <view wx:if="{{detail.amount}}" class="card section">
+      <view class="card-title">
+        <text class="card-icon">💰</text>
+        <text>费用明细</text>
+      </view>
+      <view class="fee-list">
+        <view class="fee-item">
+          <text>项目费用</text>
+          <text>¥{{detail.amount.projectAmount}}</text>
+        </view>
+        <view class="fee-item">
+          <text>上门费</text>
+          <text>¥{{detail.amount.travelFee}}</text>
+        </view>
+        <view wx:if="{{detail.amount.discountAmount > 0}}" class="fee-item fee-discount">
+          <text>优惠</text>
+          <text>-¥{{detail.amount.discountAmount}}</text>
+        </view>
+        <view class="fee-divider"></view>
+        <view class="fee-total">
+          <text>应付金额</text>
+          <text class="total-value">¥{{detail.amount.payableAmount}}</text>
+        </view>
+        <view wx:if="{{detail.amount.paidAmount > 0}}" class="fee-item fee-paid">
+          <text>已支付</text>
+          <text>¥{{detail.amount.paidAmount}}</text>
+        </view>
+        <view wx:if="{{detail.amount.refundedAmount > 0}}" class="fee-item fee-refund">
+          <text>已退款</text>
+          <text>¥{{detail.amount.refundedAmount}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 取消原因 -->
+    <view wx:if="{{detail.order.cancelReason}}" class="card section">
+      <view class="card-title">
+        <text class="card-icon">📝</text>
+        <text>取消原因</text>
+      </view>
+      <view class="card-content">{{detail.order.cancelReason}}</view>
+    </view>
+
+    <!-- 备注 -->
+    <view wx:if="{{detail.order.note}}" class="card section">
+      <view class="card-title">
+        <text class="card-icon">📝</text>
+        <text>备注</text>
+      </view>
+      <view class="card-content">{{detail.order.note}}</view>
+    </view>
+
+    <!-- 状态记录 -->
+    <view wx:if="{{detail.statusLogs.length > 0}}" class="card section">
+      <view class="card-title">
+        <text class="card-icon">📋</text>
+        <text>状态记录</text>
+      </view>
+      <view class="log-list">
+        <view wx:for="{{detail.statusLogs}}" wx:key="createdAt" class="log-item">
+          <view class="log-dot"></view>
+          <view class="log-info">
+            <view class="log-status">{{statusLabel(item.toStatus)}}</view>
+            <view class="log-meta">{{item.createdAt}} {{item.reason}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-section">
+      <button wx:if="{{canCancel}}" class="action-btn action-btn--secondary" bindtap="handleCancel">
+        取消订单
+      </button>
+      <button wx:if="{{canRefund}}" class="action-btn action-btn--secondary" bindtap="handleRefund">
+        申请退款
+      </button>
+      <button wx:if="{{canReview}}" class="action-btn action-btn--primary" bindtap="goToReview">
+        评价服务
+      </button>
+      <button wx:if="{{canAfterSale}}" class="action-btn action-btn--secondary" bindtap="goToAfterSale">
+        申请售后
+      </button>
+    </view>
+
+    <!-- 底部间距 -->
+    <view style="height: 40rpx;"></view>
+  </block>
+</view>

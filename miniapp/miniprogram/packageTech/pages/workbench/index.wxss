@@ -1,4 +1,21 @@
-.placeholder {
-  margin-top: 40rpx;
-}
-
+.apply-btn { margin-top: 32rpx; }
+.apply-action { display: inline-block; padding: 20rpx 48rpx; background: var(--color-primary); color: #FFFFFF; border-radius: var(--radius-sm); font-size: 30rpx; font-weight: 600; }
+.status-card { padding: 28rpx; margin-top: 24rpx; }
+.status-text { font-size: 30rpx; font-weight: 600; }
+.status-hint { margin-top: 8rpx; font-size: 24rpx; color: var(--color-text-secondary); }
+.profile-header { padding: 32rpx; margin-bottom: 24rpx; }
+.profile-name { font-size: 36rpx; font-weight: 700; }
+.profile-meta { font-size: 26rpx; color: var(--color-text-secondary); margin-top: 8rpx; }
+.online-toggle { display: inline-flex; margin-top: 20rpx; padding: 12rpx 28rpx; border-radius: 32rpx; font-size: 26rpx; font-weight: 600; }
+.online-on { background: #EDF8F3; color: var(--color-success); }
+.online-off { background: #F6F7F9; color: var(--color-muted); }
+.menu-list { display: grid; gap: 20rpx; }
+.menu-item { display: flex; align-items: center; padding: 28rpx 24rpx; gap: 24rpx; }
+.menu-icon { width: 80rpx; height: 80rpx; display: flex; align-items: center; justify-content: center; border-radius: 12rpx; font-size: 28rpx; font-weight: 700; flex-shrink: 0; }
+.menu-icon--orders { background: #FFF1ED; color: var(--color-primary); }
+.menu-icon--schedules { background: #EDF8F3; color: var(--color-accent); }
+.menu-icon--service-areas { background: #EEF2F6; color: #334E68; }
+.menu-content { flex: 1; min-width: 0; }
+.menu-name { font-size: 30rpx; font-weight: 600; }
+.menu-desc { margin-top: 6rpx; font-size: 24rpx; color: var(--color-text-secondary); }
+.menu-arrow { color: var(--color-muted); font-size: 40rpx; line-height: 1; }

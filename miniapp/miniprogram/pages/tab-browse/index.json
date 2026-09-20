@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "浏览",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "custom-tabbar": "/components/custom-tabbar/index",
+    "ui-state": "/components/ui-state/index"
+  }
+}

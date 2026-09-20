@@ -1,0 +1,18 @@
+.list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24rpx; }
+.add-btn { padding: 12rpx 24rpx; background: var(--color-primary); color: #FFFFFF; border-radius: var(--radius-sm); font-size: 26rpx; font-weight: 600; }
+.form-card { padding: 24rpx; margin-bottom: 24rpx; }
+.field { padding: 12rpx 0; border-bottom: 1rpx solid var(--color-border); }
+.field-label { font-size: 26rpx; color: var(--color-text-secondary); }
+.field-input { height: 64rpx; font-size: 28rpx; }
+.form-actions { display: flex; gap: 16rpx; margin-top: 24rpx; }
+.form-btn { flex: 1; padding: 16rpx; border-radius: var(--radius-sm); text-align: center; font-size: 26rpx; font-weight: 600; }
+.form-btn--cancel { background: #F6F7F9; color: var(--color-text); }
+.form-btn--save { background: var(--color-primary); color: #FFFFFF; }
+.list { display: grid; gap: 16rpx; }
+.card { display: flex; align-items: center; justify-content: space-between; padding: 24rpx; }
+.card-title { font-size: 28rpx; font-weight: 600; }
+.card-meta { font-size: 22rpx; color: var(--color-muted); margin-top: 4rpx; }
+.card-toggle { font-size: 24rpx; font-weight: 600; padding: 8rpx 20rpx; border-radius: 20rpx; }
+.toggle-on { background: #EDF8F3; color: var(--color-success); }
+.toggle-off { background: #F6F7F9; color: var(--color-muted); }
+.empty-tip { text-align: center; color: var(--color-muted); padding: 48rpx; }

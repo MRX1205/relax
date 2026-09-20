@@ -1,0 +1,6 @@
+.section { padding: 24rpx; margin-bottom: 24rpx; }
+.label { font-size: 26rpx; color: var(--color-text-secondary); margin-bottom: 16rpx; }
+.type-grid { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.type-chip { padding: 12rpx 24rpx; background: #F6F7F9; border: 1rpx solid var(--color-border); border-radius: 24rpx; font-size: 24rpx; }
+.type-chip--active { background: var(--color-primary); color: #FFFFFF; border-color: var(--color-primary); }
+.content-input { width: 100%; height: 200rpx; font-size: 28rpx; padding: 0; }

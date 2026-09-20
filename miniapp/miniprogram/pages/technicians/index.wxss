@@ -1,0 +1,149 @@
+.page {
+  padding-bottom: 140rpx;
+}
+
+.sort-bar {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+  padding: 0 4rpx;
+}
+
+.sort-item {
+  padding: 12rpx 24rpx;
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  border-radius: 32rpx;
+  background: var(--color-surface);
+  border: 1rpx solid var(--color-border);
+}
+
+.sort-item--active {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: #FFF1ED;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 32rpx;
+}
+
+.empty-state__icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-state__title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-muted);
+}
+
+.tech-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.tech-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx;
+  position: relative;
+}
+
+.tech-card__avatar {
+  position: relative;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #EDF8F3, #D4EDDF);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tech-card__img {
+  width: 100%;
+  height: 100%;
+}
+
+.tech-card__placeholder {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.tech-card__online {
+  position: absolute;
+  bottom: 2rpx;
+  right: 2rpx;
+  width: 18rpx;
+  height: 18rpx;
+  background: var(--color-success);
+  border-radius: 50%;
+  border: 3rpx solid var(--color-surface);
+}
+
+.tech-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tech-card__name {
+  font-size: 30rpx;
+  font-weight: 700;
+  margin-bottom: 6rpx;
+}
+
+.tech-card__intro {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  margin-bottom: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tech-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.tech-card__exp {
+  font-size: 22rpx;
+  color: var(--color-muted);
+}
+
+.tech-card__price {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.tech-card__status {
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 12rpx;
+  font-weight: 600;
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+}
+
+.tech-card__status--online {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.tech-card__status--offline {
+  background: #F5F5F5;
+  color: #757575;
+}

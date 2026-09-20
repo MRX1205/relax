@@ -1,0 +1,79 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <!-- USER: Orders -->
+  <block wx:elif="{{role === 'USER'}}">
+    <block wx:if="{{orders.length === 0}}">
+      <view class="empty"><view class="empty__icon">📋</view><view class="empty__text">暂无订单</view><view class="empty__desc">去预约一个服务吧</view></view>
+    </block>
+    <view class="order-list">
+      <view wx:for="{{orders}}" wx:key="id" class="order-card surface" data-id="{{item.id}}" bindtap="goToOrderDetail">
+        <view class="order-card__head">
+          <text class="order-card__no">{{item.orderNo}}</text>
+          <text class="order-card__status">{{item.status}}</text>
+        </view>
+        <view class="order-card__body">
+          <text class="order-card__proj">{{item.projectName}}</text>
+          <text class="order-card__time">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+        </view>
+        <view class="order-card__foot">
+          <text class="order-card__amount">¥{{item.amount || 0}}</text>
+          <text class="order-card__date">{{item.createdAt}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- TECH: Income -->
+  <block wx:elif="{{role === 'TECHNICIAN'}}">
+    <view class="income-stats">
+      <view class="income-stat">
+        <view class="income-stat__num">¥{{incomeStats.total}}</view>
+        <view class="income-stat__label">总收入</view>
+      </view>
+      <view class="income-stat">
+        <view class="income-stat__num">¥{{incomeStats.pending}}</view>
+        <view class="income-stat__label">待结算</view>
+      </view>
+      <view class="income-stat">
+        <view class="income-stat__num">¥{{incomeStats.settled}}</view>
+        <view class="income-stat__label">已结算</view>
+      </view>
+    </view>
+    <view class="section-head">
+      <text class="section-title">收入明细</text>
+      <text class="section-more" bindtap="goToFullIncome">全部 ›</text>
+    </view>
+    <block wx:if="{{income.length === 0}}">
+      <view class="empty"><view class="empty__icon">💰</view><view class="empty__text">暂无收入记录</view></view>
+    </block>
+    <view class="income-list">
+      <view wx:for="{{income}}" wx:key="id" class="income-item surface">
+        <view class="income-item__info">
+          <text class="income-item__order">{{item.orderNo || '订单收入'}}</text>
+          <text class="income-item__date">{{item.createdAt}}</text>
+        </view>
+        <view class="income-item__amount {{item.status === 'SETTLED' ? 'settled' : 'pending'}}">
+          +¥{{item.amount}}
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ADMIN: Finance -->
+  <block wx:elif="{{role === 'ADMIN' || role === 'SUPER_ADMIN'}}">
+    <view class="finance-title">财务中心</view>
+    <view class="finance-list">
+      <view wx:for="{{financeMenus}}" wx:key="name" class="finance-item surface" data-url="{{item.url}}" bindtap="goToFinancePage">
+        <view class="finance-item__icon">{{item.icon}}</view>
+        <view class="finance-item__content">
+          <view class="finance-item__name">{{item.name}}</view>
+          <view class="finance-item__desc">{{item.desc}}</view>
+        </view>
+        <view class="finance-item__arrow">›</view>
+      </view>
+    </view>
+  </block>
+</view>
+
+<custom-tabbar />

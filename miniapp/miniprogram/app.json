@@ -1,22 +1,64 @@
 {
   "pages": [
-    "pages/home/index"
+    "pages/home/index",
+    "pages/login/index",
+    "pages/phone/index",
+    "pages/role-switch/index",
+    "pages/agreement/index",
+    "pages/account/index",
+    "pages/tab-browse/index",
+    "pages/tab-mid/index",
+    "pages/tab-last/index"
   ],
   "subpackages": [
     {
       "root": "packageUser",
       "name": "user",
-      "pages": ["pages/workbench/index"]
+      "pages": [
+        "pages/workbench/index",
+        "pages/address-list/index",
+        "pages/address-edit/index",
+        "pages/project-list/index",
+        "pages/project-detail/index",
+        "pages/technician-list/index",
+        "pages/technician-detail/index",
+        "pages/booking/index",
+        "pages/order-list/index",
+        "pages/order-detail/index",
+        "pages/review/index",
+        "pages/after-sale/index",
+        "pages/coupons/index",
+        "pages/notifications/index"
+      ]
     },
     {
       "root": "packageTech",
       "name": "technician",
-      "pages": ["pages/workbench/index"]
+      "pages": [
+        "pages/workbench/index",
+        "pages/access/index",
+        "pages/service-areas/index",
+        "pages/schedules/index",
+        "pages/order-list/index",
+        "pages/order-detail/index",
+        "pages/income/index"
+      ]
     },
     {
       "root": "packageAdmin",
       "name": "admin",
-      "pages": ["pages/workbench/index"]
+      "pages": [
+        "pages/workbench/index",
+        "pages/categories/index",
+        "pages/projects/index",
+        "pages/technicians/index",
+        "pages/tech-pricing/index",
+        "pages/order-list/index",
+        "pages/refunds/index",
+        "pages/settlements/index",
+        "pages/banners/index",
+        "pages/payment-config/index"
+      ]
     }
   ],
   "window": {
@@ -26,7 +68,35 @@
     "backgroundColor": "#F6F7F9",
     "backgroundTextStyle": "dark"
   },
+  "tabBar": {
+    "custom": true,
+    "color": "#7B8794",
+    "selectedColor": "#C84B31",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/tab-browse/index",
+        "text": "浏览"
+      },
+      {
+        "pagePath": "pages/tab-mid/index",
+        "text": "服务"
+      },
+      {
+        "pagePath": "pages/tab-last/index",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/account/index",
+        "text": "我的"
+      }
+    ]
+  },
   "lazyCodeLoading": "requiredComponents",
   "sitemapLocation": "sitemap.json"
 }
-

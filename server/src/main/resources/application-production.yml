@@ -12,6 +12,17 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD}
 
+relax:
+  wechat:
+    app-id: ${WECHAT_APP_ID}
+    app-secret: ${WECHAT_APP_SECRET}
+  file:
+    cos:
+      region: ${COS_REGION}
+      bucket: ${COS_BUCKET}
+      secret-id: ${COS_SECRET_ID}
+      secret-key: ${COS_SECRET_KEY}
+
 springdoc:
   api-docs:
     enabled: false

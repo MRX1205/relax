@@ -1,0 +1,56 @@
+<view class="page">
+  <ui-state wx:if="{{loading && orders.length === 0}}" title="加载中" kind="loading" />
+
+  <block wx:else>
+    <view wx:if="{{orders.length === 0}}" class="empty-state">
+      <view class="empty-icon">📋</view>
+      <view class="empty-title">暂无订单</view>
+      <view class="empty-desc">去预约一个服务吧</view>
+      <button class="empty-btn" bindtap="goToHome">去预约</button>
+    </view>
+
+    <view class="order-list">
+      <view
+        wx:for="{{orders}}"
+        wx:key="orderNo"
+        class="order-card"
+        data-no="{{item.orderNo}}"
+        bindtap="handleTap"
+      >
+        <view class="order-header">
+          <view class="order-no">{{item.orderNo}}</view>
+          <view class="order-status status--{{item.status}}">
+            <text class="status-icon">{{statusIcon(item.status)}}</text>
+            <text class="status-text">{{statusLabel(item.status)}}</text>
+          </view>
+        </view>
+
+        <view class="order-body">
+          <view class="order-info">
+            <view class="info-row">
+              <text class="info-icon">📅</text>
+              <text>{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="order-footer">
+          <text class="order-time">{{item.createdAt}}</text>
+          <view class="order-link">
+            <text>查看详情</text>
+            <text class="link-arrow">›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{loading && orders.length > 0}}" class="loading-more">
+      <view class="loading-spinner"></view>
+      <text>加载中...</text>
+    </view>
+
+    <view wx:if="{{!hasMore && orders.length > 0}}" class="no-more">
+      <text>没有更多订单了</text>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,154 @@
+<view class="page">
+  <!-- 顶部信息 -->
+  <view class="booking-header">
+    <view class="header-info">
+      <view class="project-name">{{projectName}}</view>
+      <view class="technician-name">技师：{{technicianName}}</view>
+      <view class="duration-info">时长：{{durationMinutes}}分钟</view>
+    </view>
+  </view>
+
+  <!-- 服务地址 -->
+  <view class="section">
+    <view class="section-title">📍 服务地址</view>
+    <view class="address-card" bindtap="handleSelectAddress">
+      <view wx:if="{{addressId}}" class="address-content">
+        <view class="address-text">{{addressSummary}}</view>
+        <view class="address-arrow">›</view>
+      </view>
+      <view wx:else class="address-empty">
+        <text>点击选择服务地址</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 选择日期 -->
+  <view class="section">
+    <view class="section-title">📅 选择日期</view>
+    <scroll-view class="date-scroll" scroll-x>
+      <view class="date-grid">
+        <view
+          wx:for="{{dates}}"
+          wx:key="*this"
+          class="date-item {{index === selectedDateIndex ? 'date-item--active' : ''}} {{isToday(item) ? 'date-item--today' : ''}}"
+          data-index="{{index}}"
+          bindtap="handleDateSelect"
+        >
+          <view class="date-weekday">{{isToday(item) ? '今天' : formatDate(item).split(' ')[1]}}</view>
+          <view class="date-day">{{formatDate(item).split(' ')[0]}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 选择时间 -->
+  <view class="section">
+    <view class="section-title">⏰ 选择时间</view>
+    <view wx:if="{{loadingSlots}}" class="loading-slots">
+      <view class="loading-spinner"></view>
+      <text>加载时间段...</text>
+    </view>
+    <view wx:else class="time-grid">
+      <view
+        wx:for="{{timeSlots}}"
+        wx:key="time"
+        class="time-slot {{item.available ? '' : 'time-slot--disabled'}} {{item.selected ? 'time-slot--selected' : ''}}"
+        data-time="{{item.time}}"
+        data-available="{{item.available}}"
+        bindtap="handleTimeSelect"
+      >
+        <text class="time-text">{{item.display}}</text>
+        <text wx:if="{{!item.available}}" class="time-status">已约</text>
+        <text wx:if="{{item.selected}}" class="time-check">✓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="section">
+    <view class="section-title">📝 备注（选填）</view>
+    <view class="note-card">
+      <textarea
+        class="note-input"
+        placeholder="如有特殊要求请备注，如：肩颈不太好"
+        value="{{note}}"
+        bindinput="handleNoteInput"
+        maxlength="200"
+      />
+    </view>
+  </view>
+
+  <!-- 计算价格按钮 -->
+  <view class="action-section">
+    <button
+      class="preview-btn {{loading ? 'preview-btn--loading' : ''}}"
+      bindtap="handlePreview"
+      disabled="{{loading || !startTime}}"
+    >
+      {{loading ? '计算中...' : '计算价格'}}
+    </button>
+  </view>
+
+  <!-- 错误提示 -->
+  <view wx:if="{{error}}" class="error-banner">
+    <text class="error-icon">⚠️</text>
+    <text class="error-text">{{error}}</text>
+  </view>
+
+  <!-- 订单预览 -->
+  <view wx:if="{{preview}}" class="preview-card">
+    <view class="preview-title">📋 订单预览</view>
+
+    <view class="preview-info">
+      <view class="preview-row">
+        <text class="preview-label">项目</text>
+        <text class="preview-value">{{preview.projectName}}</text>
+      </view>
+      <view class="preview-row">
+        <text class="preview-label">时长</text>
+        <text class="preview-value">{{preview.durationMinutes}}分钟</text>
+      </view>
+      <view class="preview-row">
+        <text class="preview-label">时间</text>
+        <text class="preview-value">{{preview.serviceDate}} {{preview.startTime}}-{{preview.endTime}}</text>
+      </view>
+    </view>
+
+    <view class="preview-divider"></view>
+
+    <view class="preview-amount">
+      <view class="amount-row">
+        <text>项目费用</text>
+        <text>¥{{preview.projectAmount}}</text>
+      </view>
+      <view class="amount-row">
+        <text>上门费</text>
+        <text>¥{{preview.travelFee}}</text>
+      </view>
+      <view wx:if="{{preview.discountAmount > 0}}" class="amount-row amount-discount">
+        <text>优惠</text>
+        <text>-¥{{preview.discountAmount}}</text>
+      </view>
+    </view>
+
+    <view class="preview-divider"></view>
+
+    <view class="total-row">
+      <text class="total-label">应付金额</text>
+      <text class="total-value">¥{{preview.payableAmount}}</text>
+    </view>
+
+    <view class="submit-section">
+      <button
+        class="submit-btn {{submitting ? 'submit-btn--loading' : ''}}"
+        bindtap="handleSubmit"
+        disabled="{{submitting}}"
+      >
+        {{submitting ? '提交中...' : '确认下单并支付'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 底部间距 -->
+  <view style="height: 60rpx;"></view>
+</view>

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "评价",
+  "usingComponents": {
+    "ui-button": "/components/ui-button/index"
+  }
+}

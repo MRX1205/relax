@@ -1,0 +1,6 @@
+.section { padding: 24rpx; margin-bottom: 24rpx; }
+.label { font-size: 26rpx; color: var(--color-text-secondary); margin-bottom: 16rpx; }
+.stars { display: flex; gap: 16rpx; }
+.star { font-size: 48rpx; color: var(--color-border); }
+.star--active { color: #FFB800; }
+.content-input { width: 100%; height: 200rpx; font-size: 28rpx; padding: 0; }

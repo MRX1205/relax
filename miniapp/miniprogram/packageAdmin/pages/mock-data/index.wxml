@@ -1,0 +1,66 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+  
+  <view wx:else>
+    <!-- Mock数据开关 -->
+    <view class="section">
+      <view class="section-title">Mock数据管理</view>
+      <view class="switch-row">
+        <view class="switch-info">
+          <text class="switch-label">开启Mock数据</text>
+          <text class="switch-desc">开启后，用户端和技师端将显示测试数据</text>
+        </view>
+        <switch checked="{{status.enabled}}" bindchange="toggleMock" color="#ff6b6b"/>
+      </view>
+    </view>
+
+    <!-- 状态信息 -->
+    <view class="section">
+      <view class="section-title">状态信息</view>
+      <view class="info-row">
+        <text class="info-label">当前状态</text>
+        <text class="info-value {{status.enabled ? 'status-on' : 'status-off'}}">
+          {{status.enabled ? '已开启' : '已关闭'}}
+        </text>
+      </view>
+      <view class="info-row" wx:if="{{status.lastReset}}">
+        <text class="info-label">最后重置</text>
+        <text class="info-value">{{status.lastReset}}</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="section">
+      <view class="section-title">操作</view>
+      <button class="btn-reset" bindtap="resetMockData">重置Mock数据</button>
+      <view class="tip">
+        <text>重置将重新生成所有测试数据，包括用户、技师、项目、订单等</text>
+      </view>
+    </view>
+
+    <!-- 说明 -->
+    <view class="section">
+      <view class="section-title">说明</view>
+      <view class="desc-list">
+        <view class="desc-item">
+          <text class="desc-num">1.</text>
+          <text class="desc-text">开启Mock数据后，用户端可以看到测试项目和技师</text>
+        </view>
+        <view class="desc-item">
+          <text class="desc-num">2.</text>
+          <text class="desc-text">技师端可以看到测试订单和收入</text>
+        </view>
+        <view class="desc-item">
+          <text class="desc-num">3.</text>
+          <text class="desc-text">管理员端可以看到测试统计数据</text>
+        </view>
+        <view class="desc-item">
+          <text class="desc-num">4.</text>
+          <text class="desc-text">关闭Mock数据后，所有端将只显示真实数据</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

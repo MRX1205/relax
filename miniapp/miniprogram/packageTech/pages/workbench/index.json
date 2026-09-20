@@ -1,7 +1,4 @@
 {
   "navigationBarTitleText": "技师端",
-  "usingComponents": {
-    "ui-state": "/components/ui-state/index"
-  }
+  "usingComponents": {}
 }
-

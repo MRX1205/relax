@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "技师列表",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "custom-tabbar": "/components/custom-tabbar/index",
+    "ui-state": "/components/ui-state/index"
+  }
+}

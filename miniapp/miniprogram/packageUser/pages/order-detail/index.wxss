@@ -1,0 +1,263 @@
+.page {
+  background: #F8F9FA;
+  min-height: 100vh;
+}
+
+/* Status Section */
+.status-section {
+  padding: 48rpx 32rpx;
+  border-radius: 0 0 40rpx 40rpx;
+}
+
+.status--PENDING_PAYMENT { background: linear-gradient(135deg, #F39C12, #E67E22); }
+.status--PAID { background: linear-gradient(135deg, #3498DB, #2980B9); }
+.status--ACCEPTED { background: linear-gradient(135deg, #2ECC71, #27AE60); }
+.status--DEPARTED { background: linear-gradient(135deg, #9B59B6, #8E44AD); }
+.status--ARRIVED { background: linear-gradient(135deg, #1ABC9C, #16A085); }
+.status--IN_SERVICE { background: linear-gradient(135deg, #E74C3C, #C0392B); }
+.status--COMPLETED { background: linear-gradient(135deg, #2ECC71, #27AE60); }
+.status--CANCELLED { background: linear-gradient(135deg, #95A5A6, #7F8C8D); }
+.status--EXPIRED { background: linear-gradient(135deg, #95A5A6, #7F8C8D); }
+.status--REJECTED { background: linear-gradient(135deg, #E74C3C, #C0392B); }
+
+.status-content {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.status-icon {
+  font-size: 64rpx;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.status-text {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+}
+
+.status-no {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Cards */
+.section {
+  padding: 0 32rpx;
+  margin-bottom: 24rpx;
+}
+
+.card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.card-icon {
+  font-size: 32rpx;
+}
+
+.card-content {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.8;
+}
+
+/* Info Grid */
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-label {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.info-value {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Address Info */
+.address-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.address-contact {
+  display: flex;
+  gap: 16rpx;
+}
+
+.contact-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.contact-phone {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.address-detail {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Fee List */
+.fee-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.fee-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.fee-discount {
+  color: #27AE60;
+}
+
+.fee-paid {
+  color: #3498DB;
+}
+
+.fee-refund {
+  color: #E74C3C;
+}
+
+.fee-divider {
+  height: 2rpx;
+  background: #F0F0F0;
+  margin: 8rpx 0;
+}
+
+.fee-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+.total-value {
+  color: #FF6B6B;
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+/* Log List */
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  padding-left: 16rpx;
+}
+
+.log-item {
+  display: flex;
+  gap: 20rpx;
+  position: relative;
+}
+
+.log-item::before {
+  content: '';
+  position: absolute;
+  left: 8rpx;
+  top: 32rpx;
+  bottom: -24rpx;
+  width: 2rpx;
+  background: #E5E5E5;
+}
+
+.log-item:last-child::before {
+  display: none;
+}
+
+.log-dot {
+  width: 16rpx;
+  height: 16rpx;
+  background: #FF6B6B;
+  border-radius: 50%;
+  margin-top: 8rpx;
+  flex-shrink: 0;
+}
+
+.log-info {
+  flex: 1;
+}
+
+.log-status {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4rpx;
+}
+
+.log-meta {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* Action Section */
+.action-section {
+  padding: 24rpx 32rpx;
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 88rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border-radius: 44rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn--primary {
+  background: linear-gradient(135deg, #FF6B6B, #E84545);
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+}
+
+.action-btn--secondary {
+  background: #FFFFFF;
+  color: #FF6B6B;
+  border: 2rpx solid #FF6B6B;
+}

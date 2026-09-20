@@ -1,0 +1,81 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+  
+  <view wx:else>
+    <!-- 总览统计 -->
+    <view class="section">
+      <view class="section-title">总览</view>
+      <view class="stats-grid">
+        <view class="stat-card">
+          <text class="stat-value">{{overview.totalOrders}}</text>
+          <text class="stat-label">总订单</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">¥{{overview.totalRevenue}}</text>
+          <text class="stat-label">总收入</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{overview.totalUsers}}</text>
+          <text class="stat-label">用户数</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{overview.totalTechnicians}}</text>
+          <text class="stat-label">技师数</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 今日统计 -->
+    <view class="section">
+      <view class="section-title">今日</view>
+      <view class="stats-grid">
+        <view class="stat-card">
+          <text class="stat-value">{{overview.todayOrders}}</text>
+          <text class="stat-label">今日订单</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">¥{{overview.todayRevenue}}</text>
+          <text class="stat-label">今日收入</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 订单状态分布 -->
+    <view class="section">
+      <view class="section-title">订单状态分布</view>
+      <view class="status-list">
+        <view wx:for="{{statusCounts}}" wx:key="status" class="status-item">
+          <text class="status-name">{{item.status}}</text>
+          <text class="status-count">{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 技师排行 -->
+    <view class="section">
+      <view class="section-title">技师排行（Top 5）</view>
+      <view class="ranking-list">
+        <view wx:for="{{techRanking}}" wx:key="technicianId" class="ranking-item">
+          <text class="ranking-index">{{index + 1}}</text>
+          <text class="ranking-name">{{item.name}}</text>
+          <text class="ranking-orders">{{item.orderCount}}单</text>
+          <text class="ranking-revenue">¥{{item.revenue}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 每日趋势 -->
+    <view class="section">
+      <view class="section-title">近7日趋势</view>
+      <view class="trend-list">
+        <view wx:for="{{dailyTrend}}" wx:key="date" class="trend-item">
+          <text class="trend-date">{{item.date}}</text>
+          <text class="trend-orders">{{item.orderCount}}单</text>
+          <text class="trend-valid">有效{{item.validOrders}}单</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

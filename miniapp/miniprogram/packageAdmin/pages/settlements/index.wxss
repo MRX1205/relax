@@ -1,0 +1,16 @@
+.list { display: grid; gap: 16rpx; }
+.card { padding: 24rpx; }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.card-no { font-size: 24rpx; color: var(--color-text-secondary); }
+.card-status { font-size: 24rpx; font-weight: 600; }
+.card-status--PENDING { color: var(--color-warning); }
+.card-status--PAID { color: var(--color-success); }
+.card-status--VOID { color: var(--color-muted); }
+.card-amount { font-size: 32rpx; font-weight: 700; color: var(--color-primary); }
+.card-meta { font-size: 24rpx; color: var(--color-text-secondary); margin-top: 4rpx; }
+.card-time { font-size: 22rpx; color: var(--color-muted); margin-top: 4rpx; }
+.card-actions { display: flex; gap: 16rpx; margin-top: 16rpx; padding-top: 16rpx; border-top: 1rpx solid var(--color-border); }
+.action-btn { flex: 1; padding: 12rpx; border-radius: var(--radius-sm); text-align: center; font-size: 24rpx; font-weight: 600; }
+.action-btn--pay { background: var(--color-accent); color: #FFFFFF; }
+.action-btn--void { background: #FFF5F5; color: var(--color-danger); border: 1rpx solid #FFCDD2; }
+.empty-wrap { padding-top: 80rpx; }

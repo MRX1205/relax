@@ -1,0 +1,43 @@
+.page { padding-bottom: 140rpx; }
+
+.order-list { display: flex; flex-direction: column; gap: 16rpx; }
+.order-card { padding: 24rpx; }
+.order-card__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.order-card__no { font-size: 24rpx; color: var(--color-muted); }
+.order-card__status { font-size: 22rpx; font-weight: 600; padding: 4rpx 16rpx; border-radius: 12rpx; background: #E8F5E9; color: #2E7D32; }
+.order-card__proj { font-size: 28rpx; font-weight: 600; display: block; margin-bottom: 4rpx; }
+.order-card__time { font-size: 24rpx; color: var(--color-text-secondary); }
+.order-card__foot { display: flex; justify-content: space-between; align-items: center; padding-top: 12rpx; border-top: 1rpx solid var(--color-border); margin-top: 12rpx; }
+.order-card__amount { font-size: 30rpx; font-weight: 700; color: var(--color-primary); }
+.order-card__date { font-size: 22rpx; color: var(--color-muted); }
+
+.income-stats { display: flex; gap: 16rpx; margin-bottom: 32rpx; }
+.income-stat { flex: 1; background: var(--color-surface); border: 1rpx solid var(--color-border); border-radius: 20rpx; padding: 24rpx; text-align: center; }
+.income-stat__num { font-size: 36rpx; font-weight: 800; color: var(--color-primary); }
+.income-stat__label { font-size: 22rpx; color: var(--color-muted); margin-top: 8rpx; }
+
+.section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
+.section-title { font-size: 30rpx; font-weight: 700; }
+.section-more { font-size: 24rpx; color: var(--color-muted); }
+
+.income-list { display: flex; flex-direction: column; gap: 12rpx; }
+.income-item { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 24rpx; }
+.income-item__order { font-size: 28rpx; font-weight: 600; display: block; }
+.income-item__date { font-size: 22rpx; color: var(--color-muted); margin-top: 4rpx; }
+.income-item__amount { font-size: 30rpx; font-weight: 700; }
+.income-item__amount.pending { color: #E65100; }
+.income-item__amount.settled { color: #2E7D32; }
+
+.finance-title { font-size: 30rpx; font-weight: 700; margin-bottom: 20rpx; }
+.finance-list { display: flex; flex-direction: column; gap: 16rpx; }
+.finance-item { display: flex; align-items: center; gap: 20rpx; padding: 28rpx 24rpx; }
+.finance-item__icon { font-size: 40rpx; width: 56rpx; text-align: center; }
+.finance-item__content { flex: 1; }
+.finance-item__name { font-size: 30rpx; font-weight: 600; }
+.finance-item__desc { font-size: 24rpx; color: var(--color-muted); margin-top: 4rpx; }
+.finance-item__arrow { font-size: 32rpx; color: var(--color-muted); }
+
+.empty { display: flex; flex-direction: column; align-items: center; padding: 120rpx 32rpx; }
+.empty__icon { font-size: 80rpx; margin-bottom: 24rpx; }
+.empty__text { font-size: 28rpx; color: var(--color-muted); }
+.empty__desc { font-size: 24rpx; color: var(--color-muted); margin-top: 8rpx; }

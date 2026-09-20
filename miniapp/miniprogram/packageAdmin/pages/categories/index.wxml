@@ -1,0 +1,31 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <block wx:else>
+    <view class="list-header">
+      <view class="page-title">服务分类</view>
+      <view class="add-btn" bindtap="handleAdd">+ 新增</view>
+    </view>
+
+    <view wx:if="{{showForm}}" class="surface form-card">
+      <ui-field label="分类名称" value="{{formName}}" placeholder="如：中医推拿" bindinput="handleNameInput" />
+      <ui-field label="排序" value="{{formSort}}" type="number" placeholder="数字越小越靠前" bindinput="handleSortInput" />
+      <view class="form-actions">
+        <ui-button label="取消" variant="secondary" bind:action="handleCancel" />
+        <ui-button label="保存" loading="{{saving}}" bind:action="handleSave" />
+      </view>
+    </view>
+
+    <view class="cat-list">
+      <view wx:for="{{categories}}" wx:key="id" class="surface cat-item">
+        <view class="cat-main" data-item="{{item}}" bindtap="handleEdit">
+          <view class="cat-name">{{item.name}}</view>
+          <view class="cat-meta">排序：{{item.sort}}</view>
+        </view>
+        <view class="cat-status {{item.status === 'ENABLED' ? 'status-on' : 'status-off'}}" data-item="{{item}}" bindtap="handleToggleStatus">
+          {{item.status === 'ENABLED' ? '已启用' : '已停用'}}
+        </view>
+      </view>
+      <view wx:if="{{categories.length === 0}}" class="empty-tip">暂无分类</view>
+    </view>
+  </block>
+</view>

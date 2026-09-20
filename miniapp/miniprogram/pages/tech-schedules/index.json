@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "排班管理",
+  "usingComponents": {
+    "custom-tabbar": "/components/custom-tabbar/index"
+  }
+}

@@ -1,0 +1,121 @@
+.page {
+  padding-bottom: 140rpx;
+}
+
+.admin-header {
+  padding: 32rpx;
+  background: linear-gradient(135deg, #1F2933, #334E68);
+  border-radius: 24rpx;
+  color: #FFFFFF;
+  margin-bottom: 32rpx;
+}
+
+.admin-header__title {
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.admin-header__sub {
+  font-size: 24rpx;
+  opacity: 0.7;
+  margin-top: 8rpx;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+}
+
+.stat-card {
+  background: var(--color-surface);
+  border: 1rpx solid var(--color-border);
+  border-radius: 20rpx;
+  padding: 24rpx;
+  text-align: center;
+}
+
+.stat-card__num {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.stat-card__label {
+  font-size: 22rpx;
+  color: var(--color-muted);
+  margin-top: 8rpx;
+}
+
+.pending-row {
+  margin-bottom: 32rpx;
+}
+
+.pending-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #FFF8E1;
+  border: 1rpx solid #FFE082;
+  border-radius: 20rpx;
+}
+
+.pending-card__icon {
+  font-size: 40rpx;
+}
+
+.pending-card__info {
+  flex: 1;
+}
+
+.pending-card__title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #E65100;
+}
+
+.pending-card__desc {
+  font-size: 22rpx;
+  color: var(--color-muted);
+  margin-top: 4rpx;
+}
+
+.pending-card__arrow {
+  font-size: 32rpx;
+  color: var(--color-muted);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  margin-bottom: 20rpx;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+}
+
+.menu-card {
+  padding: 28rpx 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.menu-card__icon {
+  font-size: 40rpx;
+}
+
+.menu-card__name {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.menu-card__desc {
+  font-size: 22rpx;
+  color: var(--color-muted);
+}

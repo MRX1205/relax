@@ -1,0 +1,49 @@
+<view class="page">
+  <view class="section-title">微信支付配置</view>
+  <view class="desc">配置微信支付商户信息后，用户可使用真实微信支付下单。</view>
+
+  <view class="form-card surface">
+    <view class="form-item">
+      <text class="form-label">小程序 AppID</text>
+      <input class="form-input" value="{{config['wxpay.appId']}}" placeholder="wx..." bindinput="handleInput('wxpay.appId')" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">商户号</text>
+      <input class="form-input" value="{{config['wxpay.mchId']}}" placeholder="1234567890" bindinput="handleInput('wxpay.mchId')" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">API 密钥 (V3)</text>
+      <input class="form-input" password="{{true}}" value="{{apiKey}}" placeholder="输入新密钥（留空不修改）" bindinput="handleApiKeyInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">证书序列号</text>
+      <input class="form-input" value="{{config['wxpay.serialNo']}}" placeholder="证书序列号" bindinput="handleInput('wxpay.serialNo')" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">商户私钥</text>
+      <textarea class="form-textarea" value="{{privateKey}}" placeholder="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----" bindinput="handlePrivateKeyInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">支付回调地址</text>
+      <input class="form-input" value="{{config['wxpay.notifyUrl']}}" placeholder="https://your-domain.com/api/v1/payments/wechat/notify" bindinput="handleInput('wxpay.notifyUrl')" />
+    </view>
+    <view class="form-item switch-item">
+      <text class="form-label">启用真实支付</text>
+      <switch checked="{{enabled}}" bindchange="handleEnabledChange" />
+    </view>
+  </view>
+
+  <view class="tips surface">
+    <view class="tips-title">配置说明</view>
+    <view class="tips-item">1. 在微信支付商户平台获取商户号和 API 密钥</view>
+    <view class="tips-item">2. 下载商户 API 证书，获取证书序列号和私钥</view>
+    <view class="tips-item">3. 回调地址需配置为已备案的 HTTPS 域名</view>
+    <view class="tips-item">4. 未启用时使用模拟支付，方便开发测试</view>
+  </view>
+
+  <button class="save-btn" loading="{{saving}}" bindtap="handleSave">保存配置</button>
+
+  <view wx:if="{{showSuccess}}" class="success-toast">保存成功</view>
+</view>
+
+<custom-tabbar />

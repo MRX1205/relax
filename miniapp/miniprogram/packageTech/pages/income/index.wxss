@@ -1,0 +1,17 @@
+.summary { padding: 32rpx; margin-bottom: 24rpx; text-align: center; }
+.summary-label { font-size: 26rpx; color: var(--color-text-secondary); }
+.summary-amount { font-size: 48rpx; font-weight: 700; color: var(--color-primary); margin-top: 8rpx; }
+.tabs { display: flex; margin-bottom: 24rpx; background: var(--color-surface); border-radius: var(--radius-md); overflow: hidden; border: 1rpx solid var(--color-border); }
+.tab { flex: 1; text-align: center; padding: 20rpx; font-size: 28rpx; font-weight: 600; }
+.tab--active { background: var(--color-primary); color: #FFFFFF; }
+.list { display: grid; gap: 16rpx; }
+.item { padding: 24rpx; }
+.item-header { display: flex; justify-content: space-between; align-items: center; }
+.item-amount { font-size: 30rpx; font-weight: 700; }
+.item-status { font-size: 22rpx; font-weight: 600; }
+.item-status--PENDING { color: var(--color-warning); }
+.item-status--SETTLED, .item-status--PAID { color: var(--color-success); }
+.item-status--VOID { color: var(--color-muted); }
+.item-meta { font-size: 24rpx; color: var(--color-text-secondary); margin-top: 8rpx; }
+.item-time { font-size: 22rpx; color: var(--color-muted); margin-top: 4rpx; }
+.empty-tip { text-align: center; color: var(--color-muted); padding: 48rpx; }

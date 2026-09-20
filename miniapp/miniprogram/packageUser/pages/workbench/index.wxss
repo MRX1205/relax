@@ -1,4 +1,15 @@
-.placeholder {
-  margin-top: 40rpx;
+.menu-list {
+  margin-top: 32rpx;
+  display: grid;
+  gap: 20rpx;
 }
-
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 24rpx;
+}
+.menu-content { flex: 1; }
+.menu-name { font-size: 30rpx; font-weight: 600; }
+.menu-desc { font-size: 24rpx; color: var(--color-text-secondary); margin-top: 6rpx; }
+.menu-arrow { color: var(--color-muted); font-size: 40rpx; line-height: 1; }

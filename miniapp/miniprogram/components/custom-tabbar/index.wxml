@@ -1,0 +1,16 @@
+<view class="tabbar">
+  <view
+    wx:for="{{tabs}}"
+    wx:key="key"
+    class="tabbar-item {{item.key === activeKey ? 'tabbar-item--active' : ''}}"
+    data-path="{{item.pagePath}}"
+    data-key="{{item.key}}"
+    bindtap="handleTap"
+  >
+    <view class="tabbar-icon-wrapper">
+      <view class="tabbar-icon">{{item.icon}}</view>
+      <view wx:if="{{item.key === activeKey}}" class="tabbar-dot"></view>
+    </view>
+    <view class="tabbar-text">{{item.text}}</view>
+  </view>
+</view>

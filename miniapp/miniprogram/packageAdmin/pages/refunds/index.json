@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "退款审核",
+  "usingComponents": {
+    "ui-state": "/components/ui-state/index"
+  }
+}

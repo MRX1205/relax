@@ -1,0 +1,30 @@
+.area-list {
+  margin-top: 24rpx;
+  display: grid;
+  gap: 16rpx;
+}
+
+.area-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+}
+
+.area-name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.area-status {
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.area-status--ENABLED {
+  color: var(--color-success);
+}
+
+.area-status--DISABLED {
+  color: var(--color-muted);
+}

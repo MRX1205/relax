@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "技师入驻",
+  "usingComponents": {
+    "ui-field": "/components/ui-field/index",
+    "ui-button": "/components/ui-button/index",
+    "ui-state": "/components/ui-state/index"
+  }
+}

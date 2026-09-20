@@ -1,0 +1,62 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:elif="{{application}}">
+    <view class="page-title">入驻申请</view>
+    <view class="surface status-card">
+      <view class="status-row">
+        <text class="status-label">状态</text>
+        <text class="status-value status-value--{{application.status}}">{{application.status}}</text>
+      </view>
+      <view wx:if="{{application.rejectReason}}" class="reject-reason">
+        拒绝原因：{{application.rejectReason}}
+      </view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="page-title">技师入驻申请</view>
+    <view class="page-subtitle">提交资料后由管理员审核，通过后即可开始接单。</view>
+
+    <view class="form">
+      <view class="surface form-card">
+        <ui-field label="服务名" value="{{serviceName}}" placeholder="技师对外显示名称" bindinput="handleInput('serviceName')" />
+        <ui-field label="真实姓名" value="{{realName}}" placeholder="用于实名核验" bindinput="handleInput('realName')" />
+        <ui-field label="手机号" value="{{phone}}" type="number" placeholder="联系手机号" bindinput="handleInput('phone')" />
+        <ui-field label="从业年限" value="{{experienceYears}}" type="number" placeholder="如 3" bindinput="handleInput('experienceYears')" />
+        <ui-field label="自我介绍" value="{{intro}}" placeholder="擅长手法、服务经验等" bindinput="handleInput('intro')" />
+      </view>
+
+      <view class="surface form-card">
+        <view class="section-label">服务区域（可多选）</view>
+        <view class="area-grid">
+          <view
+            wx:for="{{serviceAreas}}"
+            wx:key="id"
+            class="area-chip {{selectedAreas.indexOf(item.regionCode) >= 0 ? 'area-chip--selected' : ''}}"
+            data-code="{{item.regionCode}}"
+            bindtap="toggleArea"
+          >
+            {{item.name}}
+          </view>
+        </view>
+      </view>
+
+      <view class="surface form-card">
+        <view class="section-label">工作照（必填）</view>
+        <view class="upload-area" bindtap="choosePhoto">
+          <image wx:if="{{photoPath}}" src="{{photoPath}}" mode="aspectFill" class="preview-img" />
+          <view wx:else class="upload-placeholder">点击上传</view>
+        </view>
+
+        <view class="section-label">技能证书（选填）</view>
+        <view class="upload-area" bindtap="chooseCertificate">
+          <image wx:if="{{certificatePath}}" src="{{certificatePath}}" mode="aspectFill" class="preview-img" />
+          <view wx:else class="upload-placeholder">点击上传</view>
+        </view>
+      </view>
+
+      <ui-button label="提交申请" loading="{{submitting}}" bind:action="handleSubmit" />
+    </view>
+  </block>
+</view>

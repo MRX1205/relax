@@ -1,0 +1,23 @@
+<view class="page">
+  <view class="page-title">切换身份</view>
+  <view class="page-desc">选择您要使用的功能模块</view>
+
+  <view class="role-list">
+    <view 
+      wx:for="{{roles}}" 
+      wx:key="code" 
+      class="role-card {{item.code === currentRole ? 'role-card--active' : ''}}"
+      data-role="{{item.code}}"
+      bindtap="handleSwitch"
+    >
+      <view class="role-card__icon">{{item.icon}}</view>
+      <view class="role-card__info">
+        <view class="role-card__name">{{item.name}}</view>
+        <view class="role-card__desc">{{item.description}}</view>
+      </view>
+      <view class="role-card__check" wx:if="{{item.code === currentRole}}">✓</view>
+    </view>
+  </view>
+
+  <view class="tip">切换身份后，首页将显示对应的功能模块</view>
+</view>

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "预约服务",
+  "usingComponents": {
+    "ui-button": "/components/ui-button/index"
+  }
+}

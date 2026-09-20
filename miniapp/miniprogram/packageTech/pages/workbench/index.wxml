@@ -1,8 +1,37 @@
 <view class="page">
-  <view class="page-title">技师端工作台</view>
-  <view class="page-subtitle">当前仅验证技师分包和公共组件加载。</view>
-  <view class="surface placeholder">
-    <ui-state title="阶段 1 骨架" description="入驻、排班和订单履约将在后续已确认阶段开发。" />
-  </view>
-</view>
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
 
+  <block wx:elif="{{!profile && !hasApplication}}">
+    <view class="page-title">技师端</view>
+    <view class="page-subtitle">您还不是技师，提交入驻申请后即可开始接单。</view>
+    <view class="apply-btn"><view class="apply-action" bindtap="goToAccess">申请入驻</view></view>
+  </block>
+
+  <block wx:elif="{{hasApplication && !profile}}">
+    <view class="page-title">入驻申请</view>
+    <view class="surface status-card">
+      <view class="status-text">审核状态：{{applicationStatus === 'PENDING' ? '待审核' : applicationStatus === 'APPROVED' ? '已通过' : '已拒绝'}}</view>
+      <view wx:if="{{applicationStatus === 'PENDING'}}" class="status-hint">请耐心等待管理员审核</view>
+    </view>
+  </block>
+
+  <block wx:elif="{{profile}}">
+    <view class="profile-header surface">
+      <view class="profile-name">{{profile.serviceName}}</view>
+      <view class="profile-meta">{{profile.realName}} · {{profile.phone}}</view>
+      <view class="online-toggle {{profile.onlineStatus === 'ONLINE' ? 'online-on' : 'online-off'}}" bindtap="toggleOnline">
+        {{profile.onlineStatus === 'ONLINE' ? '● 在线接单中' : '○ 已离线'}}
+      </view>
+    </view>
+    <view class="menu-list">
+      <view wx:for="{{menus}}" wx:key="code" class="surface menu-item" data-url="{{item.url}}" bindtap="handleMenuTap">
+        <view class="menu-icon menu-icon--{{item.code}}">{{item.name[0]}}</view>
+        <view class="menu-content">
+          <view class="menu-name">{{item.name}}</view>
+          <view class="menu-desc">{{item.desc}}</view>
+        </view>
+        <view class="menu-arrow">›</view>
+      </view>
+    </view>
+  </block>
+</view>

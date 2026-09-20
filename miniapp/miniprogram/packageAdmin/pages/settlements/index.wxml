@@ -1,0 +1,21 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <block wx:else>
+    <view wx:if="{{settlements.length === 0}}" class="empty-wrap"><ui-state title="暂无结算单" /></view>
+    <view class="list">
+      <view wx:for="{{settlements}}" wx:key="id" class="surface card">
+        <view class="card-header">
+          <text class="card-no">{{item.settlementNo}}</text>
+          <text class="card-status card-status--{{item.status}}">{{statusLabel(item.status)}}</text>
+        </view>
+        <view class="card-amount">¥{{item.totalAmount}}</view>
+        <view wx:if="{{item.referenceNo}}" class="card-meta">凭证：{{item.referenceNo}}</view>
+        <view class="card-time">{{item.createdAt}}</view>
+        <view wx:if="{{item.status === 'PENDING'}}" class="card-actions">
+          <view class="action-btn action-btn--pay" data-id="{{item.id}}" bindtap="handlePay">登记付款</view>
+          <view class="action-btn action-btn--void" data-id="{{item.id}}" bindtap="handleVoid">作废</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

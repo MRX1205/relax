@@ -1,62 +1,156 @@
+/* === 全局设计系统 === */
 page {
-  --color-primary: #C84B31;
-  --color-primary-pressed: #A83C27;
-  --color-accent: #237A57;
-  --color-text: #1F2933;
-  --color-text-secondary: #52606D;
-  --color-muted: #7B8794;
+  --color-primary: #FF6B6B;
+  --color-primary-light: #FF8E8E;
+  --color-primary-dark: #E84545;
+  --color-secondary: #4ECDC4;
+  --color-accent: #45B7D1;
+  --color-success: #2ECC71;
+  --color-warning: #F39C12;
+  --color-danger: #E74C3C;
+  --color-text: #2D3436;
+  --color-text-secondary: #636E72;
+  --color-muted: #B2BEC3;
+  --color-bg: #F8F9FA;
   --color-surface: #FFFFFF;
-  --color-background: #F6F7F9;
-  --color-border: #D9E2EC;
-  --color-danger: #C62828;
-  --color-warning: #A85D00;
-  --color-success: #237A57;
+  --color-border: #E9ECEF;
+  
   --radius-sm: 8rpx;
   --radius-md: 16rpx;
-  --space-1: 8rpx;
-  --space-2: 16rpx;
-  --space-3: 24rpx;
-  --space-4: 32rpx;
-  --space-5: 48rpx;
-
-  min-height: 100%;
-  background: var(--color-background);
+  --radius-lg: 24rpx;
+  --radius-xl: 32rpx;
+  --radius-full: 9999rpx;
+  
+  --shadow-sm: 0 2rpx 8rpx rgba(0,0,0,0.04);
+  --shadow-md: 0 4rpx 16rpx rgba(0,0,0,0.08);
+  --shadow-lg: 0 8rpx 32rpx rgba(0,0,0,0.12);
+  
+  --font-xs: 20rpx;
+  --font-sm: 24rpx;
+  --font-md: 28rpx;
+  --font-lg: 32rpx;
+  --font-xl: 36rpx;
+  --font-2xl: 40rpx;
+  --font-3xl: 48rpx;
+  
+  --space-xs: 8rpx;
+  --space-sm: 16rpx;
+  --space-md: 24rpx;
+  --space-lg: 32rpx;
+  --space-xl: 48rpx;
+  
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: var(--font-md);
   color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 30rpx;
-  letter-spacing: 0;
-}
-
-button,
-input,
-textarea {
-  font: inherit;
-}
-
-.page {
-  min-height: 100vh;
-  box-sizing: border-box;
-  padding: 32rpx 32rpx calc(48rpx + env(safe-area-inset-bottom));
-}
-
-.surface {
-  background: var(--color-surface);
-  border: 1rpx solid var(--color-border);
-  border-radius: var(--radius-md);
-}
-
-.page-title {
-  margin: 0;
-  font-size: 44rpx;
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: 0;
-}
-
-.page-subtitle {
-  margin-top: 12rpx;
-  color: var(--color-text-secondary);
-  font-size: 28rpx;
+  background: var(--color-bg);
   line-height: 1.6;
 }
 
+/* === 通用组件 === */
+.surface {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 12rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.badge--primary {
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--color-primary);
+}
+
+.badge--success {
+  background: rgba(46, 204, 113, 0.1);
+  color: var(--color-success);
+}
+
+.badge--warning {
+  background: rgba(243, 156, 18, 0.1);
+  color: var(--color-warning);
+}
+
+.badge--danger {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--color-danger);
+}
+
+/* === 渐变背景 === */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, var(--color-secondary), #45B7D1);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* === 动画 === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* === 工具类 === */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-primary { color: var(--color-primary); }
+.text-success { color: var(--color-success); }
+.text-warning { color: var(--color-warning); }
+.text-danger { color: var(--color-danger); }
+.text-muted { color: var(--color-muted); }
+.text-secondary { color: var(--color-text-secondary); }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.mt-xs { margin-top: var(--space-xs); }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+.mb-xs { margin-bottom: var(--space-xs); }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+.p-xs { padding: var(--space-xs); }
+.p-sm { padding: var(--space-sm); }
+.p-md { padding: var(--space-md); }
+.p-lg { padding: var(--space-lg); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-full { border-radius: var(--radius-full); }

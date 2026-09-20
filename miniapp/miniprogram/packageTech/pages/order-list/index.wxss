@@ -1,0 +1,15 @@
+.order-list { display: grid; gap: 16rpx; }
+.order-card { padding: 24rpx; }
+.order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.order-no { font-size: 24rpx; color: var(--color-text-secondary); }
+.order-status { font-size: 24rpx; font-weight: 600; }
+.order-status--PAID { color: var(--color-warning); }
+.order-status--ACCEPTED, .order-status--DEPARTED, .order-status--ARRIVED { color: var(--color-primary); }
+.order-status--IN_SERVICE { color: var(--color-accent); }
+.order-status--COMPLETED { color: var(--color-success); }
+.order-status--CANCELLED, .order-status--EXPIRED, .order-status--REJECTED { color: var(--color-muted); }
+.order-date { font-size: 28rpx; font-weight: 600; }
+.order-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12rpx; padding-top: 12rpx; border-top: 1rpx solid var(--color-border); }
+.order-time { font-size: 22rpx; color: var(--color-muted); }
+.order-link { font-size: 24rpx; color: var(--color-primary); }
+.empty-wrap { padding-top: 80rpx; }

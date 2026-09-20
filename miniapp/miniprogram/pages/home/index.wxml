@@ -1,55 +1,211 @@
 <view class="page">
-  <view class="hero">
-    <view class="hero__city">东莞</view>
-    <view class="page-title">到家服务项目骨架</view>
-    <view class="page-subtitle">阶段 1 已建立三角色分包、统一请求层和基础交互组件，业务功能将在后续阶段开发。</view>
-  </view>
-
-  <view class="surface service-panel">
-    <view>
-      <view class="section-title">服务连接</view>
-      <view class="service-line">
-        <view class="service-dot service-dot--{{serviceState}}"></view>
-        <text>{{serviceMessage}}</text>
+  <!-- 头部 -->
+  <view class="header gradient-primary">
+    <view class="header-content">
+      <view class="header-left">
+        <view class="header-logo">💆</view>
+        <view class="header-info">
+          <view class="header-title">东莞到家</view>
+          <view class="header-subtitle" wx:if="{{role === 'USER'}}">正规按摩 · 上门服务</view>
+          <view class="header-subtitle" wx:elif="{{role === 'TECHNICIAN'}}">技师工作台</view>
+          <view class="header-subtitle" wx:else>管理后台</view>
+        </view>
       </view>
-      <view class="service-env">当前环境：{{environmentVersion}}</view>
+      <view class="header-right" bindtap="{{account ? 'goToAccount' : 'handleLogin'}}">
+        <view class="avatar-wrapper">
+          <view class="avatar-text">{{account ? (account.nickname[0] || '我') : '?'}}</view>
+        </view>
+      </view>
     </view>
-    <ui-button
-      label="检查服务"
-      variant="secondary"
-      loading="{{checking}}"
-      bind:action="checkService"
-    />
   </view>
 
-  <view class="section-title roles-title">角色工作台</view>
-  <view class="role-list">
-    <navigator class="surface role-item" url="/packageUser/pages/workbench/index" hover-class="role-item--pressed">
-      <view class="role-item__code">用户</view>
-      <view class="role-item__content">
-        <view class="role-item__title">用户端</view>
-        <view class="role-item__description">浏览、预约和订单入口将在阶段 4-5 开发</view>
-      </view>
-      <view class="role-item__arrow">›</view>
-    </navigator>
-
-    <navigator class="surface role-item" url="/packageTech/pages/workbench/index" hover-class="role-item--pressed">
-      <view class="role-item__code role-item__code--tech">技师</view>
-      <view class="role-item__content">
-        <view class="role-item__title">技师端</view>
-        <view class="role-item__description">入驻、排班和履约入口将在阶段 3、6 开发</view>
-      </view>
-      <view class="role-item__arrow">›</view>
-    </navigator>
-
-    <navigator class="surface role-item" url="/packageAdmin/pages/workbench/index" hover-class="role-item--pressed">
-      <view class="role-item__code role-item__code--admin">管理</view>
-      <view class="role-item__content">
-        <view class="role-item__title">管理端</view>
-        <view class="role-item__description">项目、技师和订单管理将在阶段 3 起开发</view>
-      </view>
-      <view class="role-item__arrow">›</view>
-    </navigator>
+  <!-- Loading -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner-lg"></view>
+    <text class="loading-text">加载中...</text>
   </view>
+
+  <!-- 未登录 -->
+  <view wx:elif="{{!account}}" class="welcome-section">
+    <view class="welcome-card card">
+      <view class="welcome-icon">👋</view>
+      <view class="welcome-title">欢迎使用东莞到家</view>
+      <view class="welcome-desc">登录后即可浏览项目、预约技师</view>
+      <button class="welcome-btn" bindtap="handleLogin">立即登录</button>
+    </view>
+  </view>
+
+  <!-- 用户首页 -->
+  <block wx:elif="{{role === 'USER' && home}}">
+    <!-- 分类入口 -->
+    <view class="section" wx:if="{{home.categories.length > 0}}">
+      <scroll-view class="cat-scroll" scroll-x>
+        <view class="cat-grid">
+          <view wx:for="{{home.categories}}" wx:key="id" class="cat-item" data-id="{{item.id}}" bindtap="goToProjectList">
+            <view class="cat-icon-wrapper">
+              <view class="cat-icon">{{item.name === '中医推拿' ? '💆' : item.name === '精油SPA' ? '🧴' : item.name === '足疗保健' ? '🦶' : '🏃'}}</view>
+            </view>
+            <view class="cat-name">{{item.name}}</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 热门项目 -->
+    <view class="section" wx:if="{{home.featuredProjects.length > 0}}">
+      <view class="section-header">
+        <view class="section-title">🔥 热门项目</view>
+        <view class="section-more" bindtap="goToProjectList">全部 ›</view>
+      </view>
+      <scroll-view class="project-scroll" scroll-x>
+        <view class="project-grid">
+          <view wx:for="{{home.featuredProjects}}" wx:key="id" class="project-card" data-id="{{item.id}}" bindtap="goToProjectDetail">
+            <view class="project-image">
+              <view class="project-placeholder">💆</view>
+            </view>
+            <view class="project-info">
+              <view class="project-tag">{{item.categoryName}}</view>
+              <view class="project-name">{{item.name}}</view>
+              <view class="project-meta">
+                <text class="project-duration">{{item.durationMinutes}}分钟</text>
+                <text class="project-price">¥{{item.basePrice}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 推荐技师 -->
+    <view class="section" wx:if="{{home.nearbyTechnicians.length > 0}}">
+      <view class="section-header">
+        <view class="section-title">⭐ 推荐技师</view>
+        <view class="section-more" bindtap="goToTechnicianList">全部 ›</view>
+      </view>
+      <view class="tech-list">
+        <view wx:for="{{home.nearbyTechnicians}}" wx:key="id" class="tech-card card" data-id="{{item.id}}" bindtap="goToTechnicianDetail">
+          <view class="tech-avatar">
+            <view class="tech-avatar-text">{{item.serviceName[0]}}</view>
+            <view wx:if="{{item.onlineStatus === 'ONLINE'}}" class="tech-online-dot"></view>
+          </view>
+          <view class="tech-info">
+            <view class="tech-name">{{item.serviceName}}</view>
+            <view class="tech-meta">{{item.experienceYears}}年经验</view>
+          </view>
+          <view class="tech-right">
+            <view class="tech-price" wx:if="{{item.startPrice}}">¥{{item.startPrice}}起</view>
+            <view class="tech-status {{item.onlineStatus === 'ONLINE' ? 'status-online' : 'status-offline'}}">
+              {{item.onlineStatus === 'ONLINE' ? '可预约' : '休息中'}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{home.featuredProjects.length === 0 && home.nearbyTechnicians.length === 0}}" class="empty-state">
+      <view class="empty-icon">📭</view>
+      <view class="empty-title">暂无可用服务</view>
+      <view class="empty-desc">项目和技师正在上架中，请稍后再来</view>
+    </view>
+  </block>
+
+  <!-- 技师工作台 -->
+  <block wx:elif="{{role === 'TECHNICIAN'}}">
+    <block wx:if="{{!techProfile && !techHasApplication}}">
+      <view class="welcome-card card">
+        <view class="welcome-icon">🔧</view>
+        <view class="welcome-title">成为技师</view>
+        <view class="welcome-desc">提交入驻申请，审核通过后即可开始接单赚钱</view>
+        <button class="welcome-btn" bindtap="goToAccess">申请入驻</button>
+      </view>
+    </block>
+
+    <block wx:elif="{{techHasApplication && !techProfile}}">
+      <view class="welcome-card card">
+        <view class="welcome-icon">⏳</view>
+        <view class="welcome-title">
+          {{techApplicationStatus === 'PENDING' ? '入驻申请审核中' : techApplicationStatus === 'APPROVED' ? '申请已通过' : '申请已拒绝'}}
+        </view>
+        <view class="welcome-desc" wx:if="{{techApplicationStatus === 'PENDING'}}">请耐心等待管理员审核</view>
+        <button class="welcome-btn" wx:if="{{techApplicationStatus === 'REJECTED'}}" bindtap="goToAccess">重新申请</button>
+      </view>
+    </block>
+
+    <block wx:elif="{{techProfile}}">
+      <view class="tech-header gradient-secondary">
+        <view class="tech-header-info">
+          <view class="tech-header-name">{{techProfile.serviceName}}</view>
+          <view class="tech-header-meta">{{techProfile.realName}} · {{techProfile.phone}}</view>
+        </view>
+        <view class="online-toggle {{techProfile.onlineStatus === 'ONLINE' ? 'toggle-on' : 'toggle-off'}}" bindtap="toggleOnline">
+          <view class="toggle-dot"></view>
+          <text>{{techProfile.onlineStatus === 'ONLINE' ? '在线' : '离线'}}</text>
+        </view>
+      </view>
+
+      <view class="stats-row">
+        <view class="stat-card card">
+          <view class="stat-value">{{techStats.pending}}</view>
+          <view class="stat-label">待处理</view>
+        </view>
+        <view class="stat-card card">
+          <view class="stat-value">{{techStats.today}}</view>
+          <view class="stat-label">今日订单</view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">快捷操作</view>
+        <view class="action-grid">
+          <view class="action-item card" bindtap="goToTechOrders">
+            <view class="action-icon">📋</view>
+            <view class="action-text">我的订单</view>
+          </view>
+          <view class="action-item card" bindtap="goToSchedules">
+            <view class="action-icon">📅</view>
+            <view class="action-text">排班管理</view>
+          </view>
+          <view class="action-item card" bindtap="goToIncome">
+            <view class="action-icon">💰</view>
+            <view class="action-text">收入明细</view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <!-- 管理员工作台 -->
+  <block wx:elif="{{role === 'ADMIN' || role === 'SUPER_ADMIN'}}">
+    <view class="stats-grid">
+      <view class="stat-card card">
+        <view class="stat-value text-primary">{{adminStats.todayOrders || 0}}</view>
+        <view class="stat-label">今日订单</view>
+      </view>
+      <view class="stat-card card">
+        <view class="stat-value text-success">{{adminStats.totalOrders || 0}}</view>
+        <view class="stat-label">总订单</view>
+      </view>
+      <view class="stat-card card">
+        <view class="stat-value text-warning">{{adminStats.totalUsers || 0}}</view>
+        <view class="stat-label">用户数</view>
+      </view>
+      <view class="stat-card card">
+        <view class="stat-value text-danger">{{adminStats.totalTechnicians || 0}}</view>
+        <view class="stat-label">技师数</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">管理功能</view>
+      <view class="admin-grid">
+        <view wx:for="{{adminMenus}}" wx:key="name" class="admin-card card" data-url="{{item.url}}" bindtap="goToAdminPage">
+          <view class="admin-icon">{{item.icon}}</view>
+          <view class="admin-name">{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+  </block>
 </view>
 
+<custom-tabbar />

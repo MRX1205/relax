@@ -10,8 +10,26 @@ interface RequestOptions {
   data?: WechatMiniprogram.IAnyObject | string | ArrayBuffer;
 }
 
-function getAccessToken(): string {
+export class ApiError extends Error {
+  constructor(
+    public readonly code: string,
+    message: string,
+    public readonly statusCode: number,
+  ) {
+    super(message);
+  }
+}
+
+export function getAccessToken(): string {
   return wx.getStorageSync<string>(ACCESS_TOKEN_KEY) || "";
+}
+
+export function setAccessToken(token: string): void {
+  wx.setStorageSync(ACCESS_TOKEN_KEY, token);
+}
+
+export function clearAccessToken(): void {
+  wx.removeStorageSync(ACCESS_TOKEN_KEY);
 }
 
 export function request<T>({ url, method = "GET", data }: RequestOptions): Promise<T> {
@@ -31,7 +49,14 @@ export function request<T>({ url, method = "GET", data }: RequestOptions): Promi
           return;
         }
 
-        reject(new Error(envelope.message || `请求失败（${response.statusCode}）`));
+        if (response.statusCode === 401) {
+          clearAccessToken();
+        }
+        reject(new ApiError(
+          envelope.code || "REQUEST_FAILED",
+          envelope.message || `请求失败（${response.statusCode}）`,
+          response.statusCode,
+        ));
       },
       fail(error) {
         reject(new Error(error.errMsg || "网络连接失败"));
@@ -39,4 +64,3 @@ export function request<T>({ url, method = "GET", data }: RequestOptions): Promi
     });
   });
 }
-

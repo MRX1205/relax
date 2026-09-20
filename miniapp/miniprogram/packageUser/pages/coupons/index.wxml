@@ -1,0 +1,65 @@
+<view class="page">
+  <view class="tabs">
+    <view class="tab {{tab === 'available' ? 'tab--active' : ''}}" data-tab="available" bindtap="switchTab">可领取</view>
+    <view class="tab {{tab === 'mine' ? 'tab--active' : ''}}" data-tab="mine" bindtap="switchTab">我的券</view>
+  </view>
+
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:elif="{{tab === 'available'}}">
+    <block wx:if="{{availableCoupons.length === 0}}">
+      <view class="empty">
+        <view class="empty__icon">🎫</view>
+        <view class="empty__text">暂无可领取的优惠券</view>
+      </view>
+    </block>
+    <view class="coupon-list">
+      <view wx:for="{{availableCoupons}}" wx:key="id" class="coupon-card surface">
+        <view class="coupon-left">
+          <text class="coupon-amount">¥{{item.amount}}</text>
+          <text class="coupon-condition">满{{item.minSpend}}可用</text>
+        </view>
+        <view class="coupon-right">
+          <text class="coupon-name">{{item.name}}</text>
+          <text class="coupon-info" wx:if="{{item.endAt}}">有效期至 {{item.endAt}}</text>
+          <text class="coupon-info" wx:else>长期有效</text>
+          <button
+            class="claim-btn"
+            disabled="{{item.issuedCount >= item.totalCount}}"
+            data-id="{{item.id}}"
+            bindtap="handleClaim"
+          >
+            {{item.issuedCount >= item.totalCount ? '已领完' : '领取'}}
+          </button>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{tab === 'mine'}}">
+    <block wx:if="{{myCoupons.length === 0}}">
+      <view class="empty">
+        <view class="empty__icon">🎫</view>
+        <view class="empty__text">暂无优惠券</view>
+      </view>
+    </block>
+    <view class="coupon-list">
+      <view wx:for="{{myCoupons}}" wx:key="id" class="coupon-card surface {{item.status !== 'AVAILABLE' ? 'coupon-used' : ''}}">
+        <view class="coupon-left">
+          <text class="coupon-amount">¥{{item.amount}}</text>
+          <text class="coupon-condition">满{{item.minSpend}}可用</text>
+        </view>
+        <view class="coupon-right">
+          <text class="coupon-name">{{item.name}}</text>
+          <text class="coupon-info" wx:if="{{item.endAt}}">有效期至 {{item.endAt}}</text>
+          <view class="coupon-status">
+            <text wx:if="{{item.status === 'AVAILABLE'}}" class="status-available">可使用</text>
+            <text wx:elif="{{item.status === 'LOCKED'}}" class="status-locked">使用中</text>
+            <text wx:elif="{{item.status === 'USED'}}" class="status-used">已使用</text>
+            <text wx:else class="status-expired">已过期</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

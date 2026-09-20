@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "地址管理",
+  "usingComponents": {
+    "ui-state": "/components/ui-state/index",
+    "ui-button": "/components/ui-button/index"
+  }
+}

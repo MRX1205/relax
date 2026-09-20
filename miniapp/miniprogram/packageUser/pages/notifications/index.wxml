@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="header" wx:if="{{unreadCount > 0}}">
+    <text class="unread-text">{{unreadCount}} 条未读消息</text>
+    <text class="mark-read" bindtap="markAllRead">全部已读</text>
+  </view>
+
+  <ui-state wx:if="{{loading && notifications.length === 0}}" title="加载中" kind="loading" />
+
+  <block wx:elif="{{notifications.length === 0}}">
+    <view class="empty">
+      <view class="empty__icon">🔔</view>
+      <view class="empty__text">暂无消息</view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="notification-list">
+      <view
+        wx:for="{{notifications}}"
+        wx:key="id"
+        class="notification-item surface {{!item.readAt ? 'unread' : ''}}"
+        data-item="{{item}}"
+        bindtap="handleTap"
+      >
+        <view class="notification-header">
+          <text class="notification-title">{{item.title}}</text>
+          <text class="notification-time">{{item.createdAt}}</text>
+        </view>
+        <text class="notification-content">{{item.content}}</text>
+        <view wx:if="{{item.relatedOrderNo}}" class="notification-link">
+          查看订单 ›
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

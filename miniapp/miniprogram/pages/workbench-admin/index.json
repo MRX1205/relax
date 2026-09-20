@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "管理后台",
+  "usingComponents": {
+    "custom-tabbar": "/components/custom-tabbar/index",
+    "ui-state": "/components/ui-state/index"
+  }
+}

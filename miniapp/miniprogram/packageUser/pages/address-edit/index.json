@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "编辑地址",
+  "usingComponents": {
+    "ui-field": "/components/ui-field/index",
+    "ui-button": "/components/ui-button/index"
+  }
+}

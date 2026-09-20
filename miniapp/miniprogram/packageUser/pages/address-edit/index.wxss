@@ -1,0 +1,49 @@
+.form {
+  display: grid;
+  gap: 24rpx;
+}
+
+.form-card {
+  padding: 8rpx 24rpx;
+}
+
+.field {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid var(--color-border);
+}
+
+.field:last-child {
+  border-bottom: none;
+}
+
+.field__label {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  margin-bottom: 12rpx;
+}
+
+.picker-trigger {
+  font-size: 30rpx;
+  min-height: 48rpx;
+  display: flex;
+  align-items: center;
+}
+
+.placeholder-text {
+  color: var(--color-muted);
+}
+
+.location-row {
+  font-size: 28rpx;
+  min-height: 48rpx;
+  display: flex;
+  align-items: center;
+  color: var(--color-primary);
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+}

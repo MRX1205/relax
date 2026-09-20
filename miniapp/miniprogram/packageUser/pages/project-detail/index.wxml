@@ -1,0 +1,84 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:elif="{{detail}}">
+    <!-- 项目头部 -->
+    <view class="hero-section">
+      <view class="hero-bg"></view>
+      <view class="hero-content">
+        <view class="hero-tag">{{detail.project.categoryName}}</view>
+        <view class="hero-name">{{detail.project.name}}</view>
+        <view class="hero-meta">
+          <view class="meta-item">
+            <text class="meta-icon">⏱️</text>
+            <text>{{detail.project.durationMinutes}}分钟</text>
+          </view>
+          <view class="meta-item">
+            <text class="meta-icon">👥</text>
+            <text>{{detail.technicianCount}}位技师</text>
+          </view>
+        </view>
+        <view class="hero-price">
+          <text class="price-symbol">¥</text>
+          <text class="price-value">{{detail.project.basePrice}}</text>
+          <text class="price-unit">起</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 服务介绍 -->
+    <view wx:if="{{detail.project.description}}" class="card section">
+      <view class="card-title">
+        <text class="card-icon">📋</text>
+        <text>服务介绍</text>
+      </view>
+      <view class="card-content">{{detail.project.description}}</view>
+    </view>
+
+    <!-- 温馨提示 -->
+    <view wx:if="{{detail.project.notice}}" class="card section">
+      <view class="card-title">
+        <text class="card-icon">💡</text>
+        <text>温馨提示</text>
+      </view>
+      <view class="card-content notice">{{detail.project.notice}}</view>
+    </view>
+
+    <!-- 可服务技师 -->
+    <view class="section">
+      <view class="section-header">
+        <view class="section-title">可服务技师（{{detail.technicianCount}}）</view>
+      </view>
+
+      <view wx:if="{{detail.technicians.length === 0}}" class="empty-state">
+        <view class="empty-icon">👥</view>
+        <view class="empty-text">暂无可服务技师</view>
+      </view>
+
+      <view class="tech-list">
+        <view wx:for="{{detail.technicians}}" wx:key="id" class="tech-card">
+          <view class="tech-main" data-id="{{item.id}}" bindtap="goToTechnician">
+            <view class="tech-avatar">
+              <view class="tech-avatar-text">{{item.serviceName[0]}}</view>
+            </view>
+            <view class="tech-info">
+              <view class="tech-name">{{item.serviceName}}</view>
+              <view class="tech-meta">
+                <text class="tech-exp">{{item.experienceYears}}年经验</text>
+              </view>
+            </view>
+            <view class="tech-price">¥{{item.price}}</view>
+          </view>
+          <view class="tech-action">
+            <button class="book-btn" data-id="{{item.id}}" data-name="{{item.serviceName}}" bindtap="goToBooking">
+              立即预约
+            </button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部间距 -->
+    <view style="height: 40rpx;"></view>
+  </block>
+</view>

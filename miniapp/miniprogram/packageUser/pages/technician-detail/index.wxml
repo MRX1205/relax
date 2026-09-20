@@ -1,0 +1,106 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:elif="{{detail}}">
+    <!-- 技师头部 -->
+    <view class="hero-section">
+      <view class="hero-bg"></view>
+      <view class="hero-content">
+        <view class="hero-avatar">
+          <view class="hero-avatar-text">{{detail.technician.serviceName[0]}}</view>
+          <view wx:if="{{detail.technician.onlineStatus === 'ONLINE'}}" class="online-dot"></view>
+        </view>
+        <view class="hero-info">
+          <view class="hero-name">{{detail.technician.serviceName}}</view>
+          <view class="hero-meta">
+            <text class="meta-exp">{{detail.technician.experienceYears}}年经验</text>
+            <text class="meta-dot">·</text>
+            <text class="meta-status {{detail.technician.onlineStatus === 'ONLINE' ? 'status-online' : 'status-offline'}}">
+              {{detail.technician.onlineStatus === 'ONLINE' ? '在线接单中' : '休息中'}}
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 个人介绍 -->
+    <view wx:if="{{detail.technician.intro}}" class="card section">
+      <view class="card-title">
+        <text class="card-icon">👤</text>
+        <text>个人介绍</text>
+      </view>
+      <view class="card-content">{{detail.technician.intro}}</view>
+    </view>
+
+    <!-- 可服务项目 -->
+    <view class="section">
+      <view class="section-header">
+        <view class="section-title">可服务项目</view>
+      </view>
+
+      <view wx:if="{{detail.projects.length === 0}}" class="empty-state">
+        <view class="empty-icon">💆</view>
+        <view class="empty-text">暂无可服务项目</view>
+      </view>
+
+      <view class="project-list">
+        <view wx:for="{{detail.projects}}" wx:key="id" class="project-card">
+          <view class="project-info">
+            <view class="project-name">{{item.projectName}}</view>
+            <view class="project-duration">{{item.durationMinutes}}分钟</view>
+          </view>
+          <view class="project-right">
+            <view class="project-price">¥{{item.price}}</view>
+            <button class="book-btn" data-projectid="{{item.projectId}}" bindtap="goToBooking">预约</button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 可约时间 -->
+    <view class="section">
+      <view class="section-header">
+        <view class="section-title">可约时间</view>
+      </view>
+
+      <view wx:if="{{dateSlots.length === 0}}" class="empty-state">
+        <view class="empty-icon">📅</view>
+        <view class="empty-text">暂无可约时段</view>
+      </view>
+
+      <block wx:else>
+        <!-- 日期选择 -->
+        <scroll-view class="date-scroll" scroll-x>
+          <view class="date-grid">
+            <view
+              wx:for="{{dateSlots}}"
+              wx:key="date"
+              class="date-item {{selectedDate === item.date ? 'date-item--active' : ''}}"
+              data-date="{{item.date}}"
+              bindtap="handleDateTap"
+            >
+              <view class="date-label">{{item.label}}</view>
+            </view>
+          </view>
+        </scroll-view>
+
+        <!-- 时间选择 -->
+        <view class="time-grid">
+          <view
+            wx:for="{{timeSlots}}"
+            wx:key="startTime"
+            class="time-slot"
+            data-start="{{item.startTime}}"
+            data-projectid="{{detail.projects[0].projectId}}"
+            bindtap="handleTimeTap"
+          >
+            <text class="time-text">{{item.startTime}}-{{item.endTime}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 底部间距 -->
+    <view style="height: 40rpx;"></view>
+  </block>
+</view>

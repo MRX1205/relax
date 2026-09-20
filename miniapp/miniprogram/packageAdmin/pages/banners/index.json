@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "轮播图管理",
+  "usingComponents": {
+    "ui-state": "/components/ui-state/index"
+  }
+}

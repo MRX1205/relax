@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "分类管理",
+  "usingComponents": {
+    "ui-button": "/components/ui-button/index",
+    "ui-state": "/components/ui-state/index",
+    "ui-field": "/components/ui-field/index"
+  }
+}

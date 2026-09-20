@@ -1,0 +1,72 @@
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.add-btn {
+  padding: 12rpx 24rpx;
+  background: var(--color-primary);
+  color: #FFFFFF;
+  border-radius: var(--radius-sm);
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.form-card {
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.cat-list {
+  display: grid;
+  gap: 16rpx;
+}
+
+.cat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+}
+
+.cat-name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.cat-meta {
+  font-size: 24rpx;
+  color: var(--color-muted);
+  margin-top: 4rpx;
+}
+
+.cat-status {
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.status-on {
+  background: #EDF8F3;
+  color: var(--color-success);
+}
+
+.status-off {
+  background: #F6F7F9;
+  color: var(--color-muted);
+}
+
+.empty-tip {
+  text-align: center;
+  color: var(--color-muted);
+  padding: 48rpx;
+}

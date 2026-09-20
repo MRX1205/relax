@@ -11,3 +11,6 @@ spring:
   flyway:
     enabled: true
 
+relax:
+  file:
+    local-root: ./target/test-private-files

@@ -1,0 +1,60 @@
+<view class="page">
+  <!-- Category filter -->
+  <scroll-view class="cat-scroll" scroll-x wx:if="{{categories.length > 0}}">
+    <view class="cat-list">
+      <view
+        class="cat-chip {{currentCategory === 0 ? 'cat-chip--active' : ''}}"
+        data-id="0"
+        bindtap="switchCategory"
+      >全部</view>
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="cat-chip {{currentCategory === item.id ? 'cat-chip--active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="switchCategory"
+      >{{item.name}}</view>
+    </view>
+  </scroll-view>
+
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:elif="{{projects.length === 0}}">
+    <view class="empty-state">
+      <view class="empty-state__icon">💆</view>
+      <view class="empty-state__title">暂无项目</view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="project-list">
+      <view
+        wx:for="{{projects}}"
+        wx:key="id"
+        class="project-card surface"
+        data-id="{{item.id}}"
+        bindtap="goToDetail"
+      >
+        <view class="project-card__cover">
+          <image wx:if="{{item.coverFileId}}" src="{{item.coverFileId}}" mode="aspectFill" class="project-card__img" />
+          <view wx:else class="project-card__placeholder">💆</view>
+          <view class="project-card__category">{{item.categoryName}}</view>
+        </view>
+        <view class="project-card__info">
+          <view class="project-card__name">{{item.name}}</view>
+          <view class="project-card__desc">{{item.description}}</view>
+          <view class="project-card__meta">
+            <text class="project-card__duration">{{item.durationMinutes}}分钟</text>
+            <view class="project-card__price">
+              <text class="project-card__symbol">¥</text>
+              <text class="project-card__amount">{{item.basePrice}}</text>
+              <text class="project-card__unit">起</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>
+
+<custom-tabbar />

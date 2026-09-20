@@ -1,0 +1,34 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:else>
+    <view wx:if="{{technicians.length === 0}}" class="empty-wrap">
+      <ui-state title="暂无技师" description="技师正在入驻中，请稍后再来" />
+    </view>
+    <view class="tech-list">
+      <view
+        wx:for="{{technicians}}"
+        wx:key="id"
+        class="tech-card"
+        data-id="{{item.id}}"
+        bindtap="handleTap"
+      >
+        <view class="tech-card__avatar">
+          <view class="tech-card__avatar-text">{{item.serviceName[0]}}</view>
+          <view wx:if="{{item.onlineStatus === 'ONLINE'}}" class="tech-card__online"></view>
+        </view>
+        <view class="tech-card__info">
+          <view class="tech-card__name">{{item.serviceName}}</view>
+          <view class="tech-card__meta">{{item.experienceYears}}年经验</view>
+          <view wx:if="{{item.intro}}" class="tech-card__intro">{{item.intro}}</view>
+        </view>
+        <view class="tech-card__right">
+          <view class="tech-card__status {{item.onlineStatus === 'ONLINE' ? 'online' : ''}}">
+            {{item.onlineStatus === 'ONLINE' ? '可预约' : '休息中'}}
+          </view>
+          <view wx:if="{{item.startPrice}}" class="tech-card__price">¥{{item.startPrice}}起</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

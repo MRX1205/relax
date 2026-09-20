@@ -1,0 +1,28 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <block wx:else>
+    <view wx:if="{{addresses.length === 0}}" class="empty">
+      <ui-state title="暂无地址" description="添加服务地址后即可预约技师上门" />
+    </view>
+    <view wx:else class="address-list">
+      <view wx:for="{{addresses}}" wx:key="id" class="surface address-item">
+        <view class="address-main" data-id="{{item.id}}" bindtap="handleEdit">
+          <view class="address-header">
+            <text class="address-name">{{item.contactName}}</text>
+            <text class="address-phone">{{item.contactPhone}}</text>
+            <view wx:if="{{item.isDefault}}" class="default-badge">默认</view>
+          </view>
+          <view class="address-detail">{{item.regionName}} {{item.detail}}</view>
+          <view wx:if="{{item.label}}" class="address-label">{{item.label}}</view>
+        </view>
+        <view class="address-actions">
+          <text class="action-link" data-id="{{item.id}}" bindtap="handleEdit">编辑</text>
+          <text class="action-link action-link--danger" data-id="{{item.id}}" bindtap="handleDelete">删除</text>
+        </view>
+      </view>
+    </view>
+    <view class="add-bar">
+      <ui-button label="新增地址" bind:action="handleAdd" />
+    </view>
+  </block>
+</view>

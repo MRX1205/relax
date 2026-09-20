@@ -1,8 +1,20 @@
 <view class="page">
-  <view class="page-title">用户端工作台</view>
-  <view class="page-subtitle">当前仅验证用户分包和公共组件加载。</view>
-  <view class="surface placeholder">
-    <ui-state title="阶段 1 骨架" description="项目浏览、预约和订单将在后续已确认阶段开发。" />
+  <view class="page-title">用户端</view>
+  <view class="page-subtitle">浏览项目、预约技师、管理订单</view>
+
+  <view class="menu-list">
+    <view
+      wx:for="{{menus}}"
+      wx:key="name"
+      class="surface menu-item"
+      data-url="{{item.url}}"
+      bindtap="handleMenuTap"
+    >
+      <view class="menu-content">
+        <view class="menu-name">{{item.name}}</view>
+        <view class="menu-desc">{{item.desc}}</view>
+      </view>
+      <view class="menu-arrow">›</view>
+    </view>
   </view>
 </view>
-

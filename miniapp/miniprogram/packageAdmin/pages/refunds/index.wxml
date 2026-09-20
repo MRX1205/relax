@@ -1,0 +1,22 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <block wx:else>
+    <view wx:if="{{refunds.length === 0}}" class="empty-wrap">
+      <ui-state title="暂无退款申请" />
+    </view>
+    <view class="refund-list">
+      <view wx:for="{{refunds}}" wx:key="refundNo" class="surface refund-card">
+        <view class="refund-header">
+          <text class="refund-no">{{item.refundNo}}</text>
+          <text class="refund-status refund-status--{{item.status}}">{{statusLabel(item.status)}}</text>
+        </view>
+        <view class="refund-amount">¥{{item.amount}}</view>
+        <view class="refund-reason">{{item.reason}}</view>
+        <view wx:if="{{item.status === 'PENDING'}}" class="refund-actions">
+          <view class="action-btn action-btn--reject" data-no="{{item.refundNo}}" bindtap="handleReject">拒绝</view>
+          <view class="action-btn action-btn--approve" data-no="{{item.refundNo}}" bindtap="handleApprove">通过</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

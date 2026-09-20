@@ -1,0 +1,61 @@
+<view class="login-page">
+  <!-- 背景装饰 -->
+  <view class="login-bg">
+    <view class="bg-circle bg-circle--1"></view>
+    <view class="bg-circle bg-circle--2"></view>
+    <view class="bg-circle bg-circle--3"></view>
+  </view>
+
+  <!-- 主要内容 -->
+  <view class="login-content">
+    <!-- Logo区域 -->
+    <view class="login-hero">
+      <view class="logo-wrapper">
+        <view class="logo-icon">💆</view>
+      </view>
+      <view class="login-title">东莞到家</view>
+      <view class="login-subtitle">正规按摩 · 上门服务</view>
+    </view>
+
+    <!-- 登录卡片 -->
+    <view class="login-card">
+      <view wx:if="{{error}}" class="error-toast">
+        <text class="error-icon">⚠️</text>
+        <text class="error-text">{{error}}</text>
+      </view>
+
+      <view class="features-list">
+        <view class="feature-item">
+          <text class="feature-icon">✅</text>
+          <text class="feature-text">实名认证技师</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">✅</text>
+          <text class="feature-text">微信支付保障</text>
+        </view>
+        <view class="feature-item">
+          <text class="feature-icon">✅</text>
+          <text class="feature-text">完整售后体系</text>
+        </view>
+      </view>
+
+      <button class="login-btn {{loading ? 'login-btn--loading' : ''}}" bindtap="handleLogin" disabled="{{loading}}">
+        <view wx:if="{{loading}}" class="btn-loading">
+          <view class="loading-spinner"></view>
+          <text>登录中...</text>
+        </view>
+        <view wx:else class="btn-content">
+          <image class="wechat-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyQzIgMTcuNTIgNi40OCAyMiAxMiAyMkMxNy41MiAyMiAyMiAxNy41MiAyMiAxMkMyMiA2LjQ4IDE3LjUyIDIgMTIgMlpNMTYuNSA5LjVDMTYuNSA4LjEyIDE1LjM4IDcgMTQuMiA3SDkuOEM4LjYyIDcgNy41IDguMTIgNy41IDkuNVYxNC41QzcuNSAxNS44OCA4LjYyIDE3IDkuOCAxN0gxNC4yQzE1LjM4IDE3IDE2LjUgMTUuODggMTYuNSAxNC41VjkuNVpNMTQgMTIuNUgxMi41VjE0SDEyVjEyLjVIMTAuNVYxMkgxMlYxMC41SDEyLjVIMTJIMTRWMTIuNVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=" />
+          <text>微信一键登录</text>
+        </view>
+      </button>
+
+      <view class="login-hint">
+        <text>登录即表示同意</text>
+        <navigator url="/pages/agreement/index?type=USER_AGREEMENT" class="link">用户协议</navigator>
+        <text>和</text>
+        <navigator url="/pages/agreement/index?type=PRIVACY_POLICY" class="link">隐私政策</navigator>
+      </view>
+    </view>
+  </view>
+</view>

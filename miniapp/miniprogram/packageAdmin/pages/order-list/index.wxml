@@ -1,0 +1,65 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:else>
+    <view wx:if="{{orders.length === 0}}" class="empty-wrap">
+      <ui-state title="暂无订单" />
+    </view>
+    <view class="order-list">
+      <view
+        wx:for="{{orders}}"
+        wx:key="orderNo"
+        class="surface order-card"
+        data-no="{{item.orderNo}}"
+        bindtap="handleTap"
+      >
+        <view class="order-header">
+          <text class="order-no">{{item.orderNo}}</text>
+          <text class="order-status order-status--{{item.status}}">{{statusLabel(item.status)}}</text>
+        </view>
+        <view class="order-date">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</view>
+        <view class="order-footer">
+          <text class="order-time">{{item.createdAt}}</text>
+          <text wx:if="{{item.note}}" class="order-note">📝 {{item.note}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- Detail overlay -->
+  <view wx:if="{{showDetail && detail}}" class="overlay" bindtap="closeDetail">
+    <view class="detail-panel" catchtap="">
+      <view class="detail-header">
+        <text class="detail-title">订单 {{detail.order.orderNo}}</text>
+        <text class="detail-close" bindtap="closeDetail">✕</text>
+      </view>
+      <scroll-view scroll-y class="detail-body">
+        <view class="detail-status status-{{detail.order.status}}">{{statusLabel(detail.order.status)}}</view>
+
+        <view wx:if="{{detail.projectSnapshot}}" class="detail-section">
+          <view class="detail-row"><text>项目</text><text>{{detail.projectSnapshot.projectName}}</text></view>
+          <view class="detail-row"><text>时间</text><text>{{detail.order.serviceDate}} {{detail.order.startTime}}-{{detail.order.endTime}}</text></view>
+        </view>
+
+        <view wx:if="{{detail.amount}}" class="detail-section">
+          <view class="detail-row"><text>应付</text><text>¥{{detail.amount.payableAmount}}</text></view>
+          <view class="detail-row"><text>已付</text><text>¥{{detail.amount.paidAmount}}</text></view>
+        </view>
+
+        <view class="detail-section">
+          <view class="detail-label">备注</view>
+          <textarea class="note-input" value="{{noteInput}}" bindinput="handleNoteInput" placeholder="输入备注" />
+          <view class="note-save" bindtap="handleSaveNote">保存备注</view>
+        </view>
+
+        <view wx:if="{{detail.order.status === 'PAID' || detail.order.status === 'ACCEPTED'}}" class="detail-section">
+          <view class="reassign-btn" bindtap="handleReassign">改派技师</view>
+        </view>
+
+        <view wx:if="{{detail.order.status !== 'CANCELLED' && detail.order.status !== 'EXPIRED'}}" class="detail-section">
+          <view class="cancel-btn" bindtap="handleCancel">取消订单</view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

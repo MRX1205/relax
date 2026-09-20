@@ -1,0 +1,67 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <!-- USER: Technicians -->
+  <block wx:elif="{{role === 'USER'}}">
+    <view class="sort-bar">
+      <view class="sort-item {{sortBy === 'default' ? 'sort-item--active' : ''}}" data-sort="default" bindtap="switchSort">默认</view>
+      <view class="sort-item {{sortBy === 'rating' ? 'sort-item--active' : ''}}" data-sort="rating" bindtap="switchSort">评分</view>
+      <view class="sort-item {{sortBy === 'price' ? 'sort-item--active' : ''}}" data-sort="price" bindtap="switchSort">价格</view>
+    </view>
+
+    <block wx:if="{{technicians.length === 0}}">
+      <view class="empty"><view class="empty__icon">👤</view><view class="empty__text">暂无可约技师</view></view>
+    </block>
+
+    <view class="tech-list">
+      <view wx:for="{{technicians}}" wx:key="id" class="tech-card surface" data-id="{{item.id}}" bindtap="goToTechDetail">
+        <view class="tech-card__avatar">
+          <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" mode="aspectFill" class="tech-card__img" />
+          <view wx:else class="tech-card__ph">{{item.serviceName[0]}}</view>
+          <view wx:if="{{item.onlineStatus === 'ONLINE'}}" class="tech-card__dot"></view>
+        </view>
+        <view class="tech-card__info">
+          <view class="tech-card__name">{{item.serviceName}}</view>
+          <view class="tech-card__intro">{{item.intro}}</view>
+          <view class="tech-card__meta">
+            <text>{{item.experienceYears}}年经验</text>
+            <text wx:if="{{item.startPrice}}" class="tech-card__price">¥{{item.startPrice}}起</text>
+          </view>
+        </view>
+        <view class="tech-card__status {{item.onlineStatus === 'ONLINE' ? 's-on' : 's-off'}}">
+          {{item.onlineStatus === 'ONLINE' ? '可约' : '休息'}}
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- TECH: Schedules -->
+  <block wx:elif="{{role === 'TECHNICIAN'}}">
+    <view class="quick-grid">
+      <view class="quick-item surface" bindtap="goToSchedules">
+        <view class="quick-item__icon">📅</view>
+        <view class="quick-item__name">排班管理</view>
+        <view class="quick-item__desc">设置可服务时段</view>
+      </view>
+      <view class="quick-item surface" bindtap="goToServiceAreas">
+        <view class="quick-item__icon">📍</view>
+        <view class="quick-item__name">服务区域</view>
+        <view class="quick-item__desc">查看已开通区域</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ADMIN: Operations -->
+  <block wx:elif="{{role === 'ADMIN' || role === 'SUPER_ADMIN'}}">
+    <view class="ops-title">运营管理</view>
+    <view class="ops-list">
+      <view wx:for="{{opsMenus}}" wx:key="name" class="ops-item surface" data-url="{{item.url}}" bindtap="goToOpsPage">
+        <view class="ops-item__icon">{{item.icon}}</view>
+        <view class="ops-item__name">{{item.name}}</view>
+        <view class="ops-item__arrow">›</view>
+      </view>
+    </view>
+  </block>
+</view>
+
+<custom-tabbar />

@@ -1,0 +1,18 @@
+<view class="page">
+  <view class="page-title">售后申请</view>
+
+  <view class="surface section">
+    <view class="label">问题类型</view>
+    <view class="type-grid">
+      <view wx:for="{{types}}" wx:key="*this" class="type-chip {{selectedType === item ? 'type-chip--active' : ''}}"
+        data-type="{{item}}" bindtap="handleTypeTap">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="surface section">
+    <view class="label">问题描述</view>
+    <textarea class="content-input" placeholder="请详细描述您遇到的问题" value="{{content}}" bindinput="handleContentInput" maxlength="500" />
+  </view>
+
+  <ui-button label="提交申请" loading="{{submitting}}" bind:action="handleSubmit" />
+</view>

@@ -1,0 +1,43 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:elif="{{detail}}">
+    <view class="surface status-banner status-banner--{{detail.order.status}}">
+      <view class="status-text">{{statusLabel(detail.order.status)}}</view>
+      <view class="status-no">订单号：{{detail.order.orderNo}}</view>
+    </view>
+
+    <view wx:if="{{detail.projectSnapshot}}" class="surface info-card">
+      <view class="info-title">服务信息</view>
+      <view class="info-row"><text>项目</text><text>{{detail.projectSnapshot.projectName}}</text></view>
+      <view class="info-row"><text>时长</text><text>{{detail.projectSnapshot.durationMinutes}}分钟</text></view>
+      <view class="info-row"><text>时间</text><text>{{detail.order.serviceDate}} {{detail.order.startTime}}-{{detail.order.endTime}}</text></view>
+    </view>
+
+    <view wx:if="{{detail.addressSnapshot}}" class="surface info-card">
+      <view class="info-title">服务地址</view>
+      <view class="info-row"><text>联系人</text><text>{{detail.addressSnapshot.contactName}} {{detail.addressSnapshot.contactPhone}}</text></view>
+      <view class="info-row"><text>地址</text><text>{{detail.addressSnapshot.regionName}} {{detail.addressSnapshot.detail}}</text></view>
+    </view>
+
+    <view wx:if="{{detail.amount}}" class="surface info-card">
+      <view class="info-title">费用</view>
+      <view class="info-row info-total"><text>应付金额</text><text>¥{{detail.amount.payableAmount}}</text></view>
+    </view>
+
+    <view wx:if="{{detail.statusLogs.length > 0}}" class="surface info-card">
+      <view class="info-title">状态记录</view>
+      <view wx:for="{{detail.statusLogs}}" wx:key="createdAt" class="log-item">
+        <view class="log-status">{{statusLabel(item.toStatus)}}</view>
+        <view class="log-meta">{{item.createdAt}} {{item.reason}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{actions.length > 0}}" class="action-bar">
+      <view wx:for="{{actions}}" wx:key="action" class="action-btn {{item.action === 'reject' ? 'action-btn--danger' : 'action-btn--primary'}}"
+        data-action="{{item.action}}" bindtap="handleAction">
+        {{item.label}}
+      </view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,15 @@
+.refund-list { display: grid; gap: 16rpx; }
+.refund-card { padding: 24rpx; }
+.refund-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.refund-no { font-size: 24rpx; color: var(--color-text-secondary); }
+.refund-status { font-size: 24rpx; font-weight: 600; }
+.refund-status--PENDING { color: var(--color-warning); }
+.refund-status--SUCCESS { color: var(--color-success); }
+.refund-status--REJECTED { color: var(--color-danger); }
+.refund-amount { font-size: 32rpx; font-weight: 700; color: var(--color-primary); margin-bottom: 8rpx; }
+.refund-reason { font-size: 26rpx; color: var(--color-text-secondary); margin-bottom: 16rpx; }
+.refund-actions { display: flex; gap: 16rpx; padding-top: 16rpx; border-top: 1rpx solid var(--color-border); }
+.action-btn { flex: 1; padding: 12rpx; border-radius: var(--radius-sm); text-align: center; font-size: 24rpx; font-weight: 600; }
+.action-btn--approve { background: var(--color-accent); color: #FFFFFF; }
+.action-btn--reject { background: #FFF5F5; color: var(--color-danger); border: 1rpx solid #FFCDD2; }
+.empty-wrap { padding-top: 80rpx; }

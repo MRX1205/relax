@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "技师管理",
+  "usingComponents": {
+    "ui-button": "/components/ui-button/index",
+    "ui-state": "/components/ui-state/index"
+  }
+}

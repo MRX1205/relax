@@ -1,0 +1,18 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <ui-state wx:elif="{{error}}" title="{{error}}" kind="error" />
+  <block wx:elif="{{agreement}}">
+    <view class="agreement-title">{{agreement.title}}</view>
+    <view class="agreement-meta">版本 {{agreement.version}} · {{agreement.effectiveAt}}</view>
+    <view class="surface agreement-body">
+      <text user-select>{{agreement.content}}</text>
+    </view>
+    <view wx:if="{{showConsent}}" class="consent-bar">
+      <ui-button
+        label="我已阅读并同意"
+        loading="{{submitting}}"
+        bind:action="handleConsent"
+      />
+    </view>
+  </block>
+</view>

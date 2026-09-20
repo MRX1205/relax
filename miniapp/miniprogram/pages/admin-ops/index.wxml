@@ -1,0 +1,21 @@
+<view class="page">
+  <view class="section-title">运营管理</view>
+  <view class="menu-list">
+    <view
+      wx:for="{{menus}}"
+      wx:key="name"
+      class="menu-item surface"
+      data-url="{{item.url}}"
+      bindtap="handleMenuTap"
+    >
+      <view class="menu-item__icon">{{item.icon}}</view>
+      <view class="menu-item__content">
+        <view class="menu-item__name">{{item.name}}</view>
+        <view class="menu-item__desc">{{item.desc}}</view>
+      </view>
+      <view class="menu-item__arrow">›</view>
+    </view>
+  </view>
+</view>
+
+<custom-tabbar />

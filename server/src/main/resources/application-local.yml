@@ -11,3 +11,9 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
+
+relax:
+  auth:
+    bootstrap-super-admin-open-id: ${BOOTSTRAP_SUPER_ADMIN_OPEN_ID:mock:dec1420f640fcb83a93e48d6f30ae2e5}
+  file:
+    local-root: ${LOCAL_FILE_ROOT:./data/private-files}

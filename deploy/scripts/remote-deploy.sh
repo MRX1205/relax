@@ -28,7 +28,9 @@ if [ -f "../server/target/relax-server-0.1.0-SNAPSHOT.jar" ]; then
     docker build -f ../server/Dockerfile.slim -t relax-server:latest ../server
 fi
 
-docker compose up -d --remove-orphans
+docker compose up -d --remove-orphans mysql redis
+docker compose up -d --remove-orphans server
+docker compose up -d --remove-orphans nginx
 
 echo "=== [4/5] 等待服务健康检查 ==="
 MAX_RETRIES=20

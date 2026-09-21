@@ -15,7 +15,7 @@ fi
 echo "=== [2/5] 检查宿主机 Nginx 反向代理配置 ==="
 if [ -d "${NGINX_VHOST_DIR}" ]; then
     rm -f "${NGINX_VHOST_DIR}/relaxback.lyhlz.cn.conf"
-    cp deploy/nginx/relaxback.lyhlz.cn.conf "${NGINX_VHOST_DIR}/realxback.lyhlz.cn.conf"
+    cp deploy/nginx/realxback.lyhlz.cn.conf "${NGINX_VHOST_DIR}/realxback.lyhlz.cn.conf"
     nginx -t && nginx -s reload || echo "Nginx 重新加载跳过"
 fi
 

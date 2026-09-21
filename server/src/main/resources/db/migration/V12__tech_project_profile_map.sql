@@ -1,22 +1,22 @@
 -- V12: 技师项目管理、技师全量资料与相册、地图常驻位置支持
 
 -- 1. 项目表增加创建者类型与创建者ID（平台 / 技师）
-ALTER TABLE service_project ADD COLUMN IF NOT EXISTS creator_type VARCHAR(20) DEFAULT 'PLATFORM' NOT NULL;
-ALTER TABLE service_project ADD COLUMN IF NOT EXISTS creator_id BIGINT DEFAULT 0 NOT NULL;
+ALTER TABLE service_project ADD COLUMN creator_type VARCHAR(20) DEFAULT 'PLATFORM' NOT NULL;
+ALTER TABLE service_project ADD COLUMN creator_id BIGINT DEFAULT 0 NOT NULL;
 
 -- 2. 技师表增加详细风采资料与常驻地图位置
-ALTER TABLE technician ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500) NULL;
-ALTER TABLE technician ADD COLUMN IF NOT EXISTS age INT NULL;
-ALTER TABLE technician ADD COLUMN IF NOT EXISTS age_tag VARCHAR(32) NULL;
-ALTER TABLE technician ADD COLUMN IF NOT EXISTS height INT NULL;
-ALTER TABLE technician ADD COLUMN IF NOT EXISTS weight INT NULL;
-ALTER TABLE technician ADD COLUMN IF NOT EXISTS latitude DECIMAL(10, 6) NULL;
-ALTER TABLE technician ADD COLUMN IF NOT EXISTS longitude DECIMAL(10, 6) NULL;
-ALTER TABLE technician ADD COLUMN IF NOT EXISTS base_address VARCHAR(255) NULL;
-ALTER TABLE technician ADD COLUMN IF NOT EXISTS certifications_json VARCHAR(500) NULL;
+ALTER TABLE technician ADD COLUMN avatar_url VARCHAR(500) NULL;
+ALTER TABLE technician ADD COLUMN age INT NULL;
+ALTER TABLE technician ADD COLUMN age_tag VARCHAR(32) NULL;
+ALTER TABLE technician ADD COLUMN height INT NULL;
+ALTER TABLE technician ADD COLUMN weight INT NULL;
+ALTER TABLE technician ADD COLUMN latitude DECIMAL(10, 6) NULL;
+ALTER TABLE technician ADD COLUMN longitude DECIMAL(10, 6) NULL;
+ALTER TABLE technician ADD COLUMN base_address VARCHAR(255) NULL;
+ALTER TABLE technician ADD COLUMN certifications_json VARCHAR(500) NULL;
 
 -- 3. 技师照片表增加直链URL支持
-ALTER TABLE technician_photo ADD COLUMN IF NOT EXISTS file_url VARCHAR(500) NULL;
+ALTER TABLE technician_photo ADD COLUMN file_url VARCHAR(500) NULL;
 
 -- 4. 初始化示例技师风采资料
 UPDATE technician SET

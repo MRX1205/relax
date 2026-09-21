@@ -1,4 +1,4 @@
-name: CI & CD Automated Deployment
+name: CI and CD Automated Deployment
 
 on:
   push:
@@ -92,7 +92,6 @@ jobs:
     name: 3. 微信小程序代码自动上传 (miniprogram-ci)
     needs: verify
     runs-on: ubuntu-latest
-    if: ${{ secrets.WX_PRIVATE_KEY != '' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -102,18 +101,20 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Dependencies
+      - name: Install Miniapp Dependencies
         working-directory: miniapp
         run: npm ci
 
-      - name: Setup WeChat Upload Private Key
-        working-directory: miniapp
-        run: |
-          echo "${{ secrets.WX_PRIVATE_KEY }}" > private.wxee1086d1aae0e823.key
-
       - name: Upload Mini Program to WeChat MP
         working-directory: miniapp
+        env:
+          WX_KEY: ${{ secrets.WX_PRIVATE_KEY }}
         run: |
+          if [ -z "$WX_KEY" ]; then
+            echo "未配置 WX_PRIVATE_KEY Secret，跳过自动上传"
+            exit 0
+          fi
+          echo "$WX_KEY" > private.wxee1086d1aae0e823.key
           npm install --no-save miniprogram-ci
           npm run upload
 

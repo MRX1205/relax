@@ -8,4 +8,4 @@ CREATE TABLE payment_notify_log (
     PRIMARY KEY (id)
 );
 
-CREATE INDEX idx_notify_payment ON payment_notify_log (payment_no, transaction_id);
+CREATE INDEX idx_pnl_payment_tx ON payment_notify_log (payment_no, transaction_id);

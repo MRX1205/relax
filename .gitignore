@@ -6,8 +6,13 @@
 miniapp/node_modules/
 miniapp/miniprogram_npm/
 miniapp/project.private.config.json
+miniapp/private.*.key
+*.key
+miniapp/preview.jpg
 
 server/target/
 
 deploy/backups/
+deploy/.env
+
 

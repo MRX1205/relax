@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.relax.common.api.BusinessException;
 
 @Component
-@Profile({"local", "test"})
+@Profile({"local", "test", "dev"})
 class MockWechatGateway implements WechatGateway {
 
     @Override

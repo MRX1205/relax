@@ -18,6 +18,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+    }
+
+    @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, AccessTokenFilter accessTokenFilter,
             ApiSecurityErrorWriter errorWriter) throws Exception {
         return http
@@ -32,6 +37,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/health",
                                 "/api/v1/auth/wechat-login",
+                                "/api/v1/auth/phone-login",
+                                "/api/v1/auth/password-login",
+                                "/api/v1/auth/role-wechat-login",
                                 "/actuator/health",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",

@@ -1,0 +1,163 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:else>
+    <!-- 1. 基本信息卡片 -->
+    <view class="form-card">
+      <view class="card-title">
+        <text class="title-icon">👤</text>
+        <text>基本信息</text>
+      </view>
+
+      <view class="field-row">
+        <text class="field-label">服务艺名 *</text>
+        <input class="field-input" value="{{serviceName}}" data-field="serviceName" placeholder="如：小雅理疗师" bindinput="handleInput" />
+      </view>
+
+      <view class="field-row">
+        <text class="field-label">联系电话 *</text>
+        <input class="field-input" type="number" value="{{phone}}" data-field="phone" placeholder="客户可直接拨打" bindinput="handleInput" />
+      </view>
+
+      <view class="field-row">
+        <text class="field-label">从业年限</text>
+        <view class="counter-input">
+          <input class="field-input text-right" type="number" value="{{experienceYears}}" data-field="experienceYears" bindinput="handleInput" />
+          <text class="unit-text">年</text>
+        </view>
+      </view>
+
+      <!-- 年龄段选择 -->
+      <view class="tag-section">
+        <text class="sub-label">年龄段标签</text>
+        <view class="chips-row">
+          <view
+            wx:for="{{ageTagOptions}}"
+            wx:key="*this"
+            class="chip {{ageTag === item ? 'chip--active' : ''}}"
+            data-tag="{{item}}"
+            bindtap="selectAgeTag"
+          >
+            {{item}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 身高与体重 -->
+      <view class="two-col-row">
+        <view class="field-col flex-1">
+          <text class="field-label">身高 (cm)</text>
+          <input class="field-input" type="number" value="{{height}}" data-field="height" placeholder="如 165" bindinput="handleInput" />
+        </view>
+        <view class="field-col flex-1">
+          <text class="field-label">体重 (kg)</text>
+          <input class="field-input" type="number" value="{{weight}}" data-field="weight" placeholder="如 50" bindinput="handleInput" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 2. 常驻定位与地图服务范围 (地图能力接入) -->
+    <view class="form-card">
+      <view class="card-title-between">
+        <view class="card-title">
+          <text class="title-icon">🗺️</text>
+          <text>常驻服务位置</text>
+        </view>
+        <view class="view-map-btn" wx:if="{{latitude && longitude}}" bindtap="viewLocationOnMap">
+          查看地图
+        </view>
+      </view>
+
+      <view class="location-box" bindtap="chooseLocation">
+        <view class="loc-icon-col">📍</view>
+        <view class="loc-text-col">
+          <text class="loc-name">{{baseAddress || '点击选择您的常驻服务定位点'}}</text>
+          <text class="loc-coords" wx:if="{{latitude && longitude}}">坐标: {{latitude}}, {{longitude}}</text>
+          <text class="loc-tip" wx:else>用于系统为附近客户推荐您并精确计算出行距离</text>
+        </view>
+        <view class="loc-arrow">›</view>
+      </view>
+    </view>
+
+    <!-- 3. 自我介绍与擅长标签 -->
+    <view class="form-card">
+      <view class="card-title">
+        <text class="title-icon">✨</text>
+        <text>自我介绍与服务特色</text>
+      </view>
+
+      <view class="textarea-wrap">
+        <textarea
+          class="intro-textarea"
+          value="{{intro}}"
+          data-field="intro"
+          placeholder="向客户介绍您的专业技法、服务理念和特长，让客户更放心选择您..."
+          maxlength="300"
+          bindinput="handleInput"
+        />
+      </view>
+
+      <view class="tag-section">
+        <text class="sub-label">资质与认证标签 (点击选中/取消)</text>
+        <view class="chips-row">
+          <view
+            wx:for="{{allAvailableTags}}"
+            wx:key="*this"
+            class="chip {{selectedTags.includes(item) ? 'chip--active' : ''}}"
+            data-tag="{{item}}"
+            bindtap="toggleTag"
+          >
+            {{item}}
+          </view>
+        </view>
+
+        <view class="add-tag-row">
+          <input
+            class="tag-input"
+            value="{{customTagInput}}"
+            placeholder="自定义标签（如：泰式拉伸）"
+            bindinput="handleTagInput"
+          />
+          <view class="add-tag-btn" bindtap="addCustomTag">添加</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 4. 风采相册展示 (用户查看技师时可见) -->
+    <view class="form-card">
+      <view class="card-title-between">
+        <view class="card-title">
+          <text class="title-icon">📷</text>
+          <text>技师生活与风采相册 ({{photos.length}})</text>
+        </view>
+        <text class="photo-tip">真实照片更能打动客户</text>
+      </view>
+
+      <view class="photo-grid">
+        <view wx:for="{{photos}}" wx:key="id" class="photo-item">
+          <image
+            class="photo-img"
+            src="{{item.fileUrl}}"
+            mode="aspectFill"
+            data-url="{{item.fileUrl}}"
+            bindtap="previewPhoto"
+          />
+          <view class="photo-del-badge" data-id="{{item.id}}" bindtap="handleDeletePhoto">✕</view>
+        </view>
+
+        <!-- 添加照片按钮 -->
+        <view class="photo-add-btn" bindtap="handleAddPhoto">
+          <text class="add-icon">＋</text>
+          <text class="add-text">上传照片</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 5. 底部固定保存栏 -->
+    <view class="bottom-save-bar">
+      <button class="save-btn" loading="{{submitting}}" bindtap="handleSaveAll">
+        保存全部资料与设置
+      </button>
+    </view>
+  </block>
+</view>

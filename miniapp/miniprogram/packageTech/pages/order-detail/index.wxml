@@ -2,40 +2,135 @@
   <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
 
   <block wx:elif="{{detail}}">
-    <view class="surface status-banner status-banner--{{detail.order.status}}">
-      <view class="status-text">{{statusLabel(detail.order.status)}}</view>
-      <view class="status-no">订单号：{{detail.order.orderNo}}</view>
-    </view>
-
-    <view wx:if="{{detail.projectSnapshot}}" class="surface info-card">
-      <view class="info-title">服务信息</view>
-      <view class="info-row"><text>项目</text><text>{{detail.projectSnapshot.projectName}}</text></view>
-      <view class="info-row"><text>时长</text><text>{{detail.projectSnapshot.durationMinutes}}分钟</text></view>
-      <view class="info-row"><text>时间</text><text>{{detail.order.serviceDate}} {{detail.order.startTime}}-{{detail.order.endTime}}</text></view>
-    </view>
-
-    <view wx:if="{{detail.addressSnapshot}}" class="surface info-card">
-      <view class="info-title">服务地址</view>
-      <view class="info-row"><text>联系人</text><text>{{detail.addressSnapshot.contactName}} {{detail.addressSnapshot.contactPhone}}</text></view>
-      <view class="info-row"><text>地址</text><text>{{detail.addressSnapshot.regionName}} {{detail.addressSnapshot.detail}}</text></view>
-    </view>
-
-    <view wx:if="{{detail.amount}}" class="surface info-card">
-      <view class="info-title">费用</view>
-      <view class="info-row info-total"><text>应付金额</text><text>¥{{detail.amount.payableAmount}}</text></view>
-    </view>
-
-    <view wx:if="{{detail.statusLogs.length > 0}}" class="surface info-card">
-      <view class="info-title">状态记录</view>
-      <view wx:for="{{detail.statusLogs}}" wx:key="createdAt" class="log-item">
-        <view class="log-status">{{statusLabel(item.toStatus)}}</view>
-        <view class="log-meta">{{item.createdAt}} {{item.reason}}</view>
+    <!-- 1. 状态头部 Banner -->
+    <view class="status-banner" style="background: {{statusInfo.bg}};">
+      <view class="status-banner-left">
+        <text class="status-banner-icon">{{statusInfo.icon}}</text>
+        <view class="status-banner-text-col">
+          <text class="status-banner-title" style="color: {{statusInfo.color}};">{{statusInfo.text}}</text>
+          <text class="status-banner-desc">{{statusInfo.desc}}</text>
+        </view>
       </view>
     </view>
 
-    <view wx:if="{{actions.length > 0}}" class="action-bar">
-      <view wx:for="{{actions}}" wx:key="action" class="action-btn {{item.action === 'reject' ? 'action-btn--danger' : 'action-btn--primary'}}"
-        data-action="{{item.action}}" bindtap="handleAction">
+    <!-- 2. 客户联系与服务地址卡片（核心：技师一键电话 + 一键地图导航） -->
+    <view wx:if="{{detail.addressSnapshot}}" class="card customer-card">
+      <view class="section-title-row">
+        <view class="section-title">
+          <text class="card-icon">👤</text>
+          <text>服务客户与地址</text>
+        </view>
+        <view class="map-nav-btn" bindtap="openLocationMap">
+          <text class="map-icon">🗺️</text>
+          <text>导航到这</text>
+        </view>
+      </view>
+
+      <view class="customer-info-row">
+        <view class="customer-basic">
+          <text class="customer-name">{{detail.addressSnapshot.contactName}}</text>
+          <text class="customer-phone">{{detail.addressSnapshot.contactPhone}}</text>
+        </view>
+        <view class="call-btn" bindtap="callCustomer">
+          <text class="call-icon">📞</text>
+          <text class="call-text">联系客户</text>
+        </view>
+      </view>
+
+      <view class="address-box" bindtap="openLocationMap">
+        <text class="addr-pin">📍</text>
+        <text class="address-text">{{detail.addressSnapshot.regionName}} {{detail.addressSnapshot.detail}}</text>
+      </view>
+    </view>
+
+    <!-- 3. 服务项目与时间 -->
+    <view wx:if="{{detail.projectSnapshot}}" class="card section">
+      <view class="section-title">
+        <text class="card-icon">💆</text>
+        <text>服务项目</text>
+      </view>
+      <view class="project-info-row">
+        <view class="proj-name-col">
+          <text class="proj-name">{{detail.projectSnapshot.projectName}}</text>
+          <text class="proj-duration">⏱️ 服务时长约 {{detail.projectSnapshot.durationMinutes}} 分钟</text>
+        </view>
+        <text class="proj-price">¥{{detail.projectSnapshot.actualPrice || detail.projectSnapshot.basePrice}}</text>
+      </view>
+      <view class="time-info-row">
+        <text class="time-label">预约上门时间</text>
+        <text class="time-val">{{detail.order.serviceDate}} {{detail.order.startTime}}-{{detail.order.endTime}}</text>
+      </view>
+    </view>
+
+    <!-- 4. 费用明细 -->
+    <view wx:if="{{detail.amount}}" class="card section">
+      <view class="section-title">
+        <text class="card-icon">💰</text>
+        <text>费用结算</text>
+      </view>
+      <view class="fee-list">
+        <view class="fee-item">
+          <text class="fee-label">项目服务费</text>
+          <text class="fee-val">¥{{detail.amount.projectAmount}}</text>
+        </view>
+        <view class="fee-item">
+          <text class="fee-label">上门交通出行费</text>
+          <text class="fee-val">¥{{detail.amount.travelFee}}</text>
+        </view>
+        <view class="fee-divider"></view>
+        <view class="fee-total">
+          <text class="total-label">订单总金额</text>
+          <text class="total-value">¥{{detail.amount.payableAmount}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 5. 订单信息 -->
+    <view class="card section">
+      <view class="section-title">
+        <text class="card-icon">📋</text>
+        <text>订单编号</text>
+      </view>
+      <view class="order-info-row">
+        <text class="info-label">订单编号</text>
+        <view class="info-val-with-btn">
+          <text class="info-val">{{detail.order.orderNo}}</text>
+          <text class="copy-tag" bindtap="copyOrderNo">复制</text>
+        </view>
+      </view>
+      <view class="order-info-row">
+        <text class="info-label">创建时间</text>
+        <text class="info-val">{{detail.order.createdAt}}</text>
+      </view>
+    </view>
+
+    <!-- 6. 履约记录 / 时间线 -->
+    <view wx:if="{{formattedLogs.length > 0}}" class="card section">
+      <view class="section-title">
+        <text class="card-icon">⏳</text>
+        <text>履约时间线</text>
+      </view>
+      <view class="timeline">
+        <view wx:for="{{formattedLogs}}" wx:key="time" class="timeline-item">
+          <view class="timeline-dot {{index === 0 ? 'timeline-dot--latest' : ''}}"></view>
+          <view class="timeline-content">
+            <view class="timeline-status">{{item.text}}</view>
+            <view class="timeline-time">{{item.time}}</view>
+            <view wx:if="{{item.reason}}" class="timeline-reason">{{item.reason}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 7. 底部操作栏 -->
+    <view wx:if="{{actions.length > 0}}" class="bottom-action-bar">
+      <view
+        wx:for="{{actions}}"
+        wx:key="action"
+        class="action-btn {{item.action === 'reject' ? 'action-btn--danger' : 'action-btn--primary'}}"
+        data-action="{{item.action}}"
+        bindtap="handleAction"
+      >
         {{item.label}}
       </view>
     </view>

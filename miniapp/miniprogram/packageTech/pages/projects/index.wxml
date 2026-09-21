@@ -1,0 +1,245 @@
+<view class="page">
+  <!-- 顶部操作栏 -->
+  <view class="top-actions">
+    <view class="action-card btn-custom" bindtap="openCustomModal">
+      <text class="btn-icon">✨</text>
+      <view class="btn-text-wrap">
+        <text class="btn-title">自主创建项目</text>
+        <text class="btn-sub">自由定义项目与价格</text>
+      </view>
+    </view>
+    <view class="action-card btn-platform" bindtap="openPlatformModal">
+      <text class="btn-icon">📥</text>
+      <view class="btn-text-wrap">
+        <text class="btn-title">加入平台项目</text>
+        <text class="btn-sub">快速选用标准项目</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title-wrap">
+    <text class="section-title">我的接单项目列表 ({{projects.length}})</text>
+    <text class="section-tip">关闭开关可立即下架停止接单</text>
+  </view>
+
+  <ui-state wx:if="{{loading && projects.length === 0}}" title="加载中" kind="loading" />
+
+  <block wx:else>
+    <!-- 空状态 -->
+    <view wx:if="{{projects.length === 0}}" class="empty-box">
+      <ui-state title="暂无接单项目" description="点击上方按钮自主创建或加入平台项目开始接单吧！" />
+    </view>
+
+    <!-- 项目卡片列表 -->
+    <view class="project-list" wx:else>
+      <view wx:for="{{projects}}" wx:key="id" class="project-card {{item.status === 'ENABLED' ? '' : 'project-card--off'}}">
+        <!-- 卡片头部 -->
+        <view class="card-head">
+          <view class="name-badge-col">
+            <view class="badge-row">
+              <text class="source-tag {{item.creatorType === 'TECHNICIAN' ? 'tag-custom' : 'tag-platform'}}">
+                {{item.creatorType === 'TECHNICIAN' ? '自建项目' : '平台标准'}}
+              </text>
+              <text class="status-shelf-text {{item.status === 'ENABLED' ? 'text-shelf-on' : 'text-shelf-off'}}">
+                {{item.status === 'ENABLED' ? '● 上架接单中' : '○ 已下架休息'}}
+              </text>
+            </view>
+            <text class="project-title">{{item.projectName}}</text>
+          </view>
+          <!-- 上架/下架即时开关 -->
+          <view class="switch-wrap">
+            <switch
+              checked="{{item.status === 'ENABLED'}}"
+              color="#E54D42"
+              data-id="{{item.id}}"
+              bindchange="handleToggleStatus"
+            />
+          </view>
+        </view>
+
+        <!-- 卡片详细信息 -->
+        <view class="card-body">
+          <view class="meta-row">
+            <text class="meta-tag">⏱️ 时长约 {{item.durationMinutes}} 分钟</text>
+            <text class="meta-tag" wx:if="{{item.categoryName}}">🏷️ {{item.categoryName}}</text>
+          </view>
+          <view class="desc-box" wx:if="{{item.description}}">
+            {{item.description}}
+          </view>
+        </view>
+
+        <!-- 卡片底部：价格与操作 -->
+        <view class="card-footer">
+          <view class="price-wrap">
+            <text class="price-symbol">¥</text>
+            <text class="price-val">{{item.overridePrice || item.basePrice}}</text>
+            <text class="price-note" wx:if="{{item.overridePrice && item.overridePrice !== item.basePrice}}">(技师专属价)</text>
+          </view>
+          <view class="btn-group">
+            <view class="mini-btn btn-edit" data-id="{{item.id}}" bindtap="openEditModal">
+              ✏️ 修改
+            </view>
+            <view class="mini-btn btn-del" data-id="{{item.id}}" bindtap="handleDelete">
+              🗑️ 移除
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 弹窗 1：自主创建服务项目 -->
+  <view wx:if="{{showCustomModal}}" class="modal-mask" bindtap="closeCustomModal">
+    <view class="modal-dialog" catchtap="">
+      <view class="dialog-header">
+        <text class="dialog-title">自主创建服务项目</text>
+        <text class="dialog-close" bindtap="closeCustomModal">✕</text>
+      </view>
+      <scroll-view scroll-y class="dialog-body">
+        <view class="form-group">
+          <text class="form-label">项目名称 *</text>
+          <input
+            class="form-input"
+            value="{{customForm.name}}"
+            data-field="name"
+            placeholder="如：头部经络放松SPA"
+            bindinput="handleCustomInput"
+          />
+        </view>
+        <view class="form-row-2">
+          <view class="form-group flex-1">
+            <text class="form-label">服务时长(分钟) *</text>
+            <input
+              class="form-input"
+              type="number"
+              value="{{customForm.durationMinutes}}"
+              data-field="durationMinutes"
+              placeholder="如：60"
+              bindinput="handleCustomInput"
+            />
+          </view>
+          <view class="form-group flex-1">
+            <text class="form-label">服务价格(元) *</text>
+            <input
+              class="form-input"
+              type="digit"
+              value="{{customForm.basePrice}}"
+              data-field="basePrice"
+              placeholder="如：198"
+              bindinput="handleCustomInput"
+            />
+          </view>
+        </view>
+        <view class="form-group">
+          <text class="form-label">项目介绍与手法</text>
+          <textarea
+            class="form-textarea"
+            value="{{customForm.description}}"
+            data-field="description"
+            placeholder="介绍手法的特色、适合人群（如：适合长期久坐低头族）"
+            bindinput="handleCustomInput"
+          />
+        </view>
+        <view class="form-group">
+          <text class="form-label">服务须知 / 温馨提示</text>
+          <input
+            class="form-input"
+            value="{{customForm.notice}}"
+            data-field="notice"
+            placeholder="如：保持室内空气流通"
+            bindinput="handleCustomInput"
+          />
+        </view>
+        <view class="shelf-toggle-row">
+          <text class="shelf-label">创建后立即上架接单</text>
+          <switch checked="{{customForm.onShelf}}" color="#E54D42" bindchange="handleCustomShelfChange" />
+        </view>
+      </scroll-view>
+      <view class="dialog-footer">
+        <button class="dialog-btn btn-cancel" bindtap="closeCustomModal">取消</button>
+        <button class="dialog-btn btn-submit" loading="{{submitting}}" bindtap="handleSaveCustom">确认创建</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 弹窗 2：从平台项目库加入 -->
+  <view wx:if="{{showPlatformModal}}" class="modal-mask" bindtap="closePlatformModal">
+    <view class="modal-dialog" catchtap="">
+      <view class="dialog-header">
+        <text class="dialog-title">加入平台项目库</text>
+        <text class="dialog-close" bindtap="closePlatformModal">✕</text>
+      </view>
+      <scroll-view scroll-y class="dialog-body platform-scroll">
+        <text class="platform-tip">点击选中需要加入的项目，并可自定义您的接单价格：</text>
+        <view class="platform-list">
+          <view
+            wx:for="{{platformProjects}}"
+            wx:key="id"
+            class="platform-item {{selectedPlatformProject.id === item.id ? 'platform-item--selected' : ''}}"
+            data-id="{{item.id}}"
+            bindtap="selectPlatformItem"
+          >
+            <view class="p-item-left">
+              <view class="p-item-name">{{item.name}}</view>
+              <view class="p-item-sub">⏱️ {{item.durationMinutes}}分钟 · 建议指导价 ¥{{item.basePrice}}</view>
+            </view>
+            <view class="p-item-select-dot">
+              <text wx:if="{{selectedPlatformProject.id === item.id}}">✓</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{selectedPlatformProject}}" class="platform-price-box">
+          <text class="form-label">您的接单价格 (元) *</text>
+          <input
+            class="form-input"
+            type="digit"
+            value="{{joinPrice}}"
+            placeholder="设定您的价格"
+            bindinput="handleJoinPriceInput"
+          />
+        </view>
+      </scroll-view>
+      <view class="dialog-footer">
+        <button class="dialog-btn btn-cancel" bindtap="closePlatformModal">取消</button>
+        <button class="dialog-btn btn-submit" loading="{{submitting}}" bindtap="handleConfirmJoin">确认加入</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 弹窗 3：编辑价格 / 项目详情 -->
+  <view wx:if="{{showEditModal && editingProject}}" class="modal-mask" bindtap="closeEditModal">
+    <view class="modal-dialog" catchtap="">
+      <view class="dialog-header">
+        <text class="dialog-title">编辑项目信息</text>
+        <text class="dialog-close" bindtap="closeEditModal">✕</text>
+      </view>
+      <scroll-view scroll-y class="dialog-body">
+        <block wx:if="{{editingProject.creatorType === 'TECHNICIAN'}}">
+          <view class="form-group">
+            <text class="form-label">项目名称</text>
+            <input class="form-input" value="{{editName}}" bindinput="handleEditNameInput" />
+          </view>
+          <view class="form-group">
+            <text class="form-label">服务时长 (分钟)</text>
+            <input class="form-input" type="number" value="{{editDuration}}" bindinput="handleEditDurationInput" />
+          </view>
+        </block>
+
+        <view class="form-group">
+          <text class="form-label">接单价格 (元) *</text>
+          <input class="form-input" type="digit" value="{{editPrice}}" bindinput="handleEditPriceInput" />
+        </view>
+
+        <view class="form-group" wx:if="{{editingProject.creatorType === 'TECHNICIAN'}}">
+          <text class="form-label">项目介绍</text>
+          <textarea class="form-textarea" value="{{editDescription}}" bindinput="handleEditDescInput" />
+        </view>
+      </scroll-view>
+      <view class="dialog-footer">
+        <button class="dialog-btn btn-cancel" bindtap="closeEditModal">取消</button>
+        <button class="dialog-btn btn-submit" loading="{{submitting}}" bindtap="handleSaveEdit">保存更新</button>
+      </view>
+    </view>
+  </view>
+</view>

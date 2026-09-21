@@ -1,43 +1,205 @@
-.page { padding-bottom: 140rpx; }
+.ios-orders-page {
+  min-height: 100vh;
+  background-color: var(--ios-bg);
+  padding: 32rpx 32rpx 30rpx;
+  box-sizing: border-box;
+}
 
-.order-list { display: flex; flex-direction: column; gap: 16rpx; }
-.order-card { padding: 24rpx; }
-.order-card__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
-.order-card__no { font-size: 24rpx; color: var(--color-muted); }
-.order-card__status { font-size: 22rpx; font-weight: 600; padding: 4rpx 16rpx; border-radius: 12rpx; background: #E8F5E9; color: #2E7D32; }
-.order-card__proj { font-size: 28rpx; font-weight: 600; display: block; margin-bottom: 4rpx; }
-.order-card__time { font-size: 24rpx; color: var(--color-text-secondary); }
-.order-card__foot { display: flex; justify-content: space-between; align-items: center; padding-top: 12rpx; border-top: 1rpx solid var(--color-border); margin-top: 12rpx; }
-.order-card__amount { font-size: 30rpx; font-weight: 700; color: var(--color-primary); }
-.order-card__date { font-size: 22rpx; color: var(--color-muted); }
+.page-title-bar {
+  margin-bottom: 28rpx;
+}
 
-.income-stats { display: flex; gap: 16rpx; margin-bottom: 32rpx; }
-.income-stat { flex: 1; background: var(--color-surface); border: 1rpx solid var(--color-border); border-radius: 20rpx; padding: 24rpx; text-align: center; }
-.income-stat__num { font-size: 36rpx; font-weight: 800; color: var(--color-primary); }
-.income-stat__label { font-size: 22rpx; color: var(--color-muted); margin-top: 8rpx; }
+.page-main-title {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: var(--ios-text-primary);
+  display: block;
+  letter-spacing: -0.5rpx;
+}
 
-.section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
-.section-title { font-size: 30rpx; font-weight: 700; }
-.section-more { font-size: 24rpx; color: var(--color-muted); }
+.page-sub-title {
+  font-size: 24rpx;
+  color: var(--ios-text-tertiary);
+  margin-top: 4rpx;
+  display: block;
+}
 
-.income-list { display: flex; flex-direction: column; gap: 12rpx; }
-.income-item { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 24rpx; }
-.income-item__order { font-size: 28rpx; font-weight: 600; display: block; }
-.income-item__date { font-size: 22rpx; color: var(--color-muted); margin-top: 4rpx; }
-.income-item__amount { font-size: 30rpx; font-weight: 700; }
-.income-item__amount.pending { color: #E65100; }
-.income-item__amount.settled { color: #2E7D32; }
+/* ════ 骨架屏 ════ */
+.loading-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
 
-.finance-title { font-size: 30rpx; font-weight: 700; margin-bottom: 20rpx; }
-.finance-list { display: flex; flex-direction: column; gap: 16rpx; }
-.finance-item { display: flex; align-items: center; gap: 20rpx; padding: 28rpx 24rpx; }
-.finance-item__icon { font-size: 40rpx; width: 56rpx; text-align: center; }
-.finance-item__content { flex: 1; }
-.finance-item__name { font-size: 30rpx; font-weight: 600; }
-.finance-item__desc { font-size: 24rpx; color: var(--color-muted); margin-top: 4rpx; }
-.finance-item__arrow { font-size: 32rpx; color: var(--color-muted); }
+.skeleton-card {
+  height: 260rpx;
+  border-radius: var(--radius-lg);
+}
 
-.empty { display: flex; flex-direction: column; align-items: center; padding: 120rpx 32rpx; }
-.empty__icon { font-size: 80rpx; margin-bottom: 24rpx; }
-.empty__text { font-size: 28rpx; color: var(--color-muted); }
-.empty__desc { font-size: 24rpx; color: var(--color-muted); margin-top: 8rpx; }
+/* ════ 空状态 ════ */
+.ios-empty-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 160rpx 40rpx;
+}
+
+.empty-icon-circle {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 50%;
+  background: #EBEBF0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28rpx;
+}
+
+.empty-svg {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.empty-primary {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--ios-text-primary);
+  margin-bottom: 8rpx;
+}
+
+.empty-secondary {
+  font-size: 24rpx;
+  color: var(--ios-text-tertiary);
+  text-align: center;
+}
+
+/* ════ 订单票据卡片 ════ */
+.orders-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.order-ticket-card {
+  padding: 28rpx 32rpx;
+  background: var(--ios-card);
+}
+
+.ticket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 18rpx;
+  border-bottom: 1rpx solid var(--ios-border);
+  margin-bottom: 20rpx;
+}
+
+.ticket-no {
+  font-size: 22rpx;
+  color: var(--ios-text-tertiary);
+}
+
+.ticket-status-pill {
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 4rpx 16rpx;
+  border-radius: var(--radius-full);
+}
+
+.pill-active {
+  background: rgba(0, 122, 255, 0.08);
+  color: #007AFF;
+}
+
+.pill-done {
+  background: rgba(52, 199, 89, 0.1);
+  color: #34C759;
+}
+
+.pill-cancel {
+  background: #EBEBF0;
+  color: #8E8E93;
+}
+
+.ticket-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  margin-bottom: 20rpx;
+}
+
+.ticket-proj-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--ios-text-primary);
+  letter-spacing: -0.5rpx;
+  margin-bottom: 4rpx;
+}
+
+.ticket-meta-line {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+}
+
+.meta-label {
+  color: var(--ios-text-tertiary);
+  width: 80rpx;
+}
+
+.meta-val {
+  color: var(--ios-text-secondary);
+  flex: 1;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ticket-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 18rpx;
+  border-top: 1rpx solid var(--ios-border);
+}
+
+.ticket-price-box {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-lbl {
+  font-size: 22rpx;
+  color: var(--ios-text-tertiary);
+}
+
+.price-curr {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: var(--ios-red);
+}
+
+.price-val {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: var(--ios-red);
+  letter-spacing: -0.5rpx;
+}
+
+.ticket-detail-link {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  font-weight: 500;
+  color: var(--ios-text-secondary);
+}
+
+.chev {
+  font-size: 32rpx;
+  margin-left: 4rpx;
+  line-height: 1;
+}

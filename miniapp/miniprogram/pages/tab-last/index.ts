@@ -1,6 +1,7 @@
 import { getCachedAccount } from "../../services/auth";
 import { request } from "../../services/http";
 import { getAccessToken } from "../../services/http";
+import { formatOrderStatus } from "../../utils/order-status";
 
 Page({
   data: {
@@ -36,7 +37,11 @@ Page({
   async loadUserOrders() {
     this.setData({ loading: true });
     try {
-      const orders = await request<any[]>({ url: "/api/v1/orders" });
+      const rawOrders = await request<any[]>({ url: "/api/v1/orders" });
+      const orders = (rawOrders || []).map(order => ({
+        ...order,
+        statusInfo: formatOrderStatus(order.status),
+      }));
       this.setData({ orders, loading: false });
     } catch {
       this.setData({ loading: false });

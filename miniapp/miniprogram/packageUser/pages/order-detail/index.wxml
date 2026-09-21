@@ -2,152 +2,212 @@
   <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
 
   <block wx:elif="{{detail}}">
-    <!-- 状态头部 -->
-    <view class="status-section status--{{detail.order.status}}">
-      <view class="status-content">
-        <view class="status-icon">
-          <text wx:if="{{detail.order.status === 'PENDING_PAYMENT'}}">⏳</text>
-          <text wx:elif="{{detail.order.status === 'PAID'}}">✅</text>
-          <text wx:elif="{{detail.order.status === 'ACCEPTED'}}">👍</text>
-          <text wx:elif="{{detail.order.status === 'DEPARTED'}}">🚗</text>
-          <text wx:elif="{{detail.order.status === 'ARRIVED'}}">📍</text>
-          <text wx:elif="{{detail.order.status === 'IN_SERVICE'}}">💆</text>
-          <text wx:elif="{{detail.order.status === 'COMPLETED'}}">🎉</text>
-          <text wx:elif="{{detail.order.status === 'CANCELLED'}}">❌</text>
-          <text wx:elif="{{detail.order.status === 'REJECTED'}}">🚫</text>
-          <text wx:else>📋</text>
+    <!-- 1. 状态头部 Banner (Apple Card Style) -->
+    <view class="status-banner" style="background: {{statusInfo.bg}};">
+      <view class="status-banner-left">
+        <view class="status-icon-bubble">
+          <text class="status-banner-icon">{{statusInfo.icon}}</text>
         </view>
-        <view class="status-info">
-          <view class="status-text">{{statusLabel(detail.order.status)}}</view>
-          <view class="status-no">订单号：{{detail.order.orderNo}}</view>
+        <view class="status-banner-text-col">
+          <text class="status-banner-title" style="color: {{statusInfo.color}};">{{statusInfo.text}}</text>
+          <text class="status-banner-desc">{{statusInfo.desc}}</text>
         </view>
       </view>
     </view>
 
-    <!-- 服务信息 -->
-    <view wx:if="{{detail.projectSnapshot}}" class="card section">
-      <view class="card-title">
-        <text class="card-icon">💆</text>
-        <text>服务信息</text>
-      </view>
-      <view class="info-grid">
-        <view class="info-item">
-          <text class="info-label">项目</text>
-          <text class="info-value">{{detail.projectSnapshot.projectName}}</text>
-        </view>
-        <view class="info-item">
-          <text class="info-label">时长</text>
-          <text class="info-value">{{detail.projectSnapshot.durationMinutes}}分钟</text>
-        </view>
-        <view class="info-item">
-          <text class="info-label">时间</text>
-          <text class="info-value">{{detail.order.serviceDate}} {{detail.order.startTime}}-{{detail.order.endTime}}</text>
-        </view>
-      </view>
-    </view>
+    <!-- 容器内容流 -->
+    <view class="detail-container">
 
-    <!-- 服务地址 -->
-    <view wx:if="{{detail.addressSnapshot}}" class="card section">
-      <view class="card-title">
-        <text class="card-icon">📍</text>
-        <text>服务地址</text>
-      </view>
-      <view class="address-info">
-        <view class="address-contact">
-          <text class="contact-name">{{detail.addressSnapshot.contactName}}</text>
-          <text class="contact-phone">{{detail.addressSnapshot.contactPhone}}</text>
+      <!-- 2. 服务技师卡片 (Apple Inset Grouped) -->
+      <view class="ios-card tech-card">
+        <view class="tech-card-left">
+          <view class="tech-avatar">
+            <image wx:if="{{detail.technicianAvatarUrl}}" class="tech-avatar-img" src="{{detail.technicianAvatarUrl}}" mode="aspectFill" />
+            <view wx:else class="tech-avatar-text">{{detail.technicianName ? detail.technicianName[0] : '技'}}</view>
+          </view>
+          <view class="tech-info">
+            <view class="tech-name-row">
+              <text class="tech-name">{{detail.technicianName || '精选专业技师'}}</text>
+              <view class="tech-badge">
+                <image class="badge-check-img" src="/assets/icons/check.png" mode="aspectFit" />
+                <text>持证上岗</text>
+              </view>
+            </view>
+            <text class="tech-phone" wx:if="{{detail.technicianPhone}}">服务电话：{{detail.technicianPhone}}</text>
+          </view>
         </view>
-        <view class="address-detail">{{detail.addressSnapshot.regionName}} {{detail.addressSnapshot.detail}}</view>
+        <view class="call-btn ios-touch-active" wx:if="{{detail.technicianPhone}}" bindtap="callTechnician">
+          <image class="call-btn-img" src="/assets/icons/phone.png" mode="aspectFit" />
+          <text class="call-text">呼叫技师</text>
+        </view>
       </view>
-    </view>
 
-    <!-- 费用明细 -->
-    <view wx:if="{{detail.amount}}" class="card section">
-      <view class="card-title">
-        <text class="card-icon">💰</text>
-        <text>费用明细</text>
-      </view>
-      <view class="fee-list">
-        <view class="fee-item">
-          <text>项目费用</text>
-          <text>¥{{detail.amount.projectAmount}}</text>
+      <!-- 3. 服务地址卡片 -->
+      <view wx:if="{{detail.addressSnapshot}}" class="ios-card address-card">
+        <view class="section-title-row">
+          <view class="card-title-left">
+            <view class="icon-bubble icon-bubble--blue">
+              <image class="bubble-icon-img" src="/assets/icons/pin.png" mode="aspectFit" />
+            </view>
+            <text class="sec-heading">上门服务地址</text>
+          </view>
+          <view class="map-nav-pill ios-touch-active" bindtap="openLocationMap">
+            <text>查看地图</text>
+            <text class="pill-arrow">›</text>
+          </view>
         </view>
-        <view class="fee-item">
-          <text>上门费</text>
-          <text>¥{{detail.amount.travelFee}}</text>
-        </view>
-        <view wx:if="{{detail.amount.discountAmount > 0}}" class="fee-item fee-discount">
-          <text>优惠</text>
-          <text>-¥{{detail.amount.discountAmount}}</text>
-        </view>
-        <view class="fee-divider"></view>
-        <view class="fee-total">
-          <text>应付金额</text>
-          <text class="total-value">¥{{detail.amount.payableAmount}}</text>
-        </view>
-        <view wx:if="{{detail.amount.paidAmount > 0}}" class="fee-item fee-paid">
-          <text>已支付</text>
-          <text>¥{{detail.amount.paidAmount}}</text>
-        </view>
-        <view wx:if="{{detail.amount.refundedAmount > 0}}" class="fee-item fee-refund">
-          <text>已退款</text>
-          <text>¥{{detail.amount.refundedAmount}}</text>
+        <view class="address-info">
+          <view class="address-contact">
+            <text class="contact-name">{{detail.addressSnapshot.contactName}}</text>
+            <text class="contact-phone">{{detail.addressSnapshot.contactPhone}}</text>
+          </view>
+          <view class="address-detail">{{detail.addressSnapshot.regionName}} {{detail.addressSnapshot.detail}}</view>
         </view>
       </view>
-    </view>
 
-    <!-- 取消原因 -->
-    <view wx:if="{{detail.order.cancelReason}}" class="card section">
-      <view class="card-title">
-        <text class="card-icon">📝</text>
-        <text>取消原因</text>
+      <!-- 4. 服务项目与时间 -->
+      <view wx:if="{{detail.projectSnapshot}}" class="ios-card project-card">
+        <view class="section-title-row">
+          <view class="card-title-left">
+            <view class="icon-bubble icon-bubble--coral">
+              <image class="bubble-icon-img" src="/assets/icons/clock.png" mode="aspectFit" />
+            </view>
+            <text class="sec-heading">预约服务项目</text>
+          </view>
+        </view>
+        <view class="project-info-row">
+          <view class="proj-name-col">
+            <text class="proj-name">{{detail.projectSnapshot.projectName}}</text>
+            <text class="proj-duration">时长约 {{detail.projectSnapshot.durationMinutes}} 分钟</text>
+          </view>
+          <view class="proj-price-box">
+            <text class="currency">¥</text>
+            <text class="amount">{{detail.projectSnapshot.actualPrice || detail.projectSnapshot.basePrice}}</text>
+          </view>
+        </view>
+        <view class="hairline-divider" />
+        <view class="time-info-row">
+          <text class="time-label">预约服务时段</text>
+          <text class="time-val">{{detail.order.serviceDate}} {{detail.order.startTime}}-{{detail.order.endTime}}</text>
+        </view>
       </view>
-      <view class="card-content">{{detail.order.cancelReason}}</view>
-    </view>
 
-    <!-- 备注 -->
-    <view wx:if="{{detail.order.note}}" class="card section">
-      <view class="card-title">
-        <text class="card-icon">📝</text>
-        <text>备注</text>
-      </view>
-      <view class="card-content">{{detail.order.note}}</view>
-    </view>
-
-    <!-- 状态记录 -->
-    <view wx:if="{{detail.statusLogs.length > 0}}" class="card section">
-      <view class="card-title">
-        <text class="card-icon">📋</text>
-        <text>状态记录</text>
-      </view>
-      <view class="log-list">
-        <view wx:for="{{detail.statusLogs}}" wx:key="createdAt" class="log-item">
-          <view class="log-dot"></view>
-          <view class="log-info">
-            <view class="log-status">{{statusLabel(item.toStatus)}}</view>
-            <view class="log-meta">{{item.createdAt}} {{item.reason}}</view>
+      <!-- 5. 费用明细 (票据 Receipt 质感) -->
+      <view wx:if="{{detail.amount}}" class="ios-card fee-card">
+        <view class="section-title-row">
+          <view class="card-title-left">
+            <view class="icon-bubble icon-bubble--green">
+              <image class="bubble-icon-img" src="/assets/icons/order.png" mode="aspectFit" />
+            </view>
+            <text class="sec-heading">费用明细</text>
+          </view>
+        </view>
+        <view class="fee-list">
+          <view class="fee-item">
+            <text class="fee-label">项目服务费</text>
+            <text class="fee-val">¥{{detail.amount.projectAmount}}</text>
+          </view>
+          <view class="fee-item">
+            <text class="fee-label">技师上门出行费</text>
+            <text class="fee-val">¥{{detail.amount.travelFee}}</text>
+          </view>
+          <view wx:if="{{detail.amount.discountAmount > 0}}" class="fee-item fee-discount">
+            <text class="fee-label">优惠券立减</text>
+            <text class="fee-val">-¥{{detail.amount.discountAmount}}</text>
+          </view>
+          <view class="hairline-divider"></view>
+          <view class="fee-total">
+            <text class="total-label">订单应付总额</text>
+            <view class="total-val-box">
+              <text class="total-sym">¥</text>
+              <text class="total-value">{{detail.amount.payableAmount}}</text>
+            </view>
+          </view>
+          <view wx:if="{{detail.amount.paidAmount > 0}}" class="fee-sub-item fee-paid">
+            <text>微信实际已付</text>
+            <text>¥{{detail.amount.paidAmount}}</text>
+          </view>
+          <view wx:if="{{detail.amount.refundedAmount > 0}}" class="fee-sub-item fee-refund">
+            <text>已退款原路返还</text>
+            <text>-¥{{detail.amount.refundedAmount}}</text>
           </view>
         </view>
       </view>
-    </view>
 
-    <!-- 操作按钮 -->
-    <view class="action-section">
-      <button wx:if="{{canCancel}}" class="action-btn action-btn--secondary" bindtap="handleCancel">
-        取消订单
-      </button>
-      <button wx:if="{{canRefund}}" class="action-btn action-btn--secondary" bindtap="handleRefund">
-        申请退款
-      </button>
-      <button wx:if="{{canReview}}" class="action-btn action-btn--primary" bindtap="goToReview">
-        评价服务
-      </button>
-      <button wx:if="{{canAfterSale}}" class="action-btn action-btn--secondary" bindtap="goToAfterSale">
-        申请售后
-      </button>
-    </view>
+      <!-- 6. 订单编号与时间 -->
+      <view class="ios-card meta-card">
+        <view class="section-title-row">
+          <view class="card-title-left">
+            <view class="icon-bubble icon-bubble--purple">
+              <image class="bubble-icon-img" src="/assets/icons/order.png" mode="aspectFit" />
+            </view>
+            <text class="sec-heading">订单信息</text>
+          </view>
+        </view>
+        <view class="meta-row">
+          <text class="meta-label">订单编号</text>
+          <view class="meta-val-row">
+            <text class="meta-val">{{detail.order.orderNo}}</text>
+            <view class="copy-pill ios-touch-active" bindtap="copyOrderNo">复制</view>
+          </view>
+        </view>
+        <view class="meta-row">
+          <text class="meta-label">下单时间</text>
+          <text class="meta-val">{{detail.order.createdAt}}</text>
+        </view>
+        <view wx:if="{{detail.order.note}}" class="meta-row">
+          <text class="meta-label">特殊备注</text>
+          <text class="meta-val meta-note">{{detail.order.note}}</text>
+        </view>
+        <view wx:if="{{detail.order.cancelReason}}" class="meta-row">
+          <text class="meta-label">取消原因</text>
+          <text class="meta-val meta-cancel">{{detail.order.cancelReason}}</text>
+        </view>
+      </view>
 
-    <!-- 底部间距 -->
-    <view style="height: 40rpx;"></view>
+      <!-- 7. 服务履约进度时间线 -->
+      <view wx:if="{{formattedLogs.length > 0}}" class="ios-card timeline-card">
+        <view class="section-title-row">
+          <view class="card-title-left">
+            <view class="icon-bubble icon-bubble--amber">
+              <image class="bubble-icon-img" src="/assets/icons/clock.png" mode="aspectFit" />
+            </view>
+            <text class="sec-heading">服务履约追踪</text>
+          </view>
+        </view>
+        <view class="timeline">
+          <view wx:for="{{formattedLogs}}" wx:key="time" class="timeline-item">
+            <view class="timeline-dot-wrap">
+              <view class="timeline-dot {{index === formattedLogs.length - 1 ? 'timeline-dot--latest' : ''}}"></view>
+            </view>
+            <view class="timeline-content">
+              <view class="timeline-head">
+                <text class="timeline-status">{{item.text}}</text>
+                <text class="timeline-time">{{item.time}}</text>
+              </view>
+              <text wx:if="{{item.reason}}" class="timeline-desc">{{item.reason}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 8. 操作按钮 (Apple Button Group) -->
+      <view class="action-section">
+        <view wx:if="{{canCancel}}" class="ios-btn-outline ios-touch-active" bindtap="handleCancel">
+          取消订单
+        </view>
+        <view wx:if="{{canRefund}}" class="ios-btn-outline ios-touch-active" bindtap="handleRefund">
+          申请退款
+        </view>
+        <view wx:if="{{canReview}}" class="ios-btn-primary ios-touch-active" bindtap="goToReview">
+          评价服务
+        </view>
+        <view wx:if="{{canAfterSale}}" class="ios-btn-outline ios-touch-active" bindtap="goToAfterSale">
+          申请售后
+        </view>
+      </view>
+
+      <view style="height: 60rpx;"></view>
+    </view>
   </block>
 </view>

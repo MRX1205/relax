@@ -44,15 +44,24 @@ Page({
 
   async handleReject(e: WechatMiniprogram.TouchEvent) {
     const refundNo = e.currentTarget.dataset.no;
-    const confirmed = await new Promise<boolean>(r => {
-      wx.showModal({ title: "拒绝退款", content: "确认拒绝该退款申请？", success: res => r(res.confirm) });
+    const modalRes = await new Promise<WechatMiniprogram.ShowModalSuccessCallbackResult>(r => {
+      wx.showModal({
+        title: "拒绝退款",
+        content: "请输入拒绝原因",
+        editable: true,
+        placeholderText: "例如：服务已正常交付/不符合退款规则",
+        success: r,
+      });
     });
-    if (!confirmed) return;
+    if (!modalRes.confirm) return;
+    const reason = modalRes.content?.trim() || "不符合退款条件";
     try {
-      await rejectRefund(refundNo, "不符合退款条件");
+      await rejectRefund(refundNo, reason);
       wx.showToast({ title: "已拒绝", icon: "success" });
       this.loadRefunds(true);
-    } catch { wx.showToast({ title: "操作失败", icon: "none" }); }
+    } catch {
+      wx.showToast({ title: "操作失败", icon: "none" });
+    }
   },
 
   onReachBottom() { this.loadRefunds(); },

@@ -16,10 +16,13 @@ public class TechnicianAdminService {
 
     private final TechnicianAuditMapper auditMapper;
     private final TechnicianPricingMapper pricingMapper;
+    private final com.relax.auth.AuthMapper authMapper;
 
-    TechnicianAdminService(TechnicianAuditMapper auditMapper, TechnicianPricingMapper pricingMapper) {
+    TechnicianAdminService(TechnicianAuditMapper auditMapper, TechnicianPricingMapper pricingMapper,
+            com.relax.auth.AuthMapper authMapper) {
         this.auditMapper = auditMapper;
         this.pricingMapper = pricingMapper;
+        this.authMapper = authMapper;
     }
 
     // === 技师列表 ===
@@ -48,6 +51,9 @@ public class TechnicianAdminService {
         long techId = IdWorker.getId();
         auditMapper.insertTechnician(techId, app.userId(), app.serviceName(), app.realName(),
                 app.phone(), app.intro(), app.experienceYears());
+        if (authMapper.countRole(app.userId(), "TECHNICIAN") == 0) {
+            authMapper.insertRole(app.userId(), "TECHNICIAN", reviewerId);
+        }
     }
 
     @Transactional

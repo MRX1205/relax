@@ -1,7 +1,7 @@
 import { getHomeData } from "../../services/catalog";
 import { getCachedAccount, loadCurrentAccount } from "../../services/auth";
-import { request } from "../../services/http";
-import { getAccessToken } from "../../services/http";
+import { request, getAccessToken } from "../../services/http";
+import { getProjectCover, getTechAvatar, getTechPhotos } from "../../utils/assets";
 
 Page({
   data: {
@@ -62,7 +62,27 @@ Page({
     this.setData({ loading: true });
     try {
       const home = await getHomeData();
-      this.setData({ home, loading: false });
+      if (home) {
+        const enrichedProjects = (home.featuredProjects || []).map((p: any) => ({
+          ...p,
+          displayCover: getProjectCover(p.name, p.categoryName, p.coverFileId, p.coverUrl),
+        }));
+        const enrichedTechnicians = (home.nearbyTechnicians || []).map((t: any) => ({
+          ...t,
+          displayAvatar: getTechAvatar(t.serviceName, t.avatarUrl),
+          displayPhotos: getTechPhotos(t.photos),
+        }));
+        this.setData({
+          home: {
+            ...home,
+            featuredProjects: enrichedProjects,
+            nearbyTechnicians: enrichedTechnicians,
+          },
+          loading: false,
+        });
+      } else {
+        this.setData({ home: null, loading: false });
+      }
     } catch {
       this.setData({ loading: false });
     }
@@ -121,7 +141,35 @@ Page({
   },
 
   goToAccess() {
+    const account = getCachedAccount();
+    if (!account) {
+      wx.showToast({ title: "请先登录", icon: "none" });
+      setTimeout(() => wx.navigateTo({ url: "/pages/login/index" }), 500);
+      return;
+    }
+    if (account.roles && (account.roles.includes("TECHNICIAN") || account.roles.includes("SUPER_ADMIN"))) {
+      wx.showModal({
+        title: "您已是认证技师",
+        content: "点击确定即可直接前往您的技师接单工作台",
+        confirmText: "去工作台",
+        confirmColor: "#E54D42",
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: "/packageTech/pages/workbench/index" });
+          }
+        },
+      });
+      return;
+    }
     wx.navigateTo({ url: "/packageTech/pages/access/index" });
+  },
+
+  goToInvite() {
+    wx.navigateTo({ url: "/packageUser/pages/invite/index" });
+  },
+
+  goToMember() {
+    wx.navigateTo({ url: "/packageUser/pages/vip/index" });
   },
 
   goToTechOrders() {
@@ -134,6 +182,14 @@ Page({
 
   goToIncome() {
     wx.switchTab({ url: "/pages/tab-last/index" });
+  },
+
+  goToTechProjects() {
+    wx.navigateTo({ url: "/packageTech/pages/projects/index" });
+  },
+
+  goToTechProfile() {
+    wx.navigateTo({ url: "/packageTech/pages/profile-edit/index" });
   },
 
   async loadAdminWorkbench() {

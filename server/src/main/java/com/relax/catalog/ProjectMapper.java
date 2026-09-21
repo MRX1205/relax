@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,18 +17,37 @@ public interface ProjectMapper {
 
     @Select("SELECT p.id, p.category_id AS categoryId, c.name AS categoryName, p.name, p.duration_minutes AS durationMinutes, "
             + "p.base_price AS basePrice, p.description, p.notice, p.cover_file_id AS coverFileId, "
-            + "p.status, p.sort, p.created_at AS createdAt "
-            + "FROM service_project p JOIN service_category c ON c.id = p.category_id ORDER BY p.sort, p.id")
+            + "p.status, p.sort, COALESCE(p.creator_type, 'PLATFORM') AS creatorType, COALESCE(p.creator_id, 0) AS creatorId, "
+            + "p.created_at AS createdAt "
+            + "FROM service_project p JOIN service_category c ON c.id = p.category_id ORDER BY p.sort, p.id DESC")
     List<ProjectView> findAll();
 
     @Select("SELECT p.id, p.category_id AS categoryId, c.name AS categoryName, p.name, p.duration_minutes AS durationMinutes, "
             + "p.base_price AS basePrice, p.description, p.notice, p.cover_file_id AS coverFileId, "
-            + "p.status, p.sort, p.created_at AS createdAt "
+            + "p.status, p.sort, COALESCE(p.creator_type, 'PLATFORM') AS creatorType, COALESCE(p.creator_id, 0) AS creatorId, "
+            + "p.created_at AS createdAt "
             + "FROM service_project p JOIN service_category c ON c.id = p.category_id WHERE p.id = #{id}")
     Optional<ProjectView> findById(@Param("id") long id);
 
-    @Insert("INSERT INTO service_project (id, category_id, name, duration_minutes, base_price, description, notice, cover_file_id, sort) "
-            + "VALUES (#{id}, #{categoryId}, #{name}, #{durationMinutes}, #{basePrice}, #{description}, #{notice}, #{coverFileId}, #{sort})")
+    @Select("SELECT p.id, p.category_id AS categoryId, c.name AS categoryName, p.name, p.duration_minutes AS durationMinutes, "
+            + "p.base_price AS basePrice, p.description, p.notice, p.cover_file_id AS coverFileId, "
+            + "p.status, p.sort, COALESCE(p.creator_type, 'PLATFORM') AS creatorType, COALESCE(p.creator_id, 0) AS creatorId, "
+            + "p.created_at AS createdAt "
+            + "FROM service_project p JOIN service_category c ON c.id = p.category_id "
+            + "WHERE p.creator_type = 'PLATFORM' AND p.status = 'ON_SHELF' ORDER BY p.sort, p.id DESC")
+    List<ProjectView> findPlatformAvailable();
+
+    @Insert("INSERT INTO service_project (id, category_id, name, duration_minutes, base_price, description, notice, cover_file_id, sort, creator_type, creator_id, status) "
+            + "VALUES (#{id}, #{categoryId}, #{name}, #{durationMinutes}, #{basePrice}, #{description}, #{notice}, #{coverFileId}, #{sort}, #{creatorType}, #{creatorId}, #{status})")
+    void insertWithCreator(@Param("id") long id, @Param("categoryId") long categoryId, @Param("name") String name,
+            @Param("durationMinutes") int durationMinutes, @Param("basePrice") BigDecimal basePrice,
+            @Param("description") String description, @Param("notice") String notice,
+            @Param("coverFileId") Long coverFileId, @Param("sort") int sort,
+            @Param("creatorType") String creatorType, @Param("creatorId") long creatorId,
+            @Param("status") String status);
+
+    @Insert("INSERT INTO service_project (id, category_id, name, duration_minutes, base_price, description, notice, cover_file_id, sort, creator_type, creator_id, status) "
+            + "VALUES (#{id}, #{categoryId}, #{name}, #{durationMinutes}, #{basePrice}, #{description}, #{notice}, #{coverFileId}, #{sort}, 'PLATFORM', 0, 'DRAFT')")
     void insert(@Param("id") long id, @Param("categoryId") long categoryId, @Param("name") String name,
             @Param("durationMinutes") int durationMinutes, @Param("basePrice") BigDecimal basePrice,
             @Param("description") String description, @Param("notice") String notice,
@@ -44,8 +64,11 @@ public interface ProjectMapper {
     @Update("UPDATE service_project SET status = #{status}, updated_at = CURRENT_TIMESTAMP WHERE id = #{id}")
     int updateStatus(@Param("id") long id, @Param("status") String status);
 
+    @Delete("DELETE FROM service_project WHERE id = #{id}")
+    int delete(@Param("id") long id);
+
     record ProjectView(long id, long categoryId, String categoryName, String name, int durationMinutes,
             BigDecimal basePrice, String description, String notice, Long coverFileId,
-            String status, int sort, LocalDateTime createdAt) {
+            String status, int sort, String creatorType, Long creatorId, LocalDateTime createdAt) {
     }
 }

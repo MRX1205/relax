@@ -7,16 +7,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.relax.common.api.BusinessException;
+import com.relax.technician.TechnicianPhotoMapper;
 
 @Service
 public class CatalogPublicService {
 
     private final ProjectPublicMapper projectMapper;
     private final TechnicianPublicMapper techMapper;
+    private final TechnicianPhotoMapper photoMapper;
 
-    CatalogPublicService(ProjectPublicMapper projectMapper, TechnicianPublicMapper techMapper) {
+    CatalogPublicService(ProjectPublicMapper projectMapper, TechnicianPublicMapper techMapper,
+            TechnicianPhotoMapper photoMapper) {
         this.projectMapper = projectMapper;
         this.techMapper = techMapper;
+        this.photoMapper = photoMapper;
     }
 
     // === 项目浏览 ===
@@ -44,7 +48,11 @@ public class CatalogPublicService {
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "TECHNICIAN_NOT_FOUND", "技师不存在"));
         List<TechnicianPublicMapper.TechnicianProjectItem> projects = techMapper.findProjectsForTechnician(id);
         List<TechnicianPublicMapper.AvailabilitySlot> availability = techMapper.findAvailability(id, LocalDate.now());
-        return new TechnicianDetail(tech, projects, availability);
+        List<String> photos = photoMapper.findByTechnician(id).stream()
+                .map(p -> p.fileUrl() != null && !p.fileUrl().isBlank() ? p.fileUrl() : "/api/v1/files/public/" + p.fileId())
+                .filter(url -> !url.endsWith("/0"))
+                .toList();
+        return new TechnicianDetail(tech, projects, availability, photos);
     }
 
     public record ProjectDetail(
@@ -55,5 +63,6 @@ public class CatalogPublicService {
     public record TechnicianDetail(
             TechnicianPublicMapper.TechnicianDetail technician,
             List<TechnicianPublicMapper.TechnicianProjectItem> projects,
-            List<TechnicianPublicMapper.AvailabilitySlot> availability) {}
+            List<TechnicianPublicMapper.AvailabilitySlot> availability,
+            List<String> photos) {}
 }

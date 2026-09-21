@@ -1,34 +1,138 @@
 <view class="page">
+
+  <!-- Apple Segmented Filter Bar -->
+  <view class="filter-sticky-bar">
+    <scroll-view scroll-x class="filter-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="filter-chips">
+        <view
+          class="filter-chip {{sortBy === '' ? 'active' : ''}} ios-touch-active"
+          data-sort=""
+          bindtap="handleFilterTap"
+        >全城精选</view>
+        <view
+          class="filter-chip {{sortBy === 'distance' ? 'active' : ''}} ios-touch-active"
+          data-sort="distance"
+          bindtap="handleFilterTap"
+        >
+          <text>📍 距离就近</text>
+        </view>
+        <view
+          class="filter-chip {{sortBy === 'time' ? 'active' : ''}} ios-touch-active"
+          data-sort="time"
+          bindtap="handleFilterTap"
+        >
+          <text>⏱️ 服务时段</text>
+        </view>
+        <view
+          class="filter-chip {{sortBy === 'filter' ? 'active' : ''}} ios-touch-active"
+          data-sort="filter"
+          bindtap="handleFilterTap"
+        >
+          <text>✨ 智能筛选</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- Loading state -->
   <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
 
   <block wx:else>
+    <!-- Empty state -->
     <view wx:if="{{technicians.length === 0}}" class="empty-wrap">
-      <ui-state title="暂无技师" description="技师正在入驻中，请稍后再来" />
+      <ui-state title="暂无技师" description="当前筛选条件下暂无技师，请更换条件" />
     </view>
+
+    <!-- Technician list (Apple Inset Grouped) -->
     <view class="tech-list">
       <view
         wx:for="{{technicians}}"
         wx:key="id"
-        class="tech-card"
+        class="ios-card tech-card ios-touch-active"
         data-id="{{item.id}}"
         bindtap="handleTap"
       >
-        <view class="tech-card__avatar">
-          <view class="tech-card__avatar-text">{{item.serviceName[0]}}</view>
-          <view wx:if="{{item.onlineStatus === 'ONLINE'}}" class="tech-card__online"></view>
-        </view>
-        <view class="tech-card__info">
-          <view class="tech-card__name">{{item.serviceName}}</view>
-          <view class="tech-card__meta">{{item.experienceYears}}年经验</view>
-          <view wx:if="{{item.intro}}" class="tech-card__intro">{{item.intro}}</view>
-        </view>
-        <view class="tech-card__right">
-          <view class="tech-card__status {{item.onlineStatus === 'ONLINE' ? 'online' : ''}}">
-            {{item.onlineStatus === 'ONLINE' ? '可预约' : '休息中'}}
+        <!-- Card top section: avatar + info + price -->
+        <view class="tech-card__top">
+
+          <!-- Avatar with Squircle & Status Dot -->
+          <view class="tech-card__avatar-wrap">
+            <view class="tech-card__avatar">
+              <image
+                class="tech-card__avatar-img"
+                src="{{item.avatarUrl || '/assets/images/tech-wang.jpg'}}"
+                mode="aspectFill"
+              />
+            </view>
+            <!-- Online status breathing dot -->
+            <view class="tech-card__dot {{item.onlineStatus === 'ONLINE' ? 'dot--online' : 'dot--offline'}}"></view>
           </view>
-          <view wx:if="{{item.startPrice}}" class="tech-card__price">¥{{item.startPrice}}起</view>
+
+          <!-- Main info -->
+          <view class="tech-card__info">
+            <!-- Row 1: name + age tag + height -->
+            <view class="tech-card__row1">
+              <text class="tech-card__name">{{item.serviceName}}</text>
+              <view wx:if="{{item.ageTag}}" class="tech-card__age-tag">{{item.ageTag}}</view>
+              <text wx:if="{{item.height}}" class="tech-card__height">{{item.height}}cm</text>
+            </view>
+
+            <!-- Row 2: rating + orders + distance -->
+            <view class="tech-card__row2">
+              <text wx:if="{{item.rating}}" class="tech-card__rating">★ {{item.rating}}</text>
+              <text wx:if="{{item.annualOrders}}" class="tech-card__orders">年接 {{item.annualOrders}} 单</text>
+              <text class="tech-card__distance">附近约服务</text>
+            </view>
+
+            <!-- Row 3: certifications -->
+            <view wx:if="{{item.certifications.length > 0}}" class="tech-card__certs">
+              <view
+                wx:for="{{item.certifications}}"
+                wx:key="*this"
+                wx:for-item="cert"
+                class="tech-card__cert-chip"
+              >{{cert}}</view>
+            </view>
+
+            <!-- Row 4: earliest available time -->
+            <view class="tech-card__avail">
+              <text class="tech-card__avail-label">最早可约：</text>
+              <text class="tech-card__avail-value">{{item.earliestAvailableTime || '随时可约'}}</text>
+            </view>
+          </view>
+
+          <!-- Right: price + book button -->
+          <view class="tech-card__right">
+            <view wx:if="{{item.startPrice}}" class="tech-card__price-box">
+              <text class="currency">¥</text>
+              <text class="amount">{{item.startPrice}}</text>
+              <text class="unit">起</text>
+            </view>
+            <view class="tech-card__book-btn">去预约</view>
+          </view>
+
         </view>
+
+        <!-- Photos row (Apple HIG Squircle Thumbnails) -->
+        <view wx:if="{{item.photos.length > 0}}" class="tech-card__photos">
+          <image
+            wx:for="{{item.photos}}"
+            wx:key="*this"
+            wx:for-item="photo"
+            wx:for-index="pi"
+            wx:if="{{pi < 4}}"
+            class="tech-card__photo"
+            src="{{photo}}"
+            mode="aspectFill"
+          />
+        </view>
+
+
       </view>
     </view>
+
+    <!-- Load more hint -->
+    <view wx:if="{{!hasMore && technicians.length > 0}}" class="no-more">—— 已经到底啦 ——</view>
+
   </block>
 </view>

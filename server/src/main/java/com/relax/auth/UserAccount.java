@@ -11,5 +11,6 @@ public record UserAccount(
         String phone,
         String status,
         String lastRole,
+        String passwordHash,
         LocalDateTime createdAt) {
 }

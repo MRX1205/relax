@@ -1,4 +1,0 @@
-<view class="page">
-  <view class="loading">加载中...</view>
-</view>
-<custom-tabbar />

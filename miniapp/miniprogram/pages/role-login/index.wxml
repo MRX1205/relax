@@ -1,0 +1,145 @@
+<view class="role-login-page {{targetRole === 'ADMIN' ? 'theme-admin' : 'theme-tech'}}">
+
+  <!-- 顶部沉浸式头部卡片 -->
+  <view class="header-hero">
+    <view class="header-content">
+      <view class="role-badge-icon">
+        <image wx:if="{{targetRole === 'ADMIN'}}" src="/assets/icons/shield.png" style="width: 56rpx; height: 56rpx;" mode="aspectFit" />
+        <image wx:else src="/assets/icons/tech.png" style="width: 56rpx; height: 56rpx;" mode="aspectFit" />
+      </view>
+      <text class="role-title">{{targetRole === 'ADMIN' ? '平台管理控制台' : '技师接单工作台'}}</text>
+      <text class="role-subtitle">{{targetRole === 'ADMIN' ? '技师入驻审核 · 全平台订单调度 · 资金结算' : '自建项目 · 接单履约 · 收益与排班管理'}}</text>
+    </view>
+  </view>
+
+  <!-- 登录卡片 (Apple Inset Grouped) -->
+  <view class="ios-card login-card">
+
+    <!-- 登录方式切换 Tab (Apple Segmented Control) -->
+    <view class="login-tabs">
+      <view
+        class="tab-item {{activeTab === 'password' ? 'tab-item--active' : ''}} ios-touch-active"
+        data-tab="password"
+        bindtap="switchTab"
+      >
+        <text class="tab-text">账号密码登录</text>
+      </view>
+      <view
+        class="tab-item {{activeTab === 'wechat' ? 'tab-item--active' : ''}} ios-touch-active"
+        data-tab="wechat"
+        bindtap="switchTab"
+      >
+        <text class="tab-text">微信快捷登录</text>
+      </view>
+    </view>
+
+    <!-- 错误信息提示 -->
+    <view wx:if="{{errorMsg}}" class="error-tip">
+      <image src="/assets/icons/shield.png" style="width: 28rpx; height: 28rpx;" mode="aspectFit" />
+      <text class="error-text">{{errorMsg}}</text>
+    </view>
+
+    <!-- ══ TAB 1: 账号密码登录 ══ -->
+    <block wx:if="{{activeTab === 'password'}}">
+      <view class="form-wrap">
+        <!-- 手机号输入 -->
+        <view class="input-row">
+          <view class="input-icon-box">
+            <image src="/assets/icons/phone.png" style="width: 36rpx; height: 36rpx;" mode="aspectFit" />
+          </view>
+          <input
+            class="input-field"
+            type="number"
+            maxlength="11"
+            placeholder="请输入11位注册手机号"
+            placeholder-style="color: #C7C7CC;"
+            value="{{phone}}"
+            bindinput="handlePhoneInput"
+          />
+          <view wx:if="{{phone}}" class="clear-icon ios-touch-active" bindtap="clearPhone">✕</view>
+        </view>
+
+        <!-- 密码输入 -->
+        <view class="input-row">
+          <view class="input-icon-box">
+            <image src="/assets/icons/lock.png" style="width: 36rpx; height: 36rpx;" mode="aspectFit" />
+          </view>
+          <input
+            class="input-field"
+            password="{{!showPassword}}"
+            maxlength="32"
+            placeholder="请输入登录密码 (初始密码: 123456)"
+            placeholder-style="color: #C7C7CC;"
+            value="{{password}}"
+            bindinput="handlePasswordInput"
+          />
+          <view class="eye-icon ios-touch-active" bindtap="togglePasswordVisibility">
+            <image wx:if="{{showPassword}}" src="/assets/icons/eye.png" style="width: 36rpx; height: 36rpx;" mode="aspectFit" />
+            <image wx:else src="/assets/icons/eye-off.png" style="width: 36rpx; height: 36rpx;" mode="aspectFit" />
+          </view>
+        </view>
+
+        <!-- 快速测试账号填充 -->
+        <view class="quick-fill-row">
+          <text class="quick-label">便捷填充：</text>
+          <view class="quick-chips">
+            <block wx:if="{{targetRole === 'ADMIN'}}">
+              <view class="chip ios-touch-active" data-phone="13800000000" bindtap="quickFill">超管 13800000000</view>
+            </block>
+            <block wx:else>
+              <view class="chip ios-touch-active" data-phone="13800003333" bindtap="quickFill">王师傅 13800003333</view>
+              <view class="chip ios-touch-active" data-phone="13800004444" bindtap="quickFill">陈技师 13800004444</view>
+            </block>
+          </view>
+        </view>
+
+        <!-- 登录按钮 -->
+        <button
+          class="submit-btn {{loading ? 'btn--loading' : ''}} ios-touch-active"
+          bindtap="handlePasswordSubmit"
+          disabled="{{loading}}"
+        >
+          <text>{{loading ? '正在验证…' : '登 录'}}</text>
+        </button>
+      </view>
+    </block>
+
+    <!-- ══ TAB 2: 微信快捷登录 ══ -->
+    <block wx:else>
+      <view class="wechat-login-wrap">
+        <view class="wx-hero-badge">
+          <image src="/assets/icons/wechat.png" style="width: 72rpx; height: 72rpx;" mode="aspectFit" />
+        </view>
+        <view class="wx-hint-title">微信一键快捷登录</view>
+        <view class="wx-hint-desc">
+          已在工作台中绑定当前微信号的用户，点击下方按钮即可秒级识别登录
+        </view>
+
+        <button
+          class="wx-submit-btn {{loading ? 'btn--loading' : ''}} ios-touch-active"
+          bindtap="handleWechatSubmit"
+          disabled="{{loading}}"
+        >
+          <text class="wx-btn-label">{{loading ? '识别身份中…' : '微信一键登录'}}</text>
+        </button>
+
+        <view class="wx-notice-box">
+          <view class="wx-notice-icon">
+            <image src="/assets/icons/shield.png" style="width: 28rpx; height: 28rpx;" mode="aspectFit" />
+          </view>
+          <text class="notice-text">若当前微信尚未绑定{{targetRole === 'ADMIN' ? '管理员' : '技师'}}账号，请先使用「账号密码登录」，登入后在工作台一键绑定微信。</text>
+        </view>
+      </view>
+    </block>
+
+  </view>
+
+  <!-- 底部安全提示与返回 -->
+  <view class="footer-actions">
+    <view class="return-home-btn ios-touch-active" bindtap="returnToUserHome">
+      <text style="font-size: 32rpx; line-height: 1; color: #8E8E93; margin-right: 4rpx;">‹</text>
+      <text>返回顾客端首页</text>
+    </view>
+  </view>
+
+</view>

@@ -6,6 +6,10 @@ function getEnvironmentVersion(): EnvironmentVersion {
 }
 
 export const environment = {
-  version: getEnvironmentVersion(),
-  apiBaseUrl: getApiBaseUrl(getEnvironmentVersion()),
+  get version(): EnvironmentVersion {
+    return getEnvironmentVersion();
+  },
+  get apiBaseUrl(): string {
+    return getApiBaseUrl(getEnvironmentVersion());
+  },
 };

@@ -7,6 +7,7 @@ export function createOrder(data: {
   serviceDate: string;
   startTime: string;
   note?: string;
+  couponId?: string;
 }): Promise<OrderDetailView> {
   return request<OrderDetailView>({ url: "/api/v1/orders", method: "POST", data });
 }

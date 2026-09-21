@@ -4,7 +4,7 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
   profiles:
-    default: local
+    default: dev
   flyway:
     enabled: true
     locations: classpath:db/migration

@@ -1,19 +1,59 @@
 <view class="page">
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <ui-state wx:if="{{loading && orders.length === 0}}" title="加载中" kind="loading" />
   <block wx:else>
     <view wx:if="{{orders.length === 0}}" class="empty-wrap">
-      <ui-state title="暂无订单" description="等待用户下单" />
+      <ui-state title="暂无订单" description="等待客户下单或系统派单" />
     </view>
-    <view class="order-list">
-      <view wx:for="{{orders}}" wx:key="orderNo" class="surface order-card" data-no="{{item.orderNo}}" bindtap="handleTap">
+    <view class="order-list" wx:else>
+      <view
+        wx:for="{{orders}}"
+        wx:key="orderNo"
+        class="order-card"
+        data-no="{{item.orderNo}}"
+        bindtap="handleTap"
+      >
+        <!-- 头部：单号与中文状态徽章 -->
         <view class="order-header">
-          <text class="order-no">{{item.orderNo}}</text>
-          <text class="order-status order-status--{{item.status}}">{{statusLabel(item.status)}}</text>
+          <view class="order-no-wrap">
+            <text class="order-no-label">订单号</text>
+            <text class="order-no">{{item.orderNo}}</text>
+          </view>
+          <view class="status-badge" style="background: {{item.statusBg}}; color: {{item.statusColor}};">
+            <text class="status-icon">{{item.statusIcon}}</text>
+            <text class="status-text">{{item.statusText}}</text>
+          </view>
         </view>
-        <view class="order-date">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</view>
+
+        <!-- 项目信息与金额 -->
+        <view class="project-section">
+          <view class="project-info">
+            <text class="project-name">{{item.projectName || '上门按摩服务'}}</text>
+            <text class="project-duration" wx:if="{{item.durationMinutes}}">时长约 {{item.durationMinutes}} 分钟</text>
+          </view>
+          <view class="price-wrap">
+            <text class="price-symbol">¥</text>
+            <text class="price-val">{{item.payableAmount != null ? item.payableAmount : '--'}}</text>
+          </view>
+        </view>
+
+        <!-- 预约时间 -->
+        <view class="meta-row time-row">
+          <text class="meta-icon">⏱️</text>
+          <text class="meta-label">预约时间：</text>
+          <text class="meta-value">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+        </view>
+
+        <!-- 客户与地址 -->
+        <view class="meta-row" wx:if="{{item.customerName || item.addressDetail}}">
+          <text class="meta-icon">📍</text>
+          <text class="meta-label">服务地点：</text>
+          <text class="meta-value">{{item.customerName ? item.customerName + ' · ' : ''}}{{item.addressDetail || '客户指定地址'}}</text>
+        </view>
+
+        <!-- 底部 -->
         <view class="order-footer">
           <text class="order-time">{{item.createdAt}}</text>
-          <text class="order-link">查看详情 ›</text>
+          <text class="order-link">查看详情 / 履约 ›</text>
         </view>
       </view>
     </view>

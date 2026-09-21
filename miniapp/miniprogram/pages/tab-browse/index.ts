@@ -2,6 +2,7 @@ import { getCachedAccount } from "../../services/auth";
 import { getProjects } from "../../services/catalog";
 import { request } from "../../services/http";
 import { getAccessToken } from "../../services/http";
+import { getProjectCover } from "../../utils/assets";
 
 Page({
   data: {
@@ -34,7 +35,11 @@ Page({
     try {
       const homeData = await request<any>({ url: "/api/v1/home" });
       const projects = await getProjects(this.data.currentCategory);
-      this.setData({ categories: homeData.categories || [], projects, loading: false });
+      const enriched = (projects || []).map((p: any) => ({
+        ...p,
+        displayCover: getProjectCover(p.name, p.categoryName, p.coverFileId, p.coverUrl),
+      }));
+      this.setData({ categories: homeData.categories || [], projects: enriched, loading: false });
     } catch {
       this.setData({ loading: false });
     }

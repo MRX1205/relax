@@ -11,6 +11,11 @@ spring:
   flyway:
     enabled: true
 
+management:
+  health:
+    redis:
+      enabled: false
+
 relax:
   file:
     local-root: ./target/test-private-files

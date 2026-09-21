@@ -1,65 +1,77 @@
-<view class="page">
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+<view class="ios-browse-page">
 
-  <!-- USER: Projects -->
-  <block wx:elif="{{role === 'USER'}}">
-    <scroll-view class="cat-scroll" scroll-x wx:if="{{categories.length > 0}}">
-      <view class="cat-list">
-        <view class="cat-chip {{currentCategory === 0 ? 'cat-chip--active' : ''}}" data-id="0" bindtap="switchCategory">全部</view>
-        <view wx:for="{{categories}}" wx:key="id" class="cat-chip {{currentCategory === item.id ? 'cat-chip--active' : ''}}" data-id="{{item.id}}" bindtap="switchCategory">{{item.name}}</view>
+  <!-- ════ 1. 顶部分类吸顶胶囊条 ════ -->
+  <view class="ios-cat-header ios-blur">
+    <scroll-view class="cat-scroll" scroll-x enhanced show-scrollbar="{{false}}" enable-flex>
+      <view class="cat-pill-list">
+        <view
+          class="cat-pill {{currentCategory === 0 ? 'cat-pill--active' : ''}} ios-touch-active"
+          data-id="0"
+          bindtap="switchCategory"
+        >
+          <text class="cat-pill-txt">全部精选</text>
+        </view>
+        <view
+          wx:for="{{categories}}"
+          wx:key="id"
+          class="cat-pill {{currentCategory === item.id ? 'cat-pill--active' : ''}} ios-touch-active"
+          data-id="{{item.id}}"
+          bindtap="switchCategory"
+        >
+          <text class="cat-pill-txt">{{item.name}}</text>
+        </view>
       </view>
     </scroll-view>
+  </view>
 
-    <block wx:if="{{projects.length === 0}}">
-      <view class="empty"><view class="empty__icon">💆</view><view class="empty__text">暂无项目</view></view>
-    </block>
+  <!-- ════ 2. 加载骨架屏 ════ -->
+  <view wx:if="{{loading}}" class="loading-grid">
+    <view class="ios-skeleton skeleton-card" wx:for="{{[1,2,3,4]}}" wx:key="*this"></view>
+  </view>
 
-    <view class="project-list">
-      <view wx:for="{{projects}}" wx:key="id" class="project-card surface" data-id="{{item.id}}" bindtap="goToProjectDetail">
-        <view class="project-card__cover">
-          <image wx:if="{{item.coverFileId}}" src="{{item.coverFileId}}" mode="aspectFill" class="project-card__img" />
-          <view wx:else class="project-card__ph">💆</view>
-          <view class="project-card__cat">{{item.categoryName}}</view>
+  <!-- ════ 3. 空状态 ════ -->
+  <view wx:elif="{{projects.length === 0}}" class="ios-empty-view">
+    <view class="empty-icon-circle">
+      <image class="empty-svg" src="/assets/tabbar/projects.png" mode="aspectFit" />
+    </view>
+    <text class="empty-primary">暂无该分类项目</text>
+    <text class="empty-secondary">我们正在持续引入更多正规品质理疗项目</text>
+  </view>
+
+  <!-- ════ 4. 苹果风格卡片列表 ════ -->
+  <view wx:else class="project-feed">
+    <view
+      wx:for="{{projects}}"
+      wx:key="id"
+      class="project-card ios-card ios-touch-active"
+      data-id="{{item.id}}"
+      bindtap="goToProjectDetail"
+    >
+      <view class="proj-media-wrap">
+        <image src="{{item.displayCover || item.coverFileId || '/assets/defaults/default-cover.png'}}" mode="aspectFill" class="proj-img" />
+        <view class="proj-duration-tag">⏱ {{item.durationMinutes}}分钟</view>
+        <view class="proj-cat-tag">{{item.categoryName || '精选理疗'}}</view>
+      </view>
+
+      <view class="proj-content">
+        <view class="proj-headline-row">
+          <text class="proj-title">{{item.name}}</text>
         </view>
-        <view class="project-card__info">
-          <view class="project-card__name">{{item.name}}</view>
-          <view class="project-card__meta">
-            <text>{{item.durationMinutes}}分钟</text>
-            <view class="project-card__price"><text class="sym">¥</text><text class="amt">{{item.basePrice}}</text><text class="unit">起</text></view>
+        <text class="proj-desc">{{item.description || '专业手法深层调理，缓解肌肉疲劳与酸痛。'}}</text>
+
+        <view class="proj-bottom-bar">
+          <view class="proj-pricing">
+            <text class="price-currency">¥</text>
+            <text class="price-amount">{{item.basePrice || 168}}</text>
+            <text class="price-sub">起</text>
           </view>
+          <view class="book-cta-btn">立即预约</view>
         </view>
       </view>
     </view>
-  </block>
+  </view>
 
-  <!-- TECH/ADMIN: Orders -->
-  <block wx:elif="{{role !== 'USER'}}">
-    <view class="order-tabs">
-      <view class="order-tab {{orderTab === 'all' ? 'order-tab--active' : ''}}" data-tab="all" bindtap="switchOrderTab">全部</view>
-      <view class="order-tab {{orderTab === 'active' ? 'order-tab--active' : ''}}" data-tab="active" bindtap="switchOrderTab">进行中</view>
-      <view class="order-tab {{orderTab === 'done' ? 'order-tab--active' : ''}}" data-tab="done" bindtap="switchOrderTab">已完成</view>
-    </view>
-
-    <block wx:if="{{orders.length === 0}}">
-      <view class="empty"><view class="empty__icon">📋</view><view class="empty__text">暂无订单</view></view>
-    </block>
-
-    <view class="order-list">
-      <view wx:for="{{orders}}" wx:key="id" class="order-card surface" data-id="{{item.id}}" bindtap="goToOrderDetail">
-        <view class="order-card__head">
-          <text class="order-card__no">{{item.orderNo}}</text>
-          <text class="order-card__status">{{item.status}}</text>
-        </view>
-        <view class="order-card__body">
-          <text class="order-card__proj">{{item.projectName || '服务项目'}}</text>
-          <text class="order-card__time">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
-        </view>
-        <view class="order-card__foot">
-          <text class="order-card__amount">¥{{item.amount || 0}}</text>
-        </view>
-      </view>
-    </view>
-  </block>
+  <view class="safe-bottom-bar"></view>
 </view>
 
 <custom-tabbar />

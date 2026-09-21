@@ -1,263 +1,551 @@
+/* ==========================================================================
+   Order Detail — Apple HIG Modern Luxury Aesthetics
+   ========================================================================== */
+
 .page {
-  background: #F8F9FA;
+  background: #F5F5F7;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
-/* Status Section */
-.status-section {
-  padding: 48rpx 32rpx;
-  border-radius: 0 0 40rpx 40rpx;
-}
-
-.status--PENDING_PAYMENT { background: linear-gradient(135deg, #F39C12, #E67E22); }
-.status--PAID { background: linear-gradient(135deg, #3498DB, #2980B9); }
-.status--ACCEPTED { background: linear-gradient(135deg, #2ECC71, #27AE60); }
-.status--DEPARTED { background: linear-gradient(135deg, #9B59B6, #8E44AD); }
-.status--ARRIVED { background: linear-gradient(135deg, #1ABC9C, #16A085); }
-.status--IN_SERVICE { background: linear-gradient(135deg, #E74C3C, #C0392B); }
-.status--COMPLETED { background: linear-gradient(135deg, #2ECC71, #27AE60); }
-.status--CANCELLED { background: linear-gradient(135deg, #95A5A6, #7F8C8D); }
-.status--EXPIRED { background: linear-gradient(135deg, #95A5A6, #7F8C8D); }
-.status--REJECTED { background: linear-gradient(135deg, #E74C3C, #C0392B); }
-
-.status-content {
+/* ── 1. 状态头部 Banner ── */
+.status-banner {
+  padding: calc(env(safe-area-inset-top) + 36rpx) 36rpx 40rpx;
   display: flex;
   align-items: center;
-  gap: 24rpx;
+  justify-content: space-between;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
 }
 
-.status-icon {
-  font-size: 64rpx;
+.status-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
 }
 
-.status-info {
-  flex: 1;
+.status-icon-bubble {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
 }
 
-.status-text {
-  font-size: 36rpx;
+.status-banner-icon {
+  font-size: 38rpx;
+}
+
+.status-banner-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.status-banner-title {
+  font-size: 38rpx;
   font-weight: 800;
-  color: #FFFFFF;
-  margin-bottom: 8rpx;
+  letter-spacing: -0.5rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
 }
 
-.status-no {
+.status-banner-desc {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: #636366;
 }
 
-/* Cards */
-.section {
-  padding: 0 32rpx;
-  margin-bottom: 24rpx;
+/* ── 容器内容流 ── */
+.detail-container {
+  padding: 24rpx 28rpx 60rpx;
+  margin-top: -16rpx;
 }
 
-.card {
-  background: #FFFFFF;
-  border-radius: 20rpx;
-  padding: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
-}
-
-.card-title {
+/* ── 通用标题行 ── */
+.section-title-row {
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  font-size: 30rpx;
-  font-weight: 700;
-  color: #333;
+  justify-content: space-between;
   margin-bottom: 20rpx;
 }
 
-.card-icon {
-  font-size: 32rpx;
-}
-
-.card-content {
-  font-size: 28rpx;
-  color: #666;
-  line-height: 1.8;
-}
-
-/* Info Grid */
-.info-grid {
+.card-title-left {
   display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-}
-
-.info-item {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 14rpx;
 }
 
-.info-label {
-  font-size: 26rpx;
-  color: #666;
-}
-
-.info-value {
-  font-size: 26rpx;
-  font-weight: 600;
-  color: #333;
-}
-
-/* Address Info */
-.address-info {
-  display: flex;
-  flex-direction: column;
-  gap: 12rpx;
-}
-
-.address-contact {
-  display: flex;
-  gap: 16rpx;
-}
-
-.contact-name {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #333;
-}
-
-.contact-phone {
-  font-size: 28rpx;
-  color: #666;
-}
-
-.address-detail {
-  font-size: 26rpx;
-  color: #666;
-  line-height: 1.6;
-}
-
-/* Fee List */
-.fee-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-}
-
-.fee-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 26rpx;
-  color: #666;
-}
-
-.fee-discount {
-  color: #27AE60;
-}
-
-.fee-paid {
-  color: #3498DB;
-}
-
-.fee-refund {
-  color: #E74C3C;
-}
-
-.fee-divider {
-  height: 2rpx;
-  background: #F0F0F0;
-  margin: 8rpx 0;
-}
-
-.fee-total {
-  display: flex;
-  justify-content: space-between;
-  font-size: 30rpx;
-  font-weight: 700;
-  color: #333;
-}
-
-.total-value {
-  color: #FF6B6B;
-  font-size: 36rpx;
-  font-weight: 800;
-}
-
-/* Log List */
-.log-list {
-  display: flex;
-  flex-direction: column;
-  gap: 24rpx;
-  padding-left: 16rpx;
-}
-
-.log-item {
-  display: flex;
-  gap: 20rpx;
-  position: relative;
-}
-
-.log-item::before {
-  content: '';
-  position: absolute;
-  left: 8rpx;
-  top: 32rpx;
-  bottom: -24rpx;
-  width: 2rpx;
-  background: #E5E5E5;
-}
-
-.log-item:last-child::before {
-  display: none;
-}
-
-.log-dot {
-  width: 16rpx;
-  height: 16rpx;
-  background: #FF6B6B;
-  border-radius: 50%;
-  margin-top: 8rpx;
-  flex-shrink: 0;
-}
-
-.log-info {
-  flex: 1;
-}
-
-.log-status {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 4rpx;
-}
-
-.log-meta {
-  font-size: 24rpx;
-  color: #999;
-}
-
-/* Action Section */
-.action-section {
-  padding: 24rpx 32rpx;
-  display: flex;
-  gap: 16rpx;
-}
-
-.action-btn {
-  flex: 1;
-  height: 88rpx;
-  font-size: 28rpx;
-  font-weight: 600;
-  border-radius: 44rpx;
-  border: none;
+.icon-bubble {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 14rpx;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.action-btn--primary {
-  background: linear-gradient(135deg, #FF6B6B, #E84545);
-  color: #FFFFFF;
-  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+.icon-bubble--blue { background: rgba(0, 122, 255, 0.1); }
+.icon-bubble--coral { background: rgba(255, 56, 46, 0.1); }
+.icon-bubble--green { background: rgba(52, 199, 89, 0.1); }
+.icon-bubble--purple { background: rgba(88, 86, 214, 0.1); }
+.icon-bubble--amber { background: rgba(255, 149, 0, 0.12); }
+
+.sec-heading {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+  letter-spacing: -0.4rpx;
 }
 
-.action-btn--secondary {
+.hairline-divider {
+  height: 1rpx;
+  background: rgba(0, 0, 0, 0.05);
+  margin: 18rpx 0;
+}
+
+/* ── 2. 技师卡片 ── */
+.tech-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 28rpx;
+}
+
+.tech-card-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.tech-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+  background: #F2F2F7;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.06);
+}
+
+.tech-avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.tech-avatar-text {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+  color: #FFFFFF;
+  font-size: 38rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tech-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.tech-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.tech-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.tech-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 20rpx;
+  color: #34C759;
+  background: rgba(52, 199, 89, 0.12);
+  padding: 2rpx 12rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+}
+
+.tech-phone {
+  font-size: 24rpx;
+  color: #8E8E93;
+}
+
+.call-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  background: rgba(52, 199, 89, 0.12);
+  color: #34C759;
+  padding: 12rpx 24rpx;
+  border-radius: 36rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+/* ── 3. 地址卡片 ── */
+.map-nav-pill {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #007AFF;
+  background: rgba(0, 122, 255, 0.08);
+  padding: 8rpx 20rpx;
+  border-radius: 40rpx;
+}
+
+.pill-arrow {
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+.address-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.address-contact {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.contact-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.contact-phone {
+  font-size: 26rpx;
+  color: #636366;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.address-detail {
+  font-size: 26rpx;
+  color: #3A3A3C;
+  line-height: 1.5;
+}
+
+/* ── 4. 项目卡片 ── */
+.project-info-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.proj-name-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.proj-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.proj-duration {
+  font-size: 24rpx;
+  color: #8E8E93;
+}
+
+.proj-price-box {
+  display: flex;
+  align-items: baseline;
+  color: #FF382E;
+}
+
+.currency {
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.amount {
+  font-size: 36rpx;
+  font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.time-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.time-label {
+  font-size: 26rpx;
+  color: #8E8E93;
+}
+
+.time-val {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+/* ── 5. 费用明细 (票据风格) ── */
+.fee-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.fee-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 26rpx;
+}
+
+.fee-label {
+  color: #636366;
+}
+
+.fee-val {
+  color: #1C1C1E;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.fee-discount .fee-val {
+  color: #FF382E;
+}
+
+.fee-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 4rpx;
+}
+
+.total-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.total-val-box {
+  display: flex;
+  align-items: baseline;
+  color: #FF382E;
+}
+
+.total-sym {
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.total-value {
+  font-size: 44rpx;
+  font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.fee-sub-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 22rpx;
+  color: #8E8E93;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.fee-paid {
+  color: #007AFF;
+}
+
+.fee-refund {
+  color: #FF382E;
+}
+
+/* ── 6. 订单信息 ── */
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 0;
+  font-size: 26rpx;
+}
+
+.meta-label {
+  color: #8E8E93;
+}
+
+.meta-val-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.meta-val {
+  color: #1C1C1E;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.copy-pill {
+  font-size: 20rpx;
+  color: #007AFF;
+  background: rgba(0, 122, 255, 0.1);
+  padding: 4rpx 14rpx;
+  border-radius: 16rpx;
+  font-weight: 600;
+}
+
+.meta-note {
+  color: #FF9500;
+}
+
+.meta-cancel {
+  color: #8E8E93;
+}
+
+/* ── 7. 履约进度时间线 ── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  padding-left: 8rpx;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 20rpx;
+  position: relative;
+  padding-bottom: 28rpx;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 4rpx;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 11rpx;
+  top: 24rpx;
+  bottom: -4rpx;
+  width: 2rpx;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.timeline-item:last-child::before {
+  display: none;
+}
+
+.timeline-dot-wrap {
+  position: relative;
+  z-index: 2;
+  margin-top: 6rpx;
+}
+
+.timeline-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background: #C7C7CC;
+  border: 4rpx solid #FFFFFF;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1);
+}
+
+.timeline-dot--latest {
+  background: #FF382E;
+  box-shadow: 0 0 12rpx rgba(255, 56, 46, 0.4);
+}
+
+.timeline-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.timeline-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timeline-status {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.timeline-time {
+  font-size: 22rpx;
+  color: #8E8E93;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.timeline-desc {
+  font-size: 24rpx;
+  color: #636366;
+}
+
+/* ── 8. 操作按钮组 ── */
+.action-section {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 28rpx;
+}
+
+.ios-btn-outline {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
   background: #FFFFFF;
-  color: #FF6B6B;
-  border: 2rpx solid #FF6B6B;
+  border: 1rpx solid rgba(0, 0, 0, 0.12);
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #3A3A3C;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.02);
+}
+
+.action-section .ios-btn-primary {
+  flex: 1.5;
+}
+
+.bubble-icon-img {
+  width: 28rpx;
+  height: 28rpx;
+}
+
+.badge-check-img {
+  width: 20rpx;
+  height: 20rpx;
+}
+
+.call-btn-img {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+.ios-btn-primary {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: linear-gradient(135deg, #FF5A36 0%, #FF382E 100%);
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  box-shadow: 0 6rpx 20rpx rgba(255, 56, 46, 0.3);
 }

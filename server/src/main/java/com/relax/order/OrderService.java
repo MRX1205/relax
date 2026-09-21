@@ -30,14 +30,17 @@ public class OrderService {
     private final ScheduleMapper scheduleMapper;
     private final RegionMapper regionMapper;
     private final CouponService couponService;
+    private final com.relax.technician.TechnicianAuditMapper auditMapper;
 
     OrderService(OrderMapper orderMapper, TechnicianPublicMapper techMapper,
-            ScheduleMapper scheduleMapper, RegionMapper regionMapper, CouponService couponService) {
+            ScheduleMapper scheduleMapper, RegionMapper regionMapper, CouponService couponService,
+            com.relax.technician.TechnicianAuditMapper auditMapper) {
         this.orderMapper = orderMapper;
         this.techMapper = techMapper;
         this.scheduleMapper = scheduleMapper;
         this.regionMapper = regionMapper;
         this.couponService = couponService;
+        this.auditMapper = auditMapper;
     }
 
     @Transactional
@@ -134,19 +137,33 @@ public class OrderService {
         OrderMapper.AddressSnapshot addressSnap = orderMapper.findAddressSnapshot(order.id()).orElse(null);
         OrderMapper.AmountView amount = orderMapper.findAmount(order.id()).orElse(null);
         List<OrderMapper.StatusLogView> logs = orderMapper.findStatusLogs(order.id());
-        return new OrderDetailView(order, projectSnap, addressSnap, amount, logs);
+
+        String techName = "专业技师";
+        String techPhone = "";
+        String techAvatar = "";
+        var techOpt = auditMapper.findFullProfileById(order.technicianId());
+        if (techOpt.isPresent()) {
+            techName = techOpt.get().serviceName();
+            techPhone = techOpt.get().phone();
+            techAvatar = techOpt.get().avatarUrl() != null ? techOpt.get().avatarUrl() : "";
+        }
+        String custName = addressSnap != null ? addressSnap.contactName() : "客户";
+        String custPhone = addressSnap != null ? addressSnap.contactPhone() : "";
+
+        return new OrderDetailView(order, projectSnap, addressSnap, amount, logs,
+                techName, techPhone, techAvatar, custName, custPhone);
     }
 
-    public List<OrderMapper.OrderView> listUserOrders(long userId, int page, int size) {
-        return orderMapper.findByUser(userId, size, page * size);
+    public List<OrderMapper.OrderListItem> listUserOrders(long userId, int page, int size) {
+        return orderMapper.findEnrichedByUser(userId, size, page * size);
     }
 
-    public List<OrderMapper.OrderView> listTechnicianOrders(long technicianId, int page, int size) {
-        return orderMapper.findByTechnician(technicianId, size, page * size);
+    public List<OrderMapper.OrderListItem> listTechnicianOrders(long technicianId, int page, int size) {
+        return orderMapper.findEnrichedByTechnician(technicianId, size, page * size);
     }
 
-    public List<OrderMapper.OrderView> listAllOrders(int page, int size) {
-        return orderMapper.findAll(size, page * size);
+    public List<OrderMapper.OrderListItem> listAllOrders(int page, int size) {
+        return orderMapper.findEnrichedAll(size, page * size);
     }
 
     @Transactional
@@ -202,7 +219,15 @@ public class OrderService {
     public record CreateOrderRequest(long projectId, long technicianId, long addressId,
             String serviceDate, String startTime, String note, Long couponId) {}
 
-    public record OrderDetailView(OrderMapper.OrderView order, OrderMapper.ProjectSnapshot projectSnapshot,
-            OrderMapper.AddressSnapshot addressSnapshot, OrderMapper.AmountView amount,
-            List<OrderMapper.StatusLogView> statusLogs) {}
+    public record OrderDetailView(
+            OrderMapper.OrderView order,
+            OrderMapper.ProjectSnapshot projectSnapshot,
+            OrderMapper.AddressSnapshot addressSnapshot,
+            OrderMapper.AmountView amount,
+            List<OrderMapper.StatusLogView> statusLogs,
+            String technicianName,
+            String technicianPhone,
+            String technicianAvatarUrl,
+            String customerName,
+            String customerPhone) {}
 }

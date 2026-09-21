@@ -70,6 +70,24 @@ class FullFlowE2ETest {
         System.out.println("✅ 管理员登录成功，角色: " + body.at("/data/account/roles"));
     }
 
+    @Test
+    @Order(3)
+    void roleSwitchFlow() throws Exception {
+        mockMvc.perform(put("/api/v1/me/last-role")
+                .header("Authorization", "Bearer " + adminToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"role\": \"TECHNICIAN\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.lastRole").value("TECHNICIAN"));
+        mockMvc.perform(put("/api/v1/me/last-role")
+                .header("Authorization", "Bearer " + adminToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"role\": \"SUPER_ADMIN\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.lastRole").value("SUPER_ADMIN"));
+        System.out.println("✅ 角色切换功能测试成功 (TECHNICIAN <-> SUPER_ADMIN)");
+    }
+
     // ==================== 2. 管理员基础数据 ====================
 
     @Test
@@ -288,6 +306,18 @@ class FullFlowE2ETest {
                 .content("{\"score\": 5, \"content\": \"服务非常好！\"}"))
                 .andExpect(status().isOk());
         System.out.println("✅ 用户评价成功");
+    }
+
+    @Test
+    @Order(65)
+    void userCreateAfterSale() throws Exception {
+        mockMvc.perform(post("/api/v1/orders/" + orderNo + "/after-sales")
+                .header("Authorization", "Bearer " + userToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"type\": \"服务质量\", \"content\": \"技师态度很好，服务非常满意\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("OK"));
+        System.out.println("✅ 用户提交售后单成功");
     }
 
     // ==================== 7. 退款 ====================

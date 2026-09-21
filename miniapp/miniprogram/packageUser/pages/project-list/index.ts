@@ -1,12 +1,13 @@
 import { getProjects } from "../../../services/catalog";
 import { request } from "../../../services/http";
+import { getProjectCover } from "../../../utils/assets";
 
 interface Category { id: string; name: string; }
 
 Page({
   data: {
     loading: true,
-    projects: [] as ProjectBrief[],
+    projects: [] as any[],
     categories: [] as Category[],
     selectedCategoryId: "",
     page: 0,
@@ -23,12 +24,16 @@ Page({
     if (reset) this.setData({ page: 0, hasMore: true, projects: [] });
     if (!this.data.hasMore && !reset) return;
     try {
-      const categoryId = parseInt(this.data.selectedCategoryId) || 0;
-      const projects = await getProjects(categoryId, this.data.page);
+      const categoryId = this.data.selectedCategoryId;
+      const rawProjects = await getProjects(categoryId, this.data.page);
+      const enriched = rawProjects.map(p => ({
+        ...p,
+        displayCover: getProjectCover(p.name, p.categoryName, p.coverFileId, (p as any).coverUrl),
+      }));
       this.setData({
-        projects: reset ? projects : [...this.data.projects, ...projects],
+        projects: reset ? enriched : [...this.data.projects, ...enriched],
         page: this.data.page + 1,
-        hasMore: projects.length >= 20,
+        hasMore: rawProjects.length >= 20,
         loading: false,
       });
     } catch { this.setData({ loading: false }); }

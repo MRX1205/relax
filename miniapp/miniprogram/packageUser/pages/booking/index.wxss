@@ -1,381 +1,815 @@
-.page {
-  padding: 0 0 40rpx;
-  background: #F8F9FA;
+/* ==========================================================================
+   Booking Page — Apple HIG Modern Luxury Aesthetics
+   ========================================================================== */
+
+.booking-page {
   min-height: 100vh;
+  background: #F5F5F7;
+  padding: 24rpx 28rpx 160rpx;
+  box-sizing: border-box;
 }
 
-/* 顶部信息 */
-.booking-header {
-  background: linear-gradient(135deg, #FF6B6B, #E84545);
-  padding: 40rpx 32rpx;
-  border-radius: 0 0 32rpx 32rpx;
+/* ── 通用卡片头部 ── */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
 }
 
-.header-info {
-  color: #FFFFFF;
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
 }
 
-.project-name {
-  font-size: 36rpx;
+.card-title {
+  font-size: 30rpx;
   font-weight: 700;
-  margin-bottom: 12rpx;
+  color: #1C1C1E;
+  letter-spacing: -0.4rpx;
 }
 
-.technician-name,
-.duration-info {
-  font-size: 26rpx;
-  opacity: 0.9;
+.icon-bubble {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-bubble--blue { background: rgba(0, 122, 255, 0.1); }
+.icon-bubble--coral { background: rgba(255, 56, 46, 0.1); }
+.icon-bubble--green { background: rgba(52, 199, 89, 0.1); }
+.icon-bubble--amber { background: rgba(255, 149, 0, 0.12); }
+
+.hairline-divider {
+  height: 1rpx;
+  background: rgba(0, 0, 0, 0.05);
+  margin: 20rpx 0;
+}
+
+.chevron-cell {
+  display: flex;
+  align-items: center;
+  margin-left: 12rpx;
+}
+
+/* ── 1. 服务地址卡片 ── */
+.address-card {
+  display: flex;
+  align-items: center;
+  padding: 28rpx;
+}
+
+.address-main {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.address-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
   margin-bottom: 8rpx;
 }
 
-/* 通用section */
-.section {
-  padding: 24rpx 32rpx;
+.address-title {
+  font-size: 24rpx;
+  color: #8E8E93;
+  font-weight: 500;
 }
 
-.section-title {
-  font-size: 30rpx;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 20rpx;
+.address-badge {
+  font-size: 20rpx;
+  color: #007AFF;
+  background: rgba(0, 122, 255, 0.1);
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
 }
 
-/* 地址卡片 */
-.address-card {
-  background: #FFFFFF;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+.address-detail {
+  font-size: 28rpx;
+  line-height: 1.45;
+  white-space: pre-wrap;
 }
 
-.address-content {
+.address-detail--selected {
+  color: #1C1C1E;
+  font-weight: 600;
+}
+
+.address-detail--placeholder {
+  color: #FF382E;
+  font-weight: 600;
+}
+
+/* ── 2. 服务项目卡片 ── */
+.project-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.address-text {
-  flex: 1;
-  font-size: 28rpx;
-  color: #333;
-  line-height: 1.6;
-  white-space: pre-line;
-}
-
-.address-arrow {
-  font-size: 36rpx;
-  color: #999;
-}
-
-.address-empty {
-  text-align: center;
-  color: #999;
-  font-size: 28rpx;
-  padding: 16rpx 0;
-}
-
-/* 日期选择 */
-.date-scroll {
-  margin: 0 -32rpx;
-  padding: 0 32rpx;
-}
-
-.date-grid {
-  display: inline-flex;
-  gap: 16rpx;
-  padding: 8rpx 0;
-}
-
-.date-item {
+.project-info-col {
   display: flex;
   flex-direction: column;
+  gap: 8rpx;
+}
+
+.project-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+  letter-spacing: -0.4rpx;
+}
+
+.project-meta-pill {
+  display: inline-flex;
   align-items: center;
-  padding: 20rpx 28rpx;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: #8E8E93;
+}
+
+/* Apple Stepper */
+.quantity-stepper {
+  display: flex;
+  align-items: center;
+  background: #F2F2F7;
+  border-radius: 40rpx;
+  padding: 4rpx;
+}
+
+.stepper-btn {
+  width: 60rpx;
+  height: 60rpx;
   background: #FFFFFF;
-  border-radius: 16rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
-  min-width: 100rpx;
-  border: 3rpx solid transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
 }
 
-.date-item--active {
-  background: #FF6B6B;
-  border-color: #FF6B6B;
+.stepper-btn--disabled {
+  color: #C7C7CC;
+  box-shadow: none;
+  background: transparent;
 }
 
-.date-item--active .date-weekday,
-.date-item--active .date-day {
+.stepper-val {
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+/* 技师信息行 */
+.tech-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tech-info-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.tech-avatar-mini {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+  background: #F2F2F7;
+  flex-shrink: 0;
+}
+
+.tech-avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.tech-avatar-ph {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
   color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.date-item--today {
-  border-color: #FF6B6B;
+.tech-names {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.tech-label {
+  font-size: 20rpx;
+  color: #8E8E93;
+}
+
+.tech-val {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.tech-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 22rpx;
+  color: #34C759;
+  background: rgba(52, 199, 89, 0.12);
+  padding: 6rpx 16rpx;
+  border-radius: 30rpx;
+  font-weight: 600;
+}
+
+/* ── 3. 服务时间选择 ── */
+.selected-time-tag {
+  font-size: 24rpx;
+  color: #FF382E;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.date-scroll {
+  width: 100%;
+  white-space: nowrap;
+  margin-bottom: 24rpx;
+}
+
+.date-list {
+  display: inline-flex;
+  gap: 14rpx;
+  padding: 4rpx 0;
+}
+
+.date-pill-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 116rpx;
+  height: 124rpx;
+  background: #F2F2F7;
+  border-radius: 24rpx;
+  flex-shrink: 0;
+  border: 1rpx solid transparent;
+  transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .date-weekday {
   font-size: 22rpx;
-  color: #666;
-  margin-bottom: 8rpx;
+  color: #8E8E93;
+  margin-bottom: 6rpx;
 }
 
 .date-day {
-  font-size: 32rpx;
+  font-size: 26rpx;
   font-weight: 700;
-  color: #333;
+  color: #1C1C1E;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
 }
 
-/* 时间选择 */
-.loading-slots {
+.date-pill-btn--active {
+  background: #1C1C1E;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.18);
+}
+
+.date-pill-btn--active .date-weekday,
+.date-pill-btn--active .date-day {
+  color: #FFFFFF;
+}
+
+/* 时间段网格 */
+.slots-loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16rpx;
-  padding: 48rpx 0;
-  color: #999;
+  padding: 40rpx 0;
+  gap: 12rpx;
 }
 
-.loading-spinner {
+.loading-spinner-sm {
   width: 32rpx;
   height: 32rpx;
-  border: 4rpx solid #E5E5E5;
-  border-top-color: #FF6B6B;
+  border: 4rpx solid #FF382E;
+  border-top-color: transparent;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-.time-grid {
+.loading-txt {
+  font-size: 24rpx;
+  color: #8E8E93;
+}
+
+.slots-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+}
+
+.slot-item {
+  height: 76rpx;
+  background: #F9F9FB;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 1rpx solid rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.slot-time {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1C1C1E;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.slot-item--selected {
+  background: #FFF1EE;
+  border-color: #FF382E;
+}
+
+.slot-item--selected .slot-time {
+  color: #FF382E;
+  font-weight: 800;
+}
+
+.slot-item--disabled {
+  background: #F2F2F7;
+  opacity: 0.45;
+}
+
+.slot-item--disabled .slot-time {
+  color: #8E8E93;
+}
+
+.slot-status {
+  position: absolute;
+  top: 4rpx;
+  right: 8rpx;
+  font-size: 16rpx;
+  color: #8E8E93;
+}
+
+.slot-status--selected {
+  color: #FF382E;
+  font-weight: 800;
+}
+
+.slot-status--free {
+  color: #34C759;
+}
+
+/* ── 4. 出行方式 ── */
+.travel-modes {
+  display: flex;
   gap: 16rpx;
 }
 
-.time-slot {
+.travel-mode-btn {
+  flex: 1;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  background: #F9F9FB;
+  border-radius: 24rpx;
+  padding: 24rpx 20rpx;
+  border: 1.5rpx solid transparent;
+  gap: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.02);
+}
+
+.travel-mode-btn--active {
+  background: #FFF1EE;
+  border-color: rgba(255, 56, 46, 0.35);
+  box-shadow: 0 4rpx 14rpx rgba(255, 56, 46, 0.12);
+}
+
+.travel-icon-wrap {
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20rpx 12rpx;
-  background: #FFFFFF;
-  border-radius: 12rpx;
-  border: 3rpx solid #E5E5E5;
-  position: relative;
-  min-height: 80rpx;
 }
 
-.time-slot--disabled {
-  background: #F5F5F5;
-  border-color: #E5E5E5;
-  opacity: 0.6;
+.travel-text-col {
+  display: flex;
+  flex-direction: column;
 }
 
-.time-slot--selected {
-  background: #FF6B6B;
-  border-color: #FF6B6B;
+.travel-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #1C1C1E;
 }
 
-.time-text {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #333;
+.travel-mode-btn--active .travel-title {
+  color: #FF382E;
 }
 
-.time-slot--disabled .time-text {
-  color: #999;
-}
-
-.time-slot--selected .time-text {
-  color: #FFFFFF;
-}
-
-.time-status {
-  font-size: 18rpx;
-  color: #999;
+.travel-desc {
+  font-size: 20rpx;
+  color: #8E8E93;
   margin-top: 4rpx;
 }
 
-.time-check {
-  position: absolute;
-  top: 8rpx;
-  right: 8rpx;
+/* ── 5. 选项组卡片 ── */
+.cell-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10rpx 0;
+}
+
+.cell-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1C1C1E;
+}
+
+.cell-right {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.coupon-val {
+  font-size: 26rpx;
+  color: #8E8E93;
+}
+
+.coupon-val--active {
+  color: #FF382E;
+  font-weight: 600;
+}
+
+.note-cell {
+  align-items: center;
+}
+
+.note-input {
+  flex: 1;
+  text-align: right;
+  font-size: 26rpx;
+  color: #1C1C1E;
+  padding-left: 20rpx;
+}
+
+.privacy-cell {
+  align-items: center;
+}
+
+.privacy-label-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-right: 20rpx;
+}
+
+.privacy-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.privacy-tag {
   font-size: 20rpx;
-  color: #FFFFFF;
-  background: #4CAF50;
-  width: 32rpx;
-  height: 32rpx;
+  color: #34C759;
+  background: rgba(52, 199, 89, 0.12);
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+}
+
+.privacy-hint {
+  font-size: 22rpx;
+  color: #8E8E93;
+  margin-top: 6rpx;
+}
+
+/* Apple Switch Toggle */
+.ios-switch {
+  width: 90rpx;
+  height: 52rpx;
+  background: #E5E5EA;
+  border-radius: 30rpx;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+  flex-shrink: 0;
+}
+
+.ios-switch-knob {
+  width: 44rpx;
+  height: 44rpx;
+  background: #FFFFFF;
+  border-radius: 50%;
+  position: absolute;
+  top: 4rpx;
+  left: 4rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.18);
+  transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.ios-switch--on {
+  background: #34C759;
+}
+
+.ios-switch--on .ios-switch-knob {
+  transform: translateX(38rpx);
+}
+
+/* ── 6. 费用明细卡片 ── */
+.price-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.calc-btn {
+  font-size: 24rpx;
+  color: #FF382E;
+  background: #FFF1EE;
+  border-radius: 30rpx;
+  padding: 8rpx 22rpx;
+  line-height: 1.4;
+  margin: 0;
+  border: none;
+  font-weight: 600;
+}
+
+.calc-btn--loading {
+  opacity: 0.6;
+}
+
+.preview-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.price-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 26rpx;
+}
+
+.price-label {
+  color: #636366;
+}
+
+.price-val {
+  color: #1C1C1E;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.discount-line .price-label,
+.discount-line .price-val {
+  color: #FF382E;
+}
+
+.total-line {
+  margin-top: 6rpx;
+}
+
+.total-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.total-val-box {
+  display: flex;
+  align-items: baseline;
+  color: #FF382E;
+}
+
+.total-sym {
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.total-val {
+  font-size: 44rpx;
+  font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.preview-empty {
+  padding: 24rpx 0 10rpx;
+  text-align: center;
+}
+
+.preview-empty-hint {
+  font-size: 24rpx;
+  color: #8E8E93;
+}
+
+/* 错误提示 */
+.error-banner {
+  background: #FFF1EE;
+  border: 1rpx solid rgba(255, 56, 46, 0.2);
+  border-radius: 20rpx;
+  padding: 18rpx 24rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.error-txt {
+  font-size: 24rpx;
+  color: #FF382E;
+}
+
+/* ── 7. 支付方式 ── */
+.payment-method-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx;
+}
+
+.pay-method-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.pay-icon-wrap {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pay-text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.pay-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.pay-sub {
+  font-size: 20rpx;
+  color: #8E8E93;
+  margin-top: 4rpx;
+}
+
+.pay-check-circle {
+  width: 44rpx;
+  height: 44rpx;
+  background: #34C759;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* 备注 */
-.note-card {
-  background: #FFFFFF;
-  border-radius: 16rpx;
-  padding: 16rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+.bottom-spacer {
+  height: 40rpx;
 }
 
-.note-input {
-  width: 100%;
-  min-height: 120rpx;
-  font-size: 28rpx;
-  color: #333;
-  padding: 16rpx;
+/* ── 8. 吸底磨砂毛玻璃结算栏 ── */
+.fixed-footer-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 124rpx;
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
+  border-top: 1rpx solid rgba(0, 0, 0, 0.06);
+  padding: 14rpx 32rpx calc(14rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
   box-sizing: border-box;
 }
 
-/* 操作按钮 */
-.action-section {
-  padding: 24rpx 32rpx;
+.footer-left {
+  display: flex;
+  align-items: baseline;
 }
 
-.preview-btn {
-  width: 100%;
-  height: 96rpx;
-  background: linear-gradient(135deg, #FF6B6B, #E84545);
-  color: #FFFFFF;
-  font-size: 32rpx;
+.footer-total-label {
+  font-size: 26rpx;
+  color: #8E8E93;
+}
+
+.footer-total-sym {
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #FF382E;
+}
+
+.footer-total-num {
+  font-size: 52rpx;
+  font-weight: 800;
+  color: #FF382E;
+  margin-right: 12rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.footer-saved-pill {
+  font-size: 20rpx;
+  color: #FF382E;
+  background: #FFF1EE;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
   font-weight: 600;
-  border-radius: 48rpx;
-  border: none;
-  box-shadow: 0 8rpx 24rpx rgba(255, 107, 107, 0.4);
 }
 
-.preview-btn:disabled {
-  background: #CCCCCC;
-  box-shadow: none;
-}
-
-.preview-btn--loading {
-  opacity: 0.8;
-}
-
-/* 错误提示 */
-.error-banner {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  margin: 0 32rpx 24rpx;
-  padding: 20rpx 24rpx;
-  background: #FFF5F5;
-  border: 2rpx solid #FFCDD2;
-  border-radius: 12rpx;
-}
-
-.error-icon {
-  font-size: 28rpx;
-}
-
-.error-text {
-  font-size: 26rpx;
-  color: #E74C3C;
-}
-
-/* 订单预览 */
-.preview-card {
-  margin: 0 32rpx;
-  background: #FFFFFF;
-  border-radius: 24rpx;
-  padding: 32rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
-}
-
-.preview-title {
-  font-size: 32rpx;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 24rpx;
-}
-
-.preview-info {
-  margin-bottom: 24rpx;
-}
-
-.preview-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12rpx 0;
-}
-
-.preview-label {
-  font-size: 26rpx;
-  color: #666;
-}
-
-.preview-value {
-  font-size: 26rpx;
-  color: #333;
-  font-weight: 500;
-}
-
-.preview-divider {
-  height: 2rpx;
-  background: #F0F0F0;
-  margin: 16rpx 0;
-}
-
-.preview-amount {
-  margin-bottom: 16rpx;
-}
-
-.amount-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 12rpx 0;
-  font-size: 26rpx;
-  color: #666;
-}
-
-.amount-discount {
-  color: #4CAF50;
-}
-
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16rpx 0;
-}
-
-.total-label {
+.footer-submit-btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  padding: 0 54rpx;
+  border-radius: 44rpx;
+  background: linear-gradient(135deg, #FF5A36 0%, #FF382E 100%);
+  color: #FFFFFF;
   font-size: 30rpx;
   font-weight: 700;
-  color: #333;
-}
-
-.total-value {
-  font-size: 40rpx;
-  font-weight: 800;
-  color: #FF6B6B;
-}
-
-.submit-section {
-  margin-top: 32rpx;
-}
-
-.submit-btn {
-  width: 100%;
-  height: 96rpx;
-  background: linear-gradient(135deg, #FF6B6B, #E84545);
-  color: #FFFFFF;
-  font-size: 32rpx;
-  font-weight: 600;
-  border-radius: 48rpx;
+  box-shadow: 0 6rpx 20rpx rgba(255, 56, 46, 0.35);
   border: none;
-  box-shadow: 0 8rpx 24rpx rgba(255, 107, 107, 0.4);
+  margin: 0;
 }
 
-.submit-btn:disabled {
-  background: #CCCCCC;
-  box-shadow: none;
+.btn--disabled {
+  opacity: 0.55;
 }
 
-.submit-btn--loading {
-  opacity: 0.8;
+.bubble-icon-img {
+  width: 28rpx;
+  height: 28rpx;
+}
+
+.meta-icon-img {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 6rpx;
+}
+
+.badge-check-img {
+  width: 22rpx;
+  height: 22rpx;
+  margin-right: 6rpx;
+}
+
+.chevron-arrow {
+  font-size: 32rpx;
+  color: #C7C7CC;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.travel-icon-img {
+  width: 44rpx;
+  height: 44rpx;
+}
+
+.error-icon-img {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
+}
+
+.pay-icon-img {
+  width: 44rpx;
+  height: 44rpx;
+}
+
+.pay-check-img {
+  width: 24rpx;
+  height: 24rpx;
 }

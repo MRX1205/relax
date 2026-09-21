@@ -2,6 +2,7 @@ import { getCachedAccount } from "../../services/auth";
 import { getTechnicians } from "../../services/catalog";
 import { request } from "../../services/http";
 import { getAccessToken } from "../../services/http";
+import { getTechAvatar, getTechPhotos } from "../../utils/assets";
 
 Page({
   data: {
@@ -33,10 +34,20 @@ Page({
     this.setData({ loading: true });
     try {
       const technicians = await getTechnicians();
-      this.setData({ technicians, loading: false });
+      const enriched = technicians.map(item => ({
+        ...item,
+        displayAvatar: getTechAvatar(item.serviceName, item.avatarUrl),
+        displayPhotos: getTechPhotos(item.photos),
+      }));
+      this.setData({ technicians: enriched, loading: false });
     } catch {
       this.setData({ loading: false });
     }
+  },
+
+  switchSort(e: WechatMiniprogram.TouchEvent) {
+    const sort = e.currentTarget.dataset.sort;
+    this.setData({ sortBy: sort });
   },
 
   goToTechDetail(e: WechatMiniprogram.TouchEvent) {

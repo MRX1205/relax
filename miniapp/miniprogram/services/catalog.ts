@@ -4,9 +4,9 @@ export function getHomeData(): Promise<HomeData> {
   return request<HomeData>({ url: "/api/v1/home" });
 }
 
-export function getProjects(categoryId = 0, page = 0): Promise<ProjectBrief[]> {
+export function getProjects(categoryId: string | number = 0, page = 0): Promise<ProjectBrief[]> {
   const params = new URLSearchParams();
-  if (categoryId) params.set("categoryId", String(categoryId));
+  if (categoryId && categoryId !== "0") params.set("categoryId", String(categoryId));
   params.set("page", String(page));
   return request<ProjectBrief[]>({ url: `/api/v1/projects?${params}` });
 }

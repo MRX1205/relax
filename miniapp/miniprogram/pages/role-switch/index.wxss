@@ -1,79 +1,174 @@
+/* ==========================================================================
+   Role Switch — Apple HIG Modern Luxury Aesthetics
+   ========================================================================== */
+
 .page {
-  padding: 40rpx 32rpx;
+  padding: calc(env(safe-area-inset-top) + 32rpx) 28rpx 60rpx;
   min-height: 100vh;
-  background: #f5f5f5;
+  background: #F5F5F7;
+  box-sizing: border-box;
+}
+
+.header-section {
+  margin-bottom: 36rpx;
+  padding: 0 4rpx;
 }
 
 .page-title {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 16rpx;
+  font-size: 46rpx;
+  font-weight: 800;
+  color: #1C1C1E;
+  letter-spacing: -0.8rpx;
+  margin-bottom: 8rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
 }
 
 .page-desc {
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 48rpx;
+  font-size: 26rpx;
+  color: #8E8E93;
 }
 
 .role-list {
   display: flex;
   flex-direction: column;
-  gap: 24rpx;
+  gap: 20rpx;
 }
 
 .role-card {
   display: flex;
   align-items: center;
-  padding: 32rpx;
-  background: #fff;
-  border-radius: 16rpx;
-  border: 2rpx solid transparent;
-  transition: all 0.2s;
+  padding: 32rpx 28rpx;
+  transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  border: 1.5rpx solid rgba(0, 0, 0, 0.04);
 }
 
 .role-card--active {
-  border-color: #ff6b6b;
-  background: #fff5f5;
+  border-color: #007AFF;
+  background: #FFFFFF;
+  box-shadow: 0 8rpx 24rpx rgba(0, 122, 255, 0.12);
 }
 
-.role-card__icon {
-  font-size: 48rpx;
+.role-icon-box {
+  width: 92rpx;
+  height: 92rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.role-icon-box--user {
+  background: rgba(0, 122, 255, 0.1);
+}
+
+.role-icon-box--tech {
+  background: rgba(52, 199, 89, 0.12);
+}
+
+.role-icon-box--admin {
+  background: rgba(255, 149, 0, 0.12);
 }
 
 .role-card__info {
   flex: 1;
 }
 
+.role-card__name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
 .role-card__name {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 8rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+  letter-spacing: -0.4rpx;
+}
+
+.role-card__badge {
+  font-size: 20rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+}
+
+.role-card__badge--user {
+  background: rgba(0, 122, 255, 0.1);
+  color: #007AFF;
+}
+
+.role-card__badge--tech {
+  background: rgba(52, 199, 89, 0.12);
+  color: #34C759;
+}
+
+.role-card__badge--admin {
+  background: rgba(255, 149, 0, 0.12);
+  color: #FF9500;
 }
 
 .role-card__desc {
   font-size: 24rpx;
-  color: #666;
+  color: #8E8E93;
+  line-height: 1.45;
 }
 
-.role-card__check {
-  width: 48rpx;
-  height: 48rpx;
-  background: #ff6b6b;
-  color: #fff;
-  border-radius: 50%;
+.role-card__action {
+  margin-left: 16rpx;
+}
+
+.role-action-txt {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #007AFF;
+}
+
+.role-action-txt--tech {
+  color: #34C759;
+}
+
+.role-action-txt--admin {
+  color: #FF9500;
+}
+
+/* ── 提示卡片 ── */
+.notice-card {
+  margin-top: 40rpx;
+  padding: 26rpx 28rpx;
+  background: rgba(0, 122, 255, 0.05);
+  border: 1rpx solid rgba(0, 122, 255, 0.12);
+  display: flex;
+  gap: 16rpx;
+}
+
+.notice-icon-box {
+  width: 36rpx;
+  height: 36rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28rpx;
+  margin-top: 4rpx;
+  flex-shrink: 0;
 }
 
-.tip {
-  margin-top: 48rpx;
-  text-align: center;
+.notice-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.notice-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #007AFF;
+}
+
+.notice-txt {
   font-size: 24rpx;
-  color: #999;
+  color: #48484A;
+  line-height: 1.55;
 }

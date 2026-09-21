@@ -14,13 +14,16 @@ import org.apache.ibatis.annotations.Update;
 public interface AuthMapper {
 
     String USER_COLUMNS = "id, wechat_open_id AS wechatOpenId, union_id AS unionId, nickname, "
-            + "avatar_url AS avatarUrl, phone, status, last_role AS lastRole, created_at AS createdAt";
+            + "avatar_url AS avatarUrl, phone, status, last_role AS lastRole, password_hash AS passwordHash, created_at AS createdAt";
 
     @Select("SELECT " + USER_COLUMNS + " FROM platform_user WHERE wechat_open_id = #{openId}")
     Optional<UserAccount> findUserByOpenId(@Param("openId") String openId);
 
     @Select("SELECT " + USER_COLUMNS + " FROM platform_user WHERE id = #{id}")
     Optional<UserAccount> findUserById(@Param("id") long id);
+
+    @Select("SELECT " + USER_COLUMNS + " FROM platform_user WHERE phone = #{phone}")
+    Optional<UserAccount> findUserByPhone(@Param("phone") String phone);
 
     @Insert("INSERT INTO platform_user (id, wechat_open_id, union_id) VALUES (#{id}, #{openId}, #{unionId})")
     void insertUser(@Param("id") long id, @Param("openId") String openId, @Param("unionId") String unionId);
@@ -31,7 +34,7 @@ public interface AuthMapper {
             @Param("digest") String digest, @Param("expiresAt") LocalDateTime expiresAt);
 
     @Select("SELECT u.id, u.wechat_open_id AS wechatOpenId, u.union_id AS unionId, u.nickname, "
-            + "u.avatar_url AS avatarUrl, u.phone, u.status, u.last_role AS lastRole, u.created_at AS createdAt "
+            + "u.avatar_url AS avatarUrl, u.phone, u.status, u.last_role AS lastRole, u.password_hash AS passwordHash, u.created_at AS createdAt "
             + "FROM auth_access_token t JOIN platform_user u ON u.id = t.user_id "
             + "WHERE t.token_digest = #{digest} AND t.revoked_at IS NULL AND t.expires_at > #{now}")
     Optional<UserAccount> findUserByValidToken(@Param("digest") String digest, @Param("now") LocalDateTime now);
@@ -73,6 +76,18 @@ public interface AuthMapper {
 
     @Update("UPDATE platform_user SET last_role = #{role}, updated_at = CURRENT_TIMESTAMP WHERE id = #{userId}")
     void updateLastRole(@Param("userId") long userId, @Param("role") String role);
+
+    @Update("UPDATE platform_user SET password_hash = #{passwordHash}, updated_at = CURRENT_TIMESTAMP WHERE id = #{userId}")
+    void updatePassword(@Param("userId") long userId, @Param("passwordHash") String passwordHash);
+
+    @Update("UPDATE platform_user SET wechat_open_id = #{openId}, union_id = #{unionId}, "
+            + "updated_at = CURRENT_TIMESTAMP WHERE id = #{userId}")
+    void updateWechatOpenId(@Param("userId") long userId, @Param("openId") String openId,
+            @Param("unionId") String unionId);
+
+    @Update("UPDATE platform_user SET wechat_open_id = NULL, union_id = NULL, "
+            + "updated_at = CURRENT_TIMESTAMP WHERE id = #{userId}")
+    void clearOpenId(@Param("userId") long userId);
 
     @Update("UPDATE auth_access_token SET revoked_at = CURRENT_TIMESTAMP "
             + "WHERE token_digest = #{digest} AND revoked_at IS NULL")

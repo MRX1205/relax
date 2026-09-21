@@ -6,6 +6,7 @@ interface Project {
   id: string; categoryId: string; categoryName: string; name: string;
   durationMinutes: number; basePrice: number; description: string;
   notice: string; coverFileId: string | null; status: string; sort: number;
+  creatorType?: string; creatorId?: number;
 }
 
 Page({
@@ -15,6 +16,7 @@ Page({
     categories: [] as Category[],
     showForm: false,
     editingId: "",
+    selectedCategoryName: "点击选择分类",
     form: {
       categoryId: "", name: "", durationMinutes: "60", basePrice: "",
       description: "", notice: "", sort: "0",
@@ -24,6 +26,10 @@ Page({
   },
 
   async onLoad() {
+    await this.loadData();
+  },
+
+  async loadData() {
     try {
       const [projects, categories] = await Promise.all([
         request<Project[]>({ url: "/api/v1/admin/projects" }),
@@ -36,6 +42,7 @@ Page({
   handleAdd() {
     this.setData({
       showForm: true, editingId: "", coverPath: "",
+      selectedCategoryName: "点击选择分类",
       form: { categoryId: "", name: "", durationMinutes: "60", basePrice: "", description: "", notice: "", sort: "0" },
     });
   },
@@ -44,6 +51,7 @@ Page({
     const p = e.currentTarget.dataset.item as Project;
     this.setData({
       showForm: true, editingId: p.id, coverPath: "",
+      selectedCategoryName: p.categoryName || "已选分类",
       form: {
         categoryId: p.categoryId, name: p.name, durationMinutes: String(p.durationMinutes),
         basePrice: String(p.basePrice), description: p.description, notice: p.notice, sort: String(p.sort),
@@ -61,7 +69,7 @@ Page({
 
   handleCategoryChange(e: WechatMiniprogram.PickerChange) {
     const cat = this.data.categories[parseInt(e.detail.value as string)];
-    if (cat) this.setData({ "form.categoryId": cat.id });
+    if (cat) this.setData({ "form.categoryId": cat.id, selectedCategoryName: cat.name });
   },
 
   async chooseCover() {
@@ -81,7 +89,7 @@ Page({
     try {
       let coverFileId: string | undefined;
       if (coverPath) {
-        const file = await uploadPrivateFile(coverPath, "TECHNICIAN_PHOTO");
+        const file = await uploadPrivateFile(coverPath, "PROJECT_COVER");
         coverFileId = file.id;
       }
       const payload = {
@@ -97,7 +105,7 @@ Page({
         await request({ url: "/api/v1/admin/projects", method: "POST", data: payload });
       }
       this.setData({ showForm: false });
-      this.onLoad();
+      this.loadData();
     } catch (err) {
       wx.showToast({ title: "保存失败", icon: "none" });
     } finally {

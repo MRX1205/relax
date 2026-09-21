@@ -2,35 +2,91 @@
   <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
 
   <block wx:elif="{{!profile && !hasApplication}}">
-    <view class="page-title">技师端</view>
-    <view class="page-subtitle">您还不是技师，提交入驻申请后即可开始接单。</view>
-    <view class="apply-btn"><view class="apply-action" bindtap="goToAccess">申请入驻</view></view>
+    <view class="empty-role-card ios-card">
+      <view class="empty-icon-wrap">
+        <image src="/assets/icons/tech.png" style="width: 80rpx; height: 80rpx;" mode="aspectFit" />
+      </view>
+      <view class="empty-title">欢迎加入东莞到家理疗团队</view>
+      <view class="empty-subtitle">您当前尚未入驻，提交实名与技能申请，审核通过后即可接单创收。</view>
+      <view class="apply-action ios-touch-active" bindtap="goToAccess">立即申请入驻</view>
+    </view>
   </block>
 
   <block wx:elif="{{hasApplication && !profile}}">
-    <view class="page-title">入驻申请</view>
-    <view class="surface status-card">
-      <view class="status-text">审核状态：{{applicationStatus === 'PENDING' ? '待审核' : applicationStatus === 'APPROVED' ? '已通过' : '已拒绝'}}</view>
-      <view wx:if="{{applicationStatus === 'PENDING'}}" class="status-hint">请耐心等待管理员审核</view>
+    <view class="empty-role-card ios-card">
+      <view class="status-icon-badge">
+        <image src="/assets/icons/clock.png" style="width: 80rpx; height: 80rpx;" mode="aspectFit" />
+      </view>
+      <view class="empty-title">入驻资质审核中</view>
+      <view class="empty-subtitle">您的入驻申请已提交，管理员通常会在 24 小时内完成审核，请耐心等待。</view>
     </view>
   </block>
 
   <block wx:elif="{{profile}}">
-    <view class="profile-header surface">
-      <view class="profile-name">{{profile.serviceName}}</view>
-      <view class="profile-meta">{{profile.realName}} · {{profile.phone}}</view>
-      <view class="online-toggle {{profile.onlineStatus === 'ONLINE' ? 'online-on' : 'online-off'}}" bindtap="toggleOnline">
-        {{profile.onlineStatus === 'ONLINE' ? '● 在线接单中' : '○ 已离线'}}
+    <!-- 技师头部信息卡片 -->
+    <view class="ios-card profile-header">
+      <view class="profile-info-left">
+        <view class="profile-avatar">{{profile.serviceName[0]}}</view>
+        <view class="profile-text-col">
+          <view class="profile-name-row">
+            <text class="profile-name">{{profile.serviceName}}</text>
+            <text class="profile-tag">认证技师</text>
+          </view>
+          <text class="profile-meta">{{profile.realName}} · {{profile.phone}}</text>
+        </view>
+      </view>
+
+      <view class="online-toggle {{profile.onlineStatus === 'ONLINE' ? 'online-on' : 'online-off'}} ios-touch-active" bindtap="toggleOnline">
+        <view class="toggle-dot"></view>
+        <text>{{profile.onlineStatus === 'ONLINE' ? '接单中' : '已离线'}}</text>
       </view>
     </view>
-    <view class="menu-list">
-      <view wx:for="{{menus}}" wx:key="code" class="surface menu-item" data-url="{{item.url}}" bindtap="handleMenuTap">
-        <view class="menu-icon menu-icon--{{item.code}}">{{item.name[0]}}</view>
+
+    <!-- 微信快捷登录绑定管理卡片 -->
+    <view class="ios-card wechat-binding-card">
+      <view class="wb-left">
+        <view class="wb-icon-box">
+          <image class="wb-icon-img" src="/assets/icons/wechat.png" mode="aspectFit" />
+        </view>
+        <view class="wb-info">
+          <view class="wb-title-row">
+            <text class="wb-title">微信号安全绑定</text>
+            <text class="wb-tag {{account.wechatBound ? 'wb-tag--bound' : 'wb-tag--unbound'}}">
+              {{account.wechatBound ? '已绑定' : '未绑定'}}
+            </text>
+          </view>
+          <text class="wb-desc">{{account.wechatBound ? '已开启技师端微信一键快捷登入' : '绑定微信后登录页可直接一键秒级登入'}}</text>
+        </view>
+      </view>
+      <view class="wb-btn {{account.wechatBound ? 'wb-btn--bound' : 'wb-btn--action'}} ios-touch-active" bindtap="handleBindWechat">
+        <text>{{account.wechatBound ? '更换绑定' : '一键绑定'}}</text>
+      </view>
+    </view>
+
+    <!-- 功能管理入口 (Apple Inset Grouped TableView) -->
+    <view class="ios-card menu-group">
+      <view wx:for="{{menus}}" wx:key="code" class="menu-item ios-touch-active" data-url="{{item.url}}" bindtap="handleMenuTap">
+        <view class="menu-icon-box menu-icon--{{item.code}}">
+          <image wx:if="{{item.code === 'projects'}}" class="menu-icon-img" src="/assets/tabbar/projects-active.png" mode="aspectFit" />
+          <image wx:elif="{{item.code === 'profile'}}" class="menu-icon-img" src="/assets/icons/camera.png" mode="aspectFit" />
+          <image wx:elif="{{item.code === 'orders'}}" class="menu-icon-img" src="/assets/icons/order.png" mode="aspectFit" />
+          <image wx:elif="{{item.code === 'income'}}" class="menu-icon-img" src="/assets/icons/invite.png" mode="aspectFit" />
+          <image wx:elif="{{item.code === 'schedules'}}" class="menu-icon-img" src="/assets/icons/calendar.png" mode="aspectFit" />
+          <image wx:else class="menu-icon-img" src="/assets/icons/pin.png" mode="aspectFit" />
+        </view>
         <view class="menu-content">
           <view class="menu-name">{{item.name}}</view>
           <view class="menu-desc">{{item.desc}}</view>
         </view>
         <view class="menu-arrow">›</view>
+      </view>
+    </view>
+
+    <!-- 返回顾客端按钮 -->
+    <view class="return-wrap">
+      <view class="return-btn ios-touch-active" bindtap="returnToUserMode">
+        <text style="font-size: 32rpx; line-height: 1; color: #636366; margin-right: 4rpx;">‹</text>
+        <text>返回顾客端体验</text>
       </view>
     </view>
   </block>

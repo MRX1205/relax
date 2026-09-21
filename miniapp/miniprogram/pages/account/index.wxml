@@ -1,75 +1,246 @@
-<view class="page">
-  <view class="profile-card surface">
-    <view class="avatar-wrap" bindtap="handleChangeAvatar">
-      <image
-        wx:if="{{account.avatarUrl}}"
-        class="avatar"
-        src="{{account.avatarUrl}}"
-        mode="aspectFill"
-      />
-      <view wx:else class="avatar avatar--placeholder">
-        <text class="avatar-text">{{account.nickname[0] || '?'}}</text>
+<view class="ios-account-page">
+
+  <!-- ════ 1. 个人资料头部卡片 (Apple Inset Profile Card) ════ -->
+  <view class="profile-hero-card ios-card">
+    <view class="profile-main-row">
+      <!-- 头像 -->
+      <view class="avatar-container ios-touch-active" bindtap="handleChangeAvatar">
+        <image
+          wx:if="{{account.avatarUrl}}"
+          class="user-avatar"
+          src="{{account.avatarUrl}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="user-avatar user-avatar--placeholder">
+          <text class="avatar-letter">{{account.nickname ? account.nickname[0] : '用'}}</text>
+        </view>
+        <view class="avatar-badge">
+          <image class="badge-cam" src="/assets/icons/camera.png" mode="aspectFit" />
+        </view>
       </view>
-      <view class="avatar-edit">更换</view>
-    </view>
-    <view class="profile-info">
-      <view wx:if="{{editing}}" class="nickname-edit">
-        <input class="nickname-input" value="{{editNickname}}" bindinput="handleNicknameInput" maxlength="64" />
-        <view class="nickname-save" bindtap="handleSaveNickname">保存</view>
+
+      <!-- 用户名与电话 -->
+      <view class="profile-text-col">
+        <view wx:if="{{editing}}" class="edit-nickname-box">
+          <input
+            class="edit-input"
+            value="{{editNickname}}"
+            bindinput="handleNicknameInput"
+            maxlength="32"
+            placeholder="输入昵称"
+          />
+          <view class="save-chip ios-touch-active" bindtap="handleSaveNickname">保存</view>
+        </view>
+        <view wx:else class="name-display-row ios-touch-active" bindtap="handleEditNickname">
+          <text class="user-nickname">{{account.nickname || '未设置昵称'}}</text>
+          <image class="edit-pencil-svg" src="/assets/icons/edit.png" mode="aspectFit" />
+        </view>
+
+        <view class="phone-chip-row" bindtap="bindPhone">
+          <text wx:if="{{account.phone}}" class="phone-number">📱 {{account.phone}}</text>
+          <text wx:else class="phone-link">点击绑定手机号 ›</text>
+        </view>
+
+        <!-- 身份徽章 -->
+        <view class="role-pill-tags" wx:if="{{account.roles.length > 0}}">
+          <text class="role-pill pill-user">顾客</text>
+          <text class="role-pill pill-tech" wx:if="{{isTechnician}}">认证技师</text>
+          <text class="role-pill pill-admin" wx:if="{{isAdmin}}">平台管理</text>
+        </view>
       </view>
-      <view wx:else class="nickname-row" bindtap="handleEditNickname">
-        <text class="nickname">{{account.nickname || '未设置昵称'}}</text>
-        <text class="edit-icon">✏️</text>
-      </view>
-      <view class="phone-text">{{account.phone || '未绑定手机号'}}</view>
-      <view class="role-badge">{{account.lastRole}}</view>
     </view>
   </view>
 
-  <view class="menu-group surface">
-    <view class="menu-item" bindtap="goToRoleSwitch">
-      <text class="menu-icon">🔄</text>
-      <text class="menu-label">切换身份</text>
-      <text class="menu-arrow">›</text>
+  <!-- ════ 2. 统计资产卡片 (Apple 4-Col Stat Bar) ════ -->
+  <view class="stats-bar-card ios-card">
+    <view class="stat-cell ios-touch-active" bindtap="goToInvite">
+      <text class="stat-figure figure-red">¥90</text>
+      <text class="stat-caption">奖金余额</text>
     </view>
-    <view class="menu-item" bindtap="goToNotifications">
-      <text class="menu-icon">🔔</text>
-      <text class="menu-label">消息通知</text>
-      <text class="menu-arrow">›</text>
+    <view class="stat-vert-line"></view>
+    <view class="stat-cell ios-touch-active" bindtap="goToFollows">
+      <text class="stat-figure">3</text>
+      <text class="stat-caption">已关注</text>
     </view>
-    <view class="menu-item" bindtap="goToCoupons">
-      <text class="menu-icon">🎫</text>
-      <text class="menu-label">我的优惠券</text>
-      <text class="menu-arrow">›</text>
+    <view class="stat-vert-line"></view>
+    <view class="stat-cell ios-touch-active" bindtap="goToFavorites">
+      <text class="stat-figure">5</text>
+      <text class="stat-caption">已收藏</text>
     </view>
-    <view class="menu-item" bindtap="goToAddresses">
-      <text class="menu-icon">📍</text>
-      <text class="menu-label">地址管理</text>
-      <text class="menu-arrow">›</text>
-    </view>
-  </view>
-
-  <view class="menu-group surface">
-    <view class="menu-item" data-type="USER_AGREEMENT" bindtap="goToAgreement">
-      <text class="menu-icon">📄</text>
-      <text class="menu-label">用户协议</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" data-type="PRIVACY_POLICY" bindtap="goToAgreement">
-      <text class="menu-icon">🔒</text>
-      <text class="menu-label">隐私政策</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" data-type="TRANSACTION_RULES" bindtap="goToAgreement">
-      <text class="menu-icon">📋</text>
-      <text class="menu-label">交易规则</text>
-      <text class="menu-arrow">›</text>
+    <view class="stat-vert-line"></view>
+    <view class="stat-cell ios-touch-active" bindtap="goToCoupons">
+      <text class="stat-figure figure-red">2张</text>
+      <text class="stat-caption">优惠券</text>
     </view>
   </view>
 
-  <view class="logout-wrap">
-    <ui-button label="退出登录" variant="secondary" bind:action="handleLogout" />
+  <!-- ════ 3. Apple Wallet 风格 VIP 黑金尊享卡 ════ -->
+  <view class="vip-card-banner ios-touch-active" bindtap="goToVip">
+    <view class="vip-left-wrap">
+      <view class="vip-crown-icon">👑</view>
+      <view class="vip-text-wrap">
+        <text class="vip-head">东莞到家 VIP 尊享会员</text>
+        <text class="vip-subline">专享全场9折 · 免交通费 · 优先调度履约</text>
+      </view>
+    </view>
+    <view class="vip-cta-pill">查看特权 ›</view>
   </view>
+
+  <!-- ════ 4. 技师专区直通（已认证技师） ════ -->
+  <view class="portal-card portal-tech ios-card ios-touch-active" wx:if="{{isTechnician}}" bindtap="goToTechWorkbench">
+    <view class="portal-left">
+      <view class="portal-icon-bg icon-bg-green">💆</view>
+      <view class="portal-text-box">
+        <text class="portal-title">技师接单工作台</text>
+        <text class="portal-desc">自建项目 · 接单履约 · 个人主页与相册</text>
+      </view>
+    </view>
+    <view class="portal-btn btn-green">进入工作台 ›</view>
+  </view>
+
+  <!-- ════ 5. 管理员专区直通（平台管理员） ════ -->
+  <view class="portal-card portal-admin ios-card ios-touch-active" wx:if="{{isAdmin}}" bindtap="openAdminAuth">
+    <view class="portal-left">
+      <view class="portal-icon-bg icon-bg-gold">🛡️</view>
+      <view class="portal-text-box">
+        <text class="portal-title">平台管理总控制台</text>
+        <text class="portal-desc">订单调度 · 技师入驻审批 · 平台财务结算</text>
+      </view>
+    </view>
+    <view class="portal-btn btn-gold">安全验证进入 ›</view>
+  </view>
+
+  <!-- ════ 6. iOS Inset Grouped TableView: 我的服务 ════ -->
+  <view class="ios-grouped-list">
+    <!-- 订单 -->
+    <view class="ios-cell ios-touch-active" bindtap="goToOrders">
+      <view class="cell-icon-wrap icon-blue">
+        <image class="cell-svg" src="/assets/icons/order.png" mode="aspectFit" />
+      </view>
+      <text class="cell-label">我的服务订单</text>
+      <text class="cell-chevron">›</text>
+      <view class="ios-cell-divider"></view>
+    </view>
+
+    <!-- 地址 -->
+    <view class="ios-cell ios-touch-active" bindtap="goToAddresses">
+      <view class="cell-icon-wrap icon-green">
+        <image class="cell-svg" src="/assets/icons/address.png" mode="aspectFit" />
+      </view>
+      <text class="cell-label">服务地址管理</text>
+      <text class="cell-chevron">›</text>
+      <view class="ios-cell-divider"></view>
+    </view>
+
+    <!-- 优惠券 -->
+    <view class="ios-cell ios-touch-active" bindtap="goToCoupons">
+      <view class="cell-icon-wrap icon-orange">
+        <image class="cell-svg" src="/assets/icons/coupon.png" mode="aspectFit" />
+      </view>
+      <text class="cell-label">优惠券中心</text>
+      <text class="cell-chevron">›</text>
+      <view class="ios-cell-divider"></view>
+    </view>
+
+    <!-- 邀请 -->
+    <view class="ios-cell ios-touch-active" bindtap="goToInvite">
+      <view class="cell-icon-wrap icon-red">
+        <image class="cell-svg" src="/assets/icons/invite.png" mode="aspectFit" />
+      </view>
+      <text class="cell-label">邀请好友赚现金</text>
+      <text class="cell-badge">各奖¥30</text>
+      <text class="cell-chevron">›</text>
+      <view class="ios-cell-divider"></view>
+    </view>
+
+    <!-- 消息 -->
+    <view class="ios-cell ios-touch-active" bindtap="goToNotifications">
+      <view class="cell-icon-wrap icon-purple">
+        <image class="cell-svg" src="/assets/icons/notice.png" mode="aspectFit" />
+      </view>
+      <text class="cell-label">消息通知</text>
+      <text class="cell-chevron">›</text>
+      <view class="ios-cell-divider"></view>
+    </view>
+
+    <!-- 身份切换与专区 -->
+    <view class="ios-cell ios-touch-active" bindtap="goToRoleSwitch">
+      <view class="cell-icon-wrap icon-dark">
+        <image class="cell-svg" src="/assets/icons/role.png" mode="aspectFit" />
+      </view>
+      <text class="cell-label">身份专区 · 切换通道</text>
+      <text class="cell-tag" wx:if="{{isTechnician || isAdmin}}">已认证</text>
+      <text class="cell-chevron">›</text>
+      <view class="ios-cell-divider" wx:if="{{!isTechnician}}"></view>
+    </view>
+
+    <!-- 申请入驻（未入驻顾客可见） -->
+    <view class="ios-cell ios-touch-active" wx:if="{{!isTechnician}}" bindtap="goToTechAccess">
+      <view class="cell-icon-wrap icon-teal">
+        <image class="cell-svg" src="/assets/icons/join.png" mode="aspectFit" />
+      </view>
+      <text class="cell-label">成为技师 · 申请入驻</text>
+      <text class="cell-chevron">›</text>
+    </view>
+  </view>
+
+  <!-- ════ 7. iOS Inset Grouped TableView: 规则与协议 ════ -->
+  <view class="ios-grouped-list">
+    <view class="ios-cell ios-touch-active" data-type="USER_AGREEMENT" bindtap="goToAgreement">
+      <text class="cell-label-plain">用户服务协议</text>
+      <text class="cell-chevron">›</text>
+      <view class="ios-cell-divider"></view>
+    </view>
+    <view class="ios-cell ios-touch-active" data-type="PRIVACY_POLICY" bindtap="goToAgreement">
+      <text class="cell-label-plain">隐私保护政策</text>
+      <text class="cell-chevron">›</text>
+      <view class="ios-cell-divider"></view>
+    </view>
+    <view class="ios-cell ios-touch-active" data-type="TRANSACTION_RULES" bindtap="goToAgreement">
+      <text class="cell-label-plain">平台交易规则</text>
+      <text class="cell-chevron">›</text>
+    </view>
+  </view>
+
+  <!-- ════ 8. 退出登录按钮 ════ -->
+  <view class="logout-container">
+    <view class="logout-btn ios-touch-active" bindtap="handleLogout">
+      <text class="logout-text">退出登录</text>
+    </view>
+  </view>
+
+  <view class="safe-bottom-bar"></view>
+
+  <!-- 管理员 2FA PIN 弹窗 -->
+  <view wx:if="{{adminModalVisible}}" class="admin-auth-mask" bindtap="closeAdminAuth">
+    <view class="admin-auth-dialog ios-blur" catchtap="">
+      <view class="dialog-head">
+        <text class="d-icon">🔐</text>
+        <text class="d-title">管理员安全验证</text>
+      </view>
+      <view class="d-subtitle">
+        为确保平台核心数据安全，进入管理控制台需验证您的管理员口令 (初始口令：888888)
+      </view>
+
+      <view class="pin-input-wrap">
+        <input
+          class="pin-input"
+          password
+          type="number"
+          maxlength="10"
+          value="{{adminPinInput}}"
+          placeholder="请输入管理员 PIN 码"
+          bindinput="handlePinInput"
+        />
+      </view>
+
+      <view class="d-actions">
+        <button class="d-btn btn-cancel" bindtap="closeAdminAuth">取消</button>
+        <button class="d-btn btn-confirm" loading="{{verifyingPin}}" bindtap="confirmAdminPin">验证进入</button>
+      </view>
+    </view>
+  </view>
+
 </view>
 
 <custom-tabbar />

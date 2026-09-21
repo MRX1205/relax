@@ -1,4 +1,4 @@
-<view class="tabbar">
+<view class="ios-tabbar">
   <view
     wx:for="{{tabs}}"
     wx:key="key"
@@ -7,10 +7,14 @@
     data-key="{{item.key}}"
     bindtap="handleTap"
   >
-    <view class="tabbar-icon-wrapper">
-      <view class="tabbar-icon">{{item.icon}}</view>
-      <view wx:if="{{item.key === activeKey}}" class="tabbar-dot"></view>
+    <view class="tabbar-icon-wrap">
+      <image
+        class="tabbar-icon"
+        src="{{item.key === activeKey ? item.iconActive : item.iconNormal}}"
+        mode="aspectFit"
+      />
+      <view wx:if="{{item.key === activeKey}}" class="tabbar-indicator"></view>
     </view>
-    <view class="tabbar-text">{{item.text}}</view>
+    <text class="tabbar-text">{{item.text}}</text>
   </view>
 </view>

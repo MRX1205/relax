@@ -1,37 +1,84 @@
-import { getOrderDetail, cancelOrder, requestRefund } from "../../services/order";
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING_PAYMENT: "待支付", PAID: "已支付", ACCEPTED: "已接单", DEPARTED: "已出发",
-  ARRIVED: "已到达", IN_SERVICE: "服务中", COMPLETED: "已完成",
-  CANCELLED: "已取消", EXPIRED: "已过期", REJECTED: "已拒单", REASSIGNED: "已改派",
-};
+import { getOrderDetail, cancelOrder } from "../../services/order";
+import { formatOrderStatus, OrderStatusInfo } from "../../../utils/order-status";
 
 Page({
   data: {
     loading: true,
     detail: null as OrderDetailView | null,
+    statusInfo: null as OrderStatusInfo | null,
+    formattedLogs: [] as Array<{ text: string; time: string; reason?: string }>,
     canCancel: false,
     canReview: false,
     canRefund: false,
     canAfterSale: false,
   },
 
-  async onLoad(query: Record<string, string>) {
+  onLoad(query: Record<string, string>) {
+    const orderNo = query.orderNo || "";
+    this.loadDetail(orderNo);
+  },
+
+  async loadDetail(orderNo: string) {
+    if (!orderNo) return;
+    this.setData({ loading: true });
     try {
-      const detail = await getOrderDetail(query.orderNo!);
+      const detail = await getOrderDetail(orderNo);
       const s = detail.order.status;
+      const statusInfo = formatOrderStatus(s);
+
+      const formattedLogs = (detail.statusLogs || []).map(log => ({
+        text: formatOrderStatus(log.toStatus).text,
+        time: log.createdAt,
+        reason: log.reason || undefined,
+      }));
+
       this.setData({
         detail,
+        statusInfo,
+        formattedLogs,
         canCancel: s === "PENDING_PAYMENT",
         canReview: s === "COMPLETED",
         canRefund: s === "PAID" || s === "COMPLETED",
         canAfterSale: s === "COMPLETED" || s === "IN_SERVICE",
         loading: false,
       });
-    } catch { this.setData({ loading: false }); }
+    } catch {
+      this.setData({ loading: false });
+    }
   },
 
-  statusLabel(status: string): string { return STATUS_LABELS[status] || status; },
+  openLocationMap() {
+    const addr = this.data.detail?.addressSnapshot;
+    if (!addr || !addr.latitude || !addr.longitude) {
+      wx.showToast({ title: "该地址暂无精确经纬度", icon: "none" });
+      return;
+    }
+    wx.openLocation({
+      latitude: Number(addr.latitude),
+      longitude: Number(addr.longitude),
+      name: (addr.contactName || "服务") + "的预约地址",
+      address: `${addr.regionName || ""} ${addr.detail || ""}`.trim(),
+      scale: 16,
+    });
+  },
+
+  callTechnician() {
+    const phone = this.data.detail?.technicianPhone;
+    if (!phone) {
+      wx.showToast({ title: "暂无技师电话", icon: "none" });
+      return;
+    }
+    wx.makePhoneCall({ phoneNumber: phone });
+  },
+
+  copyOrderNo() {
+    const orderNo = this.data.detail?.order?.orderNo;
+    if (!orderNo) return;
+    wx.setClipboardData({
+      data: orderNo,
+      success: () => wx.showToast({ title: "单号已复制", icon: "success" }),
+    });
+  },
 
   async handleCancel() {
     const confirmed = await new Promise<boolean>(r => {
@@ -41,7 +88,7 @@ Page({
     try {
       await cancelOrder(this.data.detail.order.orderNo);
       wx.showToast({ title: "已取消", icon: "success" });
-      this.onLoad({ orderNo: this.data.detail.order.orderNo });
+      this.loadDetail(this.data.detail.order.orderNo);
     } catch (err) { wx.showToast({ title: err instanceof Error ? err.message : "取消失败", icon: "none" }); }
   },
 
@@ -53,20 +100,9 @@ Page({
     wx.navigateTo({ url: `/packageUser/pages/after-sale/index?orderNo=${this.data.detail?.order.orderNo}` });
   },
 
-  async handleRefund() {
-    if (!this.data.detail?.amount) return;
-    const confirmed = await new Promise<boolean>(r => {
-      wx.showModal({
-        title: "申请退款",
-        content: `确认申请退款 ¥${this.data.detail!.amount!.payableAmount}？`,
-        success: res => r(res.confirm),
-      });
-    });
-    if (!confirmed) return;
-    try {
-      await requestRefund(this.data.detail.order.orderNo, this.data.detail.amount.payableAmount, "用户申请退款");
-      wx.showToast({ title: "退款申请已提交", icon: "success" });
-      this.onLoad({ orderNo: this.data.detail.order.orderNo });
-    } catch (err) { wx.showToast({ title: err instanceof Error ? err.message : "退款失败", icon: "none" }); }
+  handleRefund() {
+    const orderNo = this.data.detail?.order.orderNo;
+    if (!orderNo) return;
+    wx.navigateTo({ url: `/packageUser/pages/refund/index?orderNo=${orderNo}` });
   },
 });

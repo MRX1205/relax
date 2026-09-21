@@ -51,6 +51,14 @@ export function request<T>({ url, method = "GET", data }: RequestOptions): Promi
 
         if (response.statusCode === 401) {
           clearAccessToken();
+          const pages = getCurrentPages();
+          const curRoute = pages[pages.length - 1]?.route || "";
+          if (!curRoute.includes("pages/login/index")) {
+            wx.showToast({ title: "登录已过期，请重新登录", icon: "none" });
+            setTimeout(() => {
+              wx.reLaunch({ url: "/pages/login/index" });
+            }, 800);
+          }
         }
         reject(new ApiError(
           envelope.code || "REQUEST_FAILED",
@@ -59,7 +67,8 @@ export function request<T>({ url, method = "GET", data }: RequestOptions): Promi
         ));
       },
       fail(error) {
-        reject(new Error(error.errMsg || "网络连接失败"));
+        console.error(`[HTTP] 请求失败: ${environment.apiBaseUrl}${url}`, error);
+        reject(new Error(error.errMsg || "网络连接失败，请检查服务器连接"));
       },
     });
   });

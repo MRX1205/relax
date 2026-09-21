@@ -1,9 +1,10 @@
 import { getProjectDetail } from "../../../services/catalog";
+import { getProjectCover, getTechAvatar } from "../../../utils/assets";
 
 Page({
   data: {
     loading: true,
-    detail: null as ProjectDetail | null,
+    detail: null as any,
     projectId: "",
   },
 
@@ -12,7 +13,30 @@ Page({
     try {
       const detail = await getProjectDetail(query.id!);
       wx.setNavigationBarTitle({ title: detail.project.name });
-      this.setData({ detail, loading: false });
+
+      const enrichedProject = {
+        ...detail.project,
+        displayCover: getProjectCover(
+          detail.project.name,
+          detail.project.categoryName,
+          detail.project.coverFileId,
+          (detail.project as any).coverUrl
+        ),
+      };
+
+      const enrichedTechnicians = (detail.technicians || []).map(t => ({
+        ...t,
+        displayAvatar: getTechAvatar(t.serviceName, t.avatarUrl),
+      }));
+
+      this.setData({
+        detail: {
+          ...detail,
+          project: enrichedProject,
+          technicians: enrichedTechnicians,
+        },
+        loading: false,
+      });
     } catch {
       this.setData({ loading: false });
     }

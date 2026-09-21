@@ -10,7 +10,7 @@
       <view class="field">
         <view class="field__label">分类</view>
         <picker range="{{categories}}" range-key="name" bindchange="handleCategoryChange">
-          <view class="picker-val">{{form.categoryId ? categories[0].name : '点击选择'}}</view>
+          <view class="picker-val">{{selectedCategoryName}}</view>
         </picker>
       </view>
       <ui-field label="项目名称" value="{{form.name}}" placeholder="如：全身推拿60分钟" bindinput="handleFormInput('name')" />
@@ -35,7 +35,12 @@
     <view class="proj-list">
       <view wx:for="{{projects}}" wx:key="id" class="surface proj-item">
         <view class="proj-main" data-item="{{item}}" bindtap="handleEdit">
-          <view class="proj-name">{{item.name}}</view>
+          <view class="proj-name-row">
+            <text class="proj-type-tag {{item.creatorType === 'TECHNICIAN' ? 'tag-custom' : 'tag-platform'}}">
+              {{item.creatorType === 'TECHNICIAN' ? '技师自建' : '平台标准'}}
+            </text>
+            <text class="proj-name">{{item.name}}</text>
+          </view>
           <view class="proj-meta">{{item.categoryName}} · {{item.durationMinutes}}分钟 · ¥{{item.basePrice}}</view>
         </view>
         <view class="proj-status {{item.status === 'ON_SHELF' ? 'status-on' : 'status-off'}}" data-item="{{item}}" bindtap="handleToggleStatus">

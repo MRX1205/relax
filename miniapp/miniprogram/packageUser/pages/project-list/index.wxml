@@ -1,42 +1,54 @@
 <view class="page">
-  <scroll-view class="cat-bar" scroll-x>
-    <view class="cat-chips">
-      <view class="cat-chip {{selectedCategoryId === '' ? 'cat-chip--active' : ''}}" data-id="" bindtap="handleCategoryTap">全部</view>
-      <view
-        wx:for="{{categories}}"
-        wx:key="id"
-        class="cat-chip {{selectedCategoryId == item.id ? 'cat-chip--active' : ''}}"
-        data-id="{{item.id}}"
-        bindtap="handleCategoryTap"
-      >
-        {{item.name}}
+  <!-- Apple Segmented Categories Scroll -->
+  <view class="cat-sticky-bar">
+    <scroll-view class="cat-bar" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="cat-chips">
+        <view class="cat-chip {{selectedCategoryId === '' ? 'cat-chip--active' : ''}} ios-touch-active" data-id="" bindtap="handleCategoryTap">全部精选</view>
+        <view
+          wx:for="{{categories}}"
+          wx:key="id"
+          class="cat-chip {{selectedCategoryId == item.id ? 'cat-chip--active' : ''}} ios-touch-active"
+          data-id="{{item.id}}"
+          bindtap="handleCategoryTap"
+        >
+          {{item.name}}
+        </view>
       </view>
-    </view>
-  </scroll-view>
+    </scroll-view>
+  </view>
 
   <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
 
   <block wx:else>
     <view wx:if="{{projects.length === 0}}" class="empty-wrap">
-      <ui-state title="暂无项目" description="该分类下暂无可用项目" />
+      <ui-state title="暂无项目" description="该分类下暂无可用项目，请查看其他分类" />
     </view>
+
+    <!-- Project List (Apple Inset Grouped) -->
     <view class="proj-list">
       <view
         wx:for="{{projects}}"
         wx:key="id"
-        class="proj-card"
+        class="ios-card proj-card ios-touch-active"
         data-id="{{item.id}}"
         bindtap="handleProjectTap"
       >
-        <view class="proj-card__left">
-          <view class="proj-card__tag">{{item.categoryName}}</view>
+        <image class="proj-card__thumb" src="{{item.coverUrl || item.displayCover}}" mode="aspectFill" />
+        <view class="proj-card__center">
           <view class="proj-card__name">{{item.name}}</view>
-          <view class="proj-card__meta">{{item.durationMinutes}}分钟</view>
+          <view class="proj-pill-row">
+            <text class="proj-card__tag">{{item.categoryName || '精选'}}</text>
+            <view class="proj-card__meta">
+              <image src="/assets/icons/clock.png" style="width: 22rpx; height: 22rpx;" mode="aspectFit" />
+              <text>{{item.durationMinutes}}分钟</text>
+            </view>
+          </view>
         </view>
         <view class="proj-card__right">
           <view class="proj-card__price">
             <text class="proj-card__symbol">¥</text>
             <text class="proj-card__amount">{{item.basePrice}}</text>
+            <text class="proj-card__unit">起</text>
           </view>
           <view class="proj-card__action">预约</view>
         </view>

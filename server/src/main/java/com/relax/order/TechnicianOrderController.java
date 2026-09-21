@@ -42,7 +42,7 @@ public class TechnicianOrderController {
     }
 
     @GetMapping
-    ApiResponse<List<OrderMapper.OrderView>> listOrders(@AuthenticationPrincipal CurrentUser currentUser,
+    ApiResponse<List<OrderMapper.OrderListItem>> listOrders(@AuthenticationPrincipal CurrentUser currentUser,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "20") int size) {
         long techId = fulfillmentService.getTechnicianId(currentUser.id());

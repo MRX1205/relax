@@ -1,0 +1,67 @@
+<view class="page">
+  <!-- 黑金 VIP 卡面 -->
+  <view class="vip-card-box">
+    <view class="vip-card">
+      <view class="vc-top">
+        <view class="vc-brand">
+          <text class="vc-crown">👑</text>
+          <text class="vc-title">东莞到家 VIP 尊享会员</text>
+        </view>
+        <view class="vc-status-badge">{{isVip ? '已开通' : '未激活'}}</view>
+      </view>
+
+      <view class="vc-middle">
+        <text class="vc-nickname">{{account.nickname || '微信尊享用户'}}</text>
+        <text class="vc-desc" wx:if="{{isVip}}">尊贵特权有效期至：{{vipExpireDate}}</text>
+        <text class="vc-desc" wx:else>开通享全单 9 折 · 免出行交通费</text>
+      </view>
+
+      <view class="vc-bottom">
+        <text class="vc-card-no">VIP · NO.8800921</text>
+        <text class="vc-logo">RELAX HOME</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员特权权益列表 -->
+  <view class="privileges-section">
+    <view class="sec-title">VIP 会员独享 5 大特权</view>
+    <view class="priv-grid">
+      <view wx:for="{{privileges}}" wx:key="title" class="priv-item">
+        <text class="priv-icon">{{item.icon}}</text>
+        <text class="priv-title">{{item.title}}</text>
+        <text class="priv-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员套餐选择 -->
+  <view class="plans-section">
+    <view class="sec-title">开通会员套餐</view>
+    <view class="plans-row">
+      <view
+        wx:for="{{plans}}"
+        wx:key="id"
+        class="plan-card {{selectedPlan === item.id ? 'plan-card--active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="selectPlan"
+      >
+        <view class="plan-tip-badge" wx:if="{{item.tip}}">{{item.tip}}</view>
+        <text class="plan-title">{{item.title}}</text>
+        <view class="plan-price-row">
+          <text class="plan-symbol">¥</text>
+          <text class="plan-price">{{item.price}}</text>
+        </view>
+        <text class="plan-orig">原价 ¥{{item.original}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部固定开通操作栏 -->
+  <view class="bottom-subscribe-bar">
+    <button class="sub-btn" loading="{{submitting}}" bindtap="handleSubscribe">
+      <text class="sub-icon">👑</text>
+      <text class="sub-text">{{isVip ? '立即续费 VIP 会员' : '立即开通尊享 VIP'}}</text>
+    </button>
+  </view>
+</view>

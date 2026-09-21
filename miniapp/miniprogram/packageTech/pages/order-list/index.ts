@@ -1,40 +1,64 @@
 import { getTechOrders } from "../../services/order";
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING_PAYMENT: "待支付", PAID: "待接单", ACCEPTED: "已接单", DEPARTED: "已出发",
-  ARRIVED: "已到达", IN_SERVICE: "服务中", COMPLETED: "已完成",
-  CANCELLED: "已取消", EXPIRED: "已过期", REJECTED: "已拒单",
-};
+import { formatOrderStatus } from "../../../utils/order-status";
 
 Page({
   data: {
     loading: true,
-    orders: [] as OrderView[],
+    orders: [] as any[],
     page: 0,
     hasMore: true,
   },
 
-  onLoad() { this.loadOrders(true); },
-  onShow() { this.loadOrders(true); },
+  async onLoad() {
+    await this.loadOrders(true);
+  },
+
+  async onShow() {
+    await this.loadOrders(true);
+  },
 
   async loadOrders(reset = false) {
-    if (reset) this.setData({ page: 0, hasMore: true });
+    if (reset) {
+      this.setData({ page: 0, hasMore: true });
+    }
+    this.setData({ loading: true });
     try {
       const orders = await getTechOrders(this.data.page);
+      const rawList = reset ? orders : [...this.data.orders, ...orders];
+      const list = (rawList || []).map((order: any) => {
+        const sInfo = formatOrderStatus(order.status);
+        return {
+          ...order,
+          statusText: sInfo.text,
+          statusColor: sInfo.color,
+          statusBg: sInfo.bg,
+          statusIcon: sInfo.icon,
+        };
+      });
       this.setData({
-        orders: reset ? orders : [...this.data.orders, ...orders],
-        page: this.data.page + 1,
-        hasMore: orders.length >= 20,
+        orders: list,
+        page: (reset ? 0 : this.data.page) + 1,
+        hasMore: (orders || []).length >= 20,
         loading: false,
       });
-    } catch { this.setData({ loading: false }); }
+    } catch {
+      this.setData({ loading: false });
+    }
   },
-
-  statusLabel(s: string): string { return STATUS_LABELS[s] || s; },
 
   handleTap(e: WechatMiniprogram.TouchEvent) {
-    wx.navigateTo({ url: `/packageTech/pages/order-detail/index?orderNo=${e.currentTarget.dataset.no}` });
+    const orderNo = e.currentTarget.dataset.no;
+    wx.navigateTo({ url: `/packageTech/pages/order-detail/index?orderNo=${orderNo}` });
   },
 
-  onReachBottom() { this.loadOrders(); },
+  async onPullDownRefresh() {
+    await this.loadOrders(true);
+    wx.stopPullDownRefresh();
+  },
+
+  onReachBottom() {
+    if (this.data.hasMore && !this.data.loading) {
+      this.loadOrders(false);
+    }
+  },
 });

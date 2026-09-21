@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "拉新赚钱 · 邀请有礼",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "ui-state": "/components/ui-state/index"
+  }
+}

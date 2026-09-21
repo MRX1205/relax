@@ -6,7 +6,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run test"
+    "check": "npm run typecheck && npm run test",
+    "upload": "node scripts/upload.mjs"
   },
   "devDependencies": {
     "miniprogram-api-typings": "5.2.3",

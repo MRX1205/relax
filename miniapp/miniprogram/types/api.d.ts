@@ -13,7 +13,7 @@ interface HealthStatus {
 
 type RoleCode = "USER" | "TECHNICIAN" | "ADMIN" | "SUPER_ADMIN";
 type AgreementType = "USER_AGREEMENT" | "PRIVACY_POLICY" | "TRANSACTION_RULES";
-type FilePurpose = "AVATAR" | "TECHNICIAN_PHOTO" | "TECHNICIAN_CERTIFICATE" | "AFTER_SALE_EVIDENCE" | "SETTLEMENT_PROOF";
+type FilePurpose = "AVATAR" | "TECHNICIAN_PHOTO" | "TECHNICIAN_CERTIFICATE" | "AFTER_SALE_EVIDENCE" | "SETTLEMENT_PROOF" | "PROJECT_COVER" | "BANNER_IMAGE";
 
 interface Account {
   id: string;
@@ -25,6 +25,7 @@ interface Account {
   roles: RoleCode[];
   permissions: string[];
   permissionGroups: string[];
+  wechatBound?: boolean;
 }
 
 interface LoginResult {
@@ -162,12 +163,36 @@ interface TechnicianItem {
   experienceYears: number;
   onlineStatus: string;
   startPrice: number | null;
+  // Extended fields for rich UI
+  rating: number | null;
+  annualOrders: number | null;
+  ageTag: string | null;           // "90后" | "95后" | "85后"
+  height: number | null;           // cm
+  weight: number | null;           // kg
+  age: number | null;
+  photos: string[];                // life photo URLs
+  certifications: string[];        // ["实名认证","手机认证","安心服务","健康档案"]
+  earliestAvailableTime: string | null; // "今天 15:00"
+  latitude?: number;
+  longitude?: number;
+  baseAddress?: string;
 }
 
 interface TechnicianDetail {
-  technician: { id: string; serviceName: string; avatarUrl: string | null; intro: string; experienceYears: number; onlineStatus: string };
-  projects: { id: string; projectId: string; projectName: string; durationMinutes: number; price: number }[];
+  technician: {
+    id: string; serviceName: string; avatarUrl: string | null;
+    intro: string; experienceYears: number; onlineStatus: string;
+    rating: number | null; annualOrders: number | null;
+    ageTag: string | null; height: number | null; weight: number | null; age: number | null;
+    photos: string[];
+    certifications: string[];
+    latitude?: number;
+    longitude?: number;
+    baseAddress?: string;
+  };
+  projects: { id: string; projectId: string; projectName: string; durationMinutes: number; price: number; coverUrl: string | null }[];
   availability: { scheduleDate: string; startTime: string; endTime: string }[];
+  reviews: { id: string; score: number; content: string; userName: string; createdAt: string }[];
 }
 
 interface OrderPreview {
@@ -191,11 +216,23 @@ interface OrderView {
   orderNo: string;
   userId: string;
   technicianId: string;
+  technicianName?: string;
+  technicianPhone?: string;
+  technicianAvatarUrl?: string;
   projectId: string;
+  projectName?: string;
+  durationMinutes?: number;
+  customerName?: string;
+  customerPhone?: string;
+  serviceAddress?: string;
+  longitude?: number;
+  latitude?: number;
   status: string;
   serviceDate: string;
   startTime: string;
   endTime: string;
+  payableAmount?: number;
+  paidAmount?: number;
   version: number;
   note: string | null;
   cancelReason: string | null;
@@ -206,21 +243,35 @@ interface OrderView {
 interface OrderDetailView {
   order: OrderView;
   projectSnapshot: { projectName: string; durationMinutes: number; basePrice: number; overridePrice: number | null; actualPrice: number } | null;
-  addressSnapshot: { contactName: string; contactPhone: string; regionName: string; detail: string } | null;
+  addressSnapshot: { contactName: string; contactPhone: string; regionName: string; detail: string; longitude?: number; latitude?: number } | null;
   amount: { projectAmount: number; travelFee: number; discountAmount: number; payableAmount: number; paidAmount: number; refundedAmount: number } | null;
   statusLogs: { fromStatus: string | null; toStatus: string; operatorType: string; operatorId: string | null; reason: string | null; createdAt: string }[];
+  technicianName?: string;
+  technicianPhone?: string;
+  technicianAvatarUrl?: string;
+  customerName?: string;
+  customerPhone?: string;
+}
+
+interface WxPayParams {
+  timeStamp: string;
+  nonceStr: string;
+  package: string;
+  signType: "RSA" | "MD5";
+  paySign: string;
 }
 
 interface PaymentView {
   id: string;
   paymentNo: string;
   orderId: string;
-  channel: string;
+  channel: "MOCK" | "WXPAY";
   amount: number;
   status: string;
   expireAt: string;
   paidAt: string | null;
   createdAt: string;
+  payParams: WxPayParams | null;  // Only present when channel === "WXPAY"
 }
 
 // === Phase 7 types ===
@@ -261,5 +312,9 @@ interface Banner {
 }
 
 interface StatsView {
-  totalOrders: number; totalRevenue: number; totalUsers: number; totalTechnicians: number;
+  todayOrders: number;
+  totalOrders: number;
+  totalRevenue: number;
+  totalUsers: number;
+  totalTechnicians: number;
 }

@@ -1,0 +1,93 @@
+<view class="page">
+  <!-- 顶部主图 Banner -->
+  <view class="invite-banner">
+    <view class="banner-badge">🔥 推荐好友 享现金奖励</view>
+    <view class="banner-title">邀请好友下单 各得好礼</view>
+    <view class="banner-subtitle">好友得 ¥20 新人无门槛券 · 您立得 ¥30 现金红包</view>
+  </view>
+
+  <!-- 邀请码与分享主卡片 -->
+  <view class="card share-card">
+    <view class="code-box">
+      <view class="code-label">我的专属邀请码</view>
+      <view class="code-val-row">
+        <text class="code-val">{{inviteCode}}</text>
+        <view class="copy-btn" bindtap="copyCode">复制</view>
+      </view>
+    </view>
+
+    <button class="share-btn" open-type="share">
+      <text class="share-icon">💬</text>
+      <text class="share-btn-text">立即分享给微信好友 / 微信群</text>
+    </button>
+  </view>
+
+  <!-- 收益概览卡片 -->
+  <view class="card earnings-card">
+    <view class="card-title-row">
+      <text class="card-title">💰 我的邀请收益</text>
+      <view class="withdraw-link" bindtap="openWithdraw">申请提现 ›</view>
+    </view>
+    <view class="stats-row">
+      <view class="stat-col">
+        <text class="stat-num color-red">¥{{totalEarnings}}</text>
+        <text class="stat-lbl">可提现余额</text>
+      </view>
+      <view class="stat-line"></view>
+      <view class="stat-col">
+        <text class="stat-num">{{invitedCount}}</text>
+        <text class="stat-lbl">已成功拉新(人)</text>
+      </view>
+      <view class="stat-line"></view>
+      <view class="stat-col">
+        <text class="stat-num">¥{{pendingReward}}</text>
+        <text class="stat-lbl">待结算奖励</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 活动规则说明 -->
+  <view class="card rules-card">
+    <view class="card-title">📋 奖励规则说明</view>
+    <view class="rule-item">
+      <view class="rule-dot">1</view>
+      <view class="rule-text">分享链接或邀请码给好友，好友首次微信授权登录，立领 <text class="highlight">¥20 无门槛项目抵扣券</text>。</view>
+    </view>
+    <view class="rule-item">
+      <view class="rule-dot">2</view>
+      <view class="rule-text">好友预约技师并完成首次上门履约后，系统将在 2 小时内核算 <text class="highlight">¥30 现金返现</text> 发放到您的奖金余额。</view>
+    </view>
+    <view class="rule-item">
+      <view class="rule-dot">3</view>
+      <view class="rule-text">奖金余额支持下单抵扣或满 ¥50 直接申请提现到您的微信零钱中，提现零手续费。</view>
+    </view>
+  </view>
+
+  <!-- 提现弹窗 -->
+  <view wx:if="{{withdrawModalVisible}}" class="modal-mask" bindtap="closeWithdraw">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">申请提现至微信零钱</text>
+        <text class="modal-close" bindtap="closeWithdraw">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="avail-tip">当前可提现余额：¥{{totalEarnings}}</view>
+        <view class="input-wrap">
+          <text class="currency-tag">¥</text>
+          <input
+            class="amt-input"
+            type="digit"
+            value="{{withdrawAmount}}"
+            placeholder="输入提现金额"
+            bindinput="handleAmountInput"
+          />
+        </view>
+        <view class="modal-hint">工作日 09:00-18:00 审核，通常 1-2 小时内到账</view>
+      </view>
+      <view class="modal-footer">
+        <button class="m-btn btn-sec" bindtap="closeWithdraw">取消</button>
+        <button class="m-btn btn-pri" bindtap="confirmWithdraw">确认提现</button>
+      </view>
+    </view>
+  </view>
+</view>

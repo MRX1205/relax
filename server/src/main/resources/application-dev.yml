@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:h2:mem:relax;DB_CLOSE_DELAY=-1;MODE=MySQL
+    url: jdbc:h2:mem:relax;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -11,15 +11,21 @@ spring:
     console:
       enabled: true
   flyway:
+    enabled: true
     locations: classpath:db/migration
   data:
     redis:
-      host: localhost
-      port: 6379
-      password:
+      repositories:
+        enabled: false
+
+management:
+  health:
+    redis:
+      enabled: false
 
 relax:
   auth:
     bootstrap-super-admin-open-id: mock:dec1420f640fcb83a93e48d6f30ae2e5
   file:
     local-root: ./data/private-files
+

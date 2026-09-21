@@ -1,74 +1,130 @@
-<view class="page">
-  <!-- 头部 -->
-  <view class="header gradient-primary">
-    <view class="header-content">
-      <view class="header-left">
-        <view class="header-logo">💆</view>
-        <view class="header-info">
-          <view class="header-title">东莞到家</view>
-          <view class="header-subtitle" wx:if="{{role === 'USER'}}">正规按摩 · 上门服务</view>
-          <view class="header-subtitle" wx:elif="{{role === 'TECHNICIAN'}}">技师工作台</view>
-          <view class="header-subtitle" wx:else>管理后台</view>
-        </view>
+<view class="ios-home-page">
+
+  <!-- ════ 1. 顶部毛玻璃导航与品牌定位栏 ════ -->
+  <view class="top-nav-bar ios-blur">
+    <view class="location-box">
+      <view class="location-pin">
+        <image class="pin-svg" src="/assets/icons/pin.png" mode="aspectFit" />
       </view>
-      <view class="header-right" bindtap="{{account ? 'goToAccount' : 'handleLogin'}}">
-        <view class="avatar-wrapper">
-          <view class="avatar-text">{{account ? (account.nickname[0] || '我') : '?'}}</view>
-        </view>
-      </view>
+      <text class="city-name">东莞市</text>
+      <text class="brand-tag">正规理疗 · 安心上门</text>
+    </view>
+    <view class="search-entry ios-touch-active" bindtap="goToProjectList">
+      <image class="search-icon" src="/assets/icons/search.png" mode="aspectFit" />
+      <text class="search-placeholder">搜索服务项目或技师</text>
     </view>
   </view>
 
-  <!-- Loading -->
-  <view wx:if="{{loading}}" class="loading-container">
-    <view class="loading-spinner-lg"></view>
-    <text class="loading-text">加载中...</text>
-  </view>
-
-  <!-- 未登录 -->
-  <view wx:elif="{{!account}}" class="welcome-section">
-    <view class="welcome-card card">
-      <view class="welcome-icon">👋</view>
-      <view class="welcome-title">欢迎使用东莞到家</view>
-      <view class="welcome-desc">登录后即可浏览项目、预约技师</view>
-      <button class="welcome-btn" bindtap="handleLogin">立即登录</button>
+  <!-- Loading State -->
+  <view wx:if="{{loading}}" class="ios-loading-wrap">
+    <view class="ios-skeleton skeleton-banner"></view>
+    <view class="skeleton-grid">
+      <view class="ios-skeleton skeleton-tile" wx:for="{{[1,2,3,4]}}" wx:key="*this"></view>
     </view>
   </view>
 
-  <!-- 用户首页 -->
   <block wx:elif="{{role === 'USER' && home}}">
-    <!-- 分类入口 -->
-    <view class="section" wx:if="{{home.categories.length > 0}}">
-      <scroll-view class="cat-scroll" scroll-x>
-        <view class="cat-grid">
-          <view wx:for="{{home.categories}}" wx:key="id" class="cat-item" data-id="{{item.id}}" bindtap="goToProjectList">
-            <view class="cat-icon-wrapper">
-              <view class="cat-icon">{{item.name === '中医推拿' ? '💆' : item.name === '精油SPA' ? '🧴' : item.name === '足疗保健' ? '🦶' : '🏃'}}</view>
+
+    <!-- ════ 2. 电影级全景圆角轮播 (Swiper Banner) ════ -->
+    <view class="banner-container">
+      <swiper
+        class="banner-swiper"
+        autoplay
+        circular
+        interval="4500"
+        indicator-dots
+        indicator-color="rgba(255,255,255,0.4)"
+        indicator-active-color="#FFFFFF"
+      >
+        <swiper-item>
+          <view class="banner-slide slide-1 ios-touch-active" bindtap="goToProjectList">
+            <image class="banner-bg-img" src="/assets/images/banner-luxury.jpg" mode="aspectFill" />
+            <view class="banner-glass-card">
+              <view class="banner-pill">⚡️ 官方直营 · 爽约包退</view>
+              <view class="banner-title">专业正规上门理疗</view>
+              <view class="banner-subtitle">中医推拿 · 精油SPA · 肩颈深度调理</view>
+              <view class="banner-cta">立即预约 探索精选 ›</view>
             </view>
-            <view class="cat-name">{{item.name}}</view>
           </view>
-        </view>
-      </scroll-view>
+        </swiper-item>
+        <swiper-item>
+          <view class="banner-slide slide-2 ios-touch-active" bindtap="goToTechnicianList">
+            <image class="banner-bg-img" src="/assets/images/project-spa.jpg" mode="aspectFill" />
+            <view class="banner-glass-card">
+              <view class="banner-pill pill-gold">👑 金牌严选 · 实名认证</view>
+              <view class="banner-title">星级理疗师驻场</view>
+              <view class="banner-subtitle">多年名店经验 · 严格健康体检 · 全程安全</view>
+              <view class="banner-cta">查看附近技师 ›</view>
+            </view>
+          </view>
+        </swiper-item>
+      </swiper>
     </view>
 
-    <!-- 热门项目 -->
-    <view class="section" wx:if="{{home.featuredProjects.length > 0}}">
-      <view class="section-header">
-        <view class="section-title">🔥 热门项目</view>
-        <view class="section-more" bindtap="goToProjectList">全部 ›</view>
+    <!-- ════ 3. 苹果 App 风格金刚区 (4-Icon Grid) ════ -->
+    <view class="quick-tiles-wrap">
+      <view class="quick-tile ios-touch-active" bindtap="goToProjectList">
+        <view class="tile-icon-box tile-flame">
+          <image class="tile-svg" src="/assets/icons/flame.png" mode="aspectFit" />
+        </view>
+        <text class="tile-label">限时特惠</text>
       </view>
-      <scroll-view class="project-scroll" scroll-x>
-        <view class="project-grid">
-          <view wx:for="{{home.featuredProjects}}" wx:key="id" class="project-card" data-id="{{item.id}}" bindtap="goToProjectDetail">
-            <view class="project-image">
-              <view class="project-placeholder">💆</view>
+
+      <view class="quick-tile ios-touch-active" bindtap="goToAccess">
+        <view class="tile-icon-box tile-tech">
+          <image class="tile-svg" src="/assets/icons/tech.png" mode="aspectFit" />
+        </view>
+        <text class="tile-label">技师入驻</text>
+      </view>
+
+      <view class="quick-tile ios-touch-active" bindtap="goToInvite">
+        <view class="tile-icon-box tile-reward">
+          <image class="tile-svg" src="/assets/icons/gift.png" mode="aspectFit" />
+          <view class="tile-sub-badge">奖¥30</view>
+        </view>
+        <text class="tile-label">邀请有礼</text>
+      </view>
+
+      <view class="quick-tile ios-touch-active" bindtap="goToMember">
+        <view class="tile-icon-box tile-vip">
+          <image class="tile-svg" src="/assets/icons/vip.png" mode="aspectFit" />
+        </view>
+        <text class="tile-label">VIP会员</text>
+      </view>
+    </view>
+
+    <!-- ════ 4. 热门服务项目 (杂志级横滑画廊) ════ -->
+    <view class="section-card ios-card" wx:if="{{home.featuredProjects.length > 0}}">
+      <view class="section-head">
+        <view class="section-title-wrap">
+          <text class="section-main-title">热门甄选</text>
+          <text class="section-sub-title">精选高复购理疗项目</text>
+        </view>
+        <view class="section-action ios-touch-active" bindtap="goToProjectList">
+          <text>全部项目</text>
+          <text class="action-chevron">›</text>
+        </view>
+      </view>
+
+      <scroll-view class="horizontal-gallery" scroll-x enable-flex enhanced show-scrollbar="{{false}}">
+        <view class="gallery-inner">
+          <view
+            wx:for="{{home.featuredProjects}}"
+            wx:key="id"
+            class="gallery-item ios-touch-active"
+            data-id="{{item.id}}"
+            bindtap="goToProjectDetail"
+          >
+            <view class="item-cover-box">
+              <image class="item-img" src="{{item.displayCover || item.coverFileId || '/assets/defaults/default-cover.png'}}" mode="aspectFill" />
+              <view class="duration-badge">⏱ {{item.durationMinutes}}分钟</view>
             </view>
-            <view class="project-info">
-              <view class="project-tag">{{item.categoryName}}</view>
-              <view class="project-name">{{item.name}}</view>
-              <view class="project-meta">
-                <text class="project-duration">{{item.durationMinutes}}分钟</text>
-                <text class="project-price">¥{{item.basePrice}}</text>
+            <view class="item-info">
+              <text class="item-title">{{item.name}}</text>
+              <view class="item-price-row">
+                <text class="price-symbol">¥</text>
+                <text class="price-value">{{item.minPrice || item.suggestedPrice || 168}}</text>
+                <text class="price-unit">起</text>
               </view>
             </view>
           </view>
@@ -76,136 +132,81 @@
       </scroll-view>
     </view>
 
-    <!-- 推荐技师 -->
-    <view class="section" wx:if="{{home.nearbyTechnicians.length > 0}}">
-      <view class="section-header">
-        <view class="section-title">⭐ 推荐技师</view>
-        <view class="section-more" bindtap="goToTechnicianList">全部 ›</view>
+    <!-- ════ 5. 推荐技师 (Apple Inset Grouped 豪华卡片) ════ -->
+    <view class="section-card ios-card" wx:if="{{home.nearbyTechnicians.length > 0}}">
+      <view class="section-head">
+        <view class="section-title-wrap">
+          <text class="section-main-title">金牌技师</text>
+          <text class="section-sub-title">就近极速出发 · 严选实名好评</text>
+        </view>
+        <view class="section-action ios-touch-active" bindtap="goToTechnicianList">
+          <text>查看更多</text>
+          <text class="action-chevron">›</text>
+        </view>
       </view>
-      <view class="tech-list">
-        <view wx:for="{{home.nearbyTechnicians}}" wx:key="id" class="tech-card card" data-id="{{item.id}}" bindtap="goToTechnicianDetail">
-          <view class="tech-avatar">
-            <view class="tech-avatar-text">{{item.serviceName[0]}}</view>
-            <view wx:if="{{item.onlineStatus === 'ONLINE'}}" class="tech-online-dot"></view>
+
+      <view class="tech-card-list">
+        <view
+          wx:for="{{home.nearbyTechnicians}}"
+          wx:key="id"
+          class="tech-row-card ios-touch-active"
+          data-id="{{item.id}}"
+          bindtap="goToTechnicianDetail"
+        >
+          <!-- 头像与在线呼吸灯 -->
+          <view class="tech-avatar-wrap">
+            <image wx:if="{{item.displayAvatar || item.avatarUrl}}" class="tech-avatar" src="{{item.displayAvatar || item.avatarUrl}}" mode="aspectFill" />
+            <view wx:else class="tech-avatar tech-avatar--initial">
+              <text>{{item.serviceName[0] || '技'}}</text>
+            </view>
+            <view class="online-indicator {{item.onlineStatus === 'ONLINE' ? 'online-live' : 'online-idle'}}"></view>
           </view>
-          <view class="tech-info">
-            <view class="tech-name">{{item.serviceName}}</view>
-            <view class="tech-meta">{{item.experienceYears}}年经验</view>
-          </view>
-          <view class="tech-right">
-            <view class="tech-price" wx:if="{{item.startPrice}}">¥{{item.startPrice}}起</view>
-            <view class="tech-status {{item.onlineStatus === 'ONLINE' ? 'status-online' : 'status-offline'}}">
-              {{item.onlineStatus === 'ONLINE' ? '可预约' : '休息中'}}
+
+          <!-- 技师主信息 -->
+          <view class="tech-center">
+            <view class="tech-name-row">
+              <text class="tech-name">{{item.serviceName}}</text>
+              <view class="verified-tag">
+                <image class="shield-icon" src="/assets/icons/shield.png" mode="aspectFit" />
+                <text>实名认证</text>
+              </view>
+            </view>
+
+            <view class="tech-stats-row">
+              <view class="rating-star">
+                <text class="star-icon">★</text>
+                <text class="rating-score">4.9</text>
+              </view>
+              <text class="dot-sep">•</text>
+              <text class="exp-tag">{{item.experienceYears || 5}}年经验</text>
+              <text class="dot-sep">•</text>
+              <text class="order-count">已服务 800+ 单</text>
+            </view>
+
+            <text class="tech-bio">{{item.intro || '手法专业娴熟，专注肩颈及全身深层经络推拿放松。'}}</text>
+
+            <!-- 4张生活风采照片平铺 -->
+            <view class="photo-strip" wx:if="{{item.displayPhotos && item.displayPhotos.length > 0}}">
+              <image wx:for="{{item.displayPhotos}}" wx:key="*this" wx:for-item="photo" class="strip-img" src="{{photo}}" mode="aspectFill" />
             </view>
           </view>
-        </view>
-      </view>
-    </view>
 
-    <!-- 空状态 -->
-    <view wx:if="{{home.featuredProjects.length === 0 && home.nearbyTechnicians.length === 0}}" class="empty-state">
-      <view class="empty-icon">📭</view>
-      <view class="empty-title">暂无可用服务</view>
-      <view class="empty-desc">项目和技师正在上架中，请稍后再来</view>
-    </view>
-  </block>
-
-  <!-- 技师工作台 -->
-  <block wx:elif="{{role === 'TECHNICIAN'}}">
-    <block wx:if="{{!techProfile && !techHasApplication}}">
-      <view class="welcome-card card">
-        <view class="welcome-icon">🔧</view>
-        <view class="welcome-title">成为技师</view>
-        <view class="welcome-desc">提交入驻申请，审核通过后即可开始接单赚钱</view>
-        <button class="welcome-btn" bindtap="goToAccess">申请入驻</button>
-      </view>
-    </block>
-
-    <block wx:elif="{{techHasApplication && !techProfile}}">
-      <view class="welcome-card card">
-        <view class="welcome-icon">⏳</view>
-        <view class="welcome-title">
-          {{techApplicationStatus === 'PENDING' ? '入驻申请审核中' : techApplicationStatus === 'APPROVED' ? '申请已通过' : '申请已拒绝'}}
-        </view>
-        <view class="welcome-desc" wx:if="{{techApplicationStatus === 'PENDING'}}">请耐心等待管理员审核</view>
-        <button class="welcome-btn" wx:if="{{techApplicationStatus === 'REJECTED'}}" bindtap="goToAccess">重新申请</button>
-      </view>
-    </block>
-
-    <block wx:elif="{{techProfile}}">
-      <view class="tech-header gradient-secondary">
-        <view class="tech-header-info">
-          <view class="tech-header-name">{{techProfile.serviceName}}</view>
-          <view class="tech-header-meta">{{techProfile.realName}} · {{techProfile.phone}}</view>
-        </view>
-        <view class="online-toggle {{techProfile.onlineStatus === 'ONLINE' ? 'toggle-on' : 'toggle-off'}}" bindtap="toggleOnline">
-          <view class="toggle-dot"></view>
-          <text>{{techProfile.onlineStatus === 'ONLINE' ? '在线' : '离线'}}</text>
-        </view>
-      </view>
-
-      <view class="stats-row">
-        <view class="stat-card card">
-          <view class="stat-value">{{techStats.pending}}</view>
-          <view class="stat-label">待处理</view>
-        </view>
-        <view class="stat-card card">
-          <view class="stat-value">{{techStats.today}}</view>
-          <view class="stat-label">今日订单</view>
-        </view>
-      </view>
-
-      <view class="section">
-        <view class="section-title">快捷操作</view>
-        <view class="action-grid">
-          <view class="action-item card" bindtap="goToTechOrders">
-            <view class="action-icon">📋</view>
-            <view class="action-text">我的订单</view>
-          </view>
-          <view class="action-item card" bindtap="goToSchedules">
-            <view class="action-icon">📅</view>
-            <view class="action-text">排班管理</view>
-          </view>
-          <view class="action-item card" bindtap="goToIncome">
-            <view class="action-icon">💰</view>
-            <view class="action-text">收入明细</view>
+          <!-- 右侧价格与预约按钮 -->
+          <view class="tech-action-col">
+            <view class="tech-price">
+              <text class="price-cur">¥</text>
+              <text class="price-val">{{item.startPrice || 168}}</text>
+              <text class="price-end">起</text>
+            </view>
+            <view class="book-pill-btn">预约</view>
           </view>
         </view>
       </view>
-    </block>
-  </block>
-
-  <!-- 管理员工作台 -->
-  <block wx:elif="{{role === 'ADMIN' || role === 'SUPER_ADMIN'}}">
-    <view class="stats-grid">
-      <view class="stat-card card">
-        <view class="stat-value text-primary">{{adminStats.todayOrders || 0}}</view>
-        <view class="stat-label">今日订单</view>
-      </view>
-      <view class="stat-card card">
-        <view class="stat-value text-success">{{adminStats.totalOrders || 0}}</view>
-        <view class="stat-label">总订单</view>
-      </view>
-      <view class="stat-card card">
-        <view class="stat-value text-warning">{{adminStats.totalUsers || 0}}</view>
-        <view class="stat-label">用户数</view>
-      </view>
-      <view class="stat-card card">
-        <view class="stat-value text-danger">{{adminStats.totalTechnicians || 0}}</view>
-        <view class="stat-label">技师数</view>
-      </view>
     </view>
 
-    <view class="section">
-      <view class="section-title">管理功能</view>
-      <view class="admin-grid">
-        <view wx:for="{{adminMenus}}" wx:key="name" class="admin-card card" data-url="{{item.url}}" bindtap="goToAdminPage">
-          <view class="admin-icon">{{item.icon}}</view>
-          <view class="admin-name">{{item.name}}</view>
-        </view>
-      </view>
-    </view>
   </block>
+
+  <view class="safe-bottom-bar"></view>
 </view>
 
 <custom-tabbar />

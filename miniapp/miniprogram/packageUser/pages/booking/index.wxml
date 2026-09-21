@@ -1,154 +1,291 @@
-<view class="page">
-  <!-- 顶部信息 -->
-  <view class="booking-header">
-    <view class="header-info">
-      <view class="project-name">{{projectName}}</view>
-      <view class="technician-name">技师：{{technicianName}}</view>
-      <view class="duration-info">时长：{{durationMinutes}}分钟</view>
+<view class="booking-page">
+
+  <!-- 1. 服务地址卡片 (Apple Inset Grouped) -->
+  <view class="ios-card address-card ios-touch-active" bindtap="handleSelectAddress">
+    <view class="icon-bubble icon-bubble--blue">
+      <image class="bubble-icon-img" src="/assets/icons/pin.png" mode="aspectFit" />
+    </view>
+    <view class="address-main">
+      <view class="address-tag-row">
+        <text class="address-title">上门服务地址</text>
+        <text wx:if="{{addressId}}" class="address-badge">已选</text>
+      </view>
+      <view class="address-detail {{addressId ? 'address-detail--selected' : 'address-detail--placeholder'}}">
+        {{addressSummary}}
+      </view>
+    </view>
+    <view class="chevron-cell">
+      <text class="chevron-arrow">›</text>
     </view>
   </view>
 
-  <!-- 服务地址 -->
-  <view class="section">
-    <view class="section-title">📍 服务地址</view>
-    <view class="address-card" bindtap="handleSelectAddress">
-      <view wx:if="{{addressId}}" class="address-content">
-        <view class="address-text">{{addressSummary}}</view>
-        <view class="address-arrow">›</view>
+  <!-- 2. 服务项目与理疗师卡片 -->
+  <view class="ios-card project-card">
+    <view class="card-header">
+      <view class="card-title-row">
+        <view class="icon-bubble icon-bubble--coral">
+          <image class="bubble-icon-img" src="/assets/icons/flame.png" mode="aspectFit" />
+        </view>
+        <text class="card-title">服务信息</text>
       </view>
-      <view wx:else class="address-empty">
-        <text>点击选择服务地址</text>
+    </view>
+
+    <!-- 项目基本信息 -->
+    <view class="project-row">
+      <view class="project-info-col">
+        <text class="project-name">{{projectName || '精选理疗服务'}}</text>
+        <view class="project-meta-pill">
+          <image class="meta-icon-img" src="/assets/icons/clock.png" mode="aspectFit" />
+          <text>服务时长约 {{durationMinutes}} 分钟</text>
+        </view>
+      </view>
+      <!-- 数量增减 (Apple Stepper) -->
+      <view class="quantity-stepper">
+        <view class="stepper-btn {{quantity <= 1 ? 'stepper-btn--disabled' : ''}} ios-touch-active" data-delta="-1" catchtap="handleQuantityChange">−</view>
+        <text class="stepper-val">{{quantity}}</text>
+        <view class="stepper-btn {{quantity >= 5 ? 'stepper-btn--disabled' : ''}} ios-touch-active" data-delta="1" catchtap="handleQuantityChange">+</view>
+      </view>
+    </view>
+
+    <view class="hairline-divider" />
+
+    <!-- 服务理疗师 -->
+    <view class="tech-row">
+      <view class="tech-info-left">
+        <view class="tech-avatar-mini">
+          <image wx:if="{{technicianAvatarUrl}}" class="tech-avatar-img" src="{{technicianAvatarUrl}}" mode="aspectFill" />
+          <text wx:else class="tech-avatar-ph">{{technicianName ? technicianName[0] : '技'}}</text>
+        </view>
+        <view class="tech-names">
+          <text class="tech-label">执业技师</text>
+          <text class="tech-val">{{technicianName || '精选金牌技师'}}</text>
+        </view>
+      </view>
+      <view class="tech-badge">
+        <image class="badge-check-img" src="/assets/icons/check.png" mode="aspectFit" />
+        <text>官方实名认证</text>
       </view>
     </view>
   </view>
 
-  <!-- 选择日期 -->
-  <view class="section">
-    <view class="section-title">📅 选择日期</view>
-    <scroll-view class="date-scroll" scroll-x>
-      <view class="date-grid">
+  <!-- 3. 服务时间选择 -->
+  <view class="ios-card time-card">
+    <view class="card-header">
+      <view class="card-title-row">
+        <view class="icon-bubble icon-bubble--green">
+          <image class="bubble-icon-img" src="/assets/icons/calendar.png" mode="aspectFit" />
+        </view>
+        <text class="card-title">服务时间</text>
+      </view>
+      <text wx:if="{{startTime}}" class="selected-time-tag">{{serviceDate}} {{startTime}}-{{endTime}}</text>
+    </view>
+
+    <!-- 日期横向滚动 (Apple Segmented Style) -->
+    <scroll-view class="date-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="date-list">
         <view
           wx:for="{{dates}}"
-          wx:key="*this"
-          class="date-item {{index === selectedDateIndex ? 'date-item--active' : ''}} {{isToday(item) ? 'date-item--today' : ''}}"
+          wx:key="dateStr"
+          class="date-pill-btn {{index === selectedDateIndex ? 'date-pill-btn--active' : ''}} ios-touch-active"
           data-index="{{index}}"
           bindtap="handleDateSelect"
         >
-          <view class="date-weekday">{{isToday(item) ? '今天' : formatDate(item).split(' ')[1]}}</view>
-          <view class="date-day">{{formatDate(item).split(' ')[0]}}</view>
+          <text class="date-weekday">{{item.weekday}}</text>
+          <text class="date-day">{{item.monthDay}}</text>
         </view>
       </view>
     </scroll-view>
-  </view>
 
-  <!-- 选择时间 -->
-  <view class="section">
-    <view class="section-title">⏰ 选择时间</view>
-    <view wx:if="{{loadingSlots}}" class="loading-slots">
-      <view class="loading-spinner"></view>
-      <text>加载时间段...</text>
+    <!-- 时间段网格 -->
+    <view wx:if="{{loadingSlots}}" class="slots-loading">
+      <view class="loading-spinner-sm" />
+      <text class="loading-txt">查询排期中…</text>
     </view>
-    <view wx:else class="time-grid">
+    <view wx:else class="slots-grid">
       <view
         wx:for="{{timeSlots}}"
         wx:key="time"
-        class="time-slot {{item.available ? '' : 'time-slot--disabled'}} {{item.selected ? 'time-slot--selected' : ''}}"
+        class="slot-item {{!item.available ? 'slot-item--disabled' : ''}} {{item.selected ? 'slot-item--selected' : ''}} ios-touch-active"
         data-time="{{item.time}}"
         data-available="{{item.available}}"
         bindtap="handleTimeSelect"
       >
-        <text class="time-text">{{item.display}}</text>
-        <text wx:if="{{!item.available}}" class="time-status">已约</text>
-        <text wx:if="{{item.selected}}" class="time-check">✓</text>
+        <text class="slot-time">{{item.display}}</text>
+        <text wx:if="{{item.selected}}" class="slot-status slot-status--selected">✓</text>
+        <text wx:elif="{{!item.available}}" class="slot-status">{{item.statusText || '约满'}}</text>
+        <text wx:else class="slot-status slot-status--free">可约</text>
       </view>
     </view>
   </view>
 
-  <!-- 备注 -->
-  <view class="section">
-    <view class="section-title">📝 备注（选填）</view>
-    <view class="note-card">
-      <textarea
-        class="note-input"
-        placeholder="如有特殊要求请备注，如：肩颈不太好"
-        value="{{note}}"
-        bindinput="handleNoteInput"
-        maxlength="200"
-      />
+  <!-- 4. 出行方式选择 (Apple Segmented Cards) -->
+  <view class="ios-card travel-card">
+    <view class="card-header">
+      <view class="card-title-row">
+        <view class="icon-bubble icon-bubble--amber">
+          <image class="bubble-icon-img" src="/assets/icons/tech.png" mode="aspectFit" />
+        </view>
+        <text class="card-title">技师出行方式</text>
+      </view>
+    </view>
+    <view class="travel-modes">
+      <view
+        class="travel-mode-btn {{travelMode === 'transit' ? 'travel-mode-btn--active' : ''}} ios-touch-active"
+        data-mode="transit"
+        bindtap="handleTravelModeChange"
+      >
+        <view class="travel-icon-wrap">
+          <image class="travel-icon-img" src="/assets/icons/transit.png" mode="aspectFit" />
+        </view>
+        <view class="travel-text-col">
+          <text class="travel-title">公共交通</text>
+          <text class="travel-desc">常规出行 · 费用实惠</text>
+        </view>
+      </view>
+      <view
+        class="travel-mode-btn {{travelMode === 'driving' ? 'travel-mode-btn--active' : ''}} ios-touch-active"
+        data-mode="driving"
+        bindtap="handleTravelModeChange"
+      >
+        <view class="travel-icon-wrap">
+          <image class="travel-icon-img" src="/assets/icons/car.png" mode="aspectFit" />
+        </view>
+        <view class="travel-text-col">
+          <text class="travel-title">专车/自驾</text>
+          <text class="travel-desc">急速直达 · 省时省心</text>
+        </view>
+      </view>
     </view>
   </view>
 
-  <!-- 计算价格按钮 -->
-  <view class="action-section">
+  <!-- 5. 优惠券与备注 (Apple Inset Grouped TableView) -->
+  <view class="ios-card cell-group-card">
+    <view class="cell-row ios-touch-active" bindtap="handleSelectCoupon">
+      <view class="cell-left-label">
+        <text class="cell-label">优惠券</text>
+      </view>
+      <view class="cell-right">
+        <text class="coupon-val {{couponId ? 'coupon-val--active' : ''}}">{{couponDesc}}</text>
+        <text class="chevron-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="hairline-divider" />
+
+    <view class="cell-row note-cell">
+      <text class="cell-label">备注要求</text>
+      <input
+        class="note-input"
+        placeholder="如有特殊要求请填写，如力度偏轻/重点按肩"
+        placeholder-style="color: #C7C7CC;"
+        value="{{note}}"
+        bindinput="handleNoteInput"
+        maxlength="100"
+      />
+    </view>
+
+    <view class="hairline-divider" />
+
+    <!-- 虚拟号码隐私保护 -->
+    <view class="cell-row privacy-cell ios-touch-active" bindtap="togglePrivacyPhone">
+      <view class="privacy-label-col">
+        <view class="privacy-title-row">
+          <text class="cell-label">虚拟号码保护</text>
+          <text class="privacy-tag">推荐开启</text>
+        </view>
+        <text class="privacy-hint">对技师隐藏真实手机号，通话均通过加密虚拟号转接</text>
+      </view>
+      <view class="ios-switch {{privacyPhone ? 'ios-switch--on' : ''}}">
+        <view class="ios-switch-knob"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 6. 价格试算 / 订单明细票据卡片 -->
+  <view class="ios-card price-summary-card">
+    <view class="price-header-row">
+      <view class="card-title-row">
+        <view class="icon-bubble icon-bubble--blue">
+          <image class="bubble-icon-img" src="/assets/icons/order.png" mode="aspectFit" />
+        </view>
+        <text class="card-title">费用明细</text>
+      </view>
+      <button
+        class="calc-btn {{loading ? 'calc-btn--loading' : ''}} ios-touch-active"
+        bindtap="handlePreview"
+        disabled="{{loading || !startTime || !addressId}}"
+      >
+        {{loading ? '计算中…' : '🔄 重新核算'}}
+      </button>
+    </view>
+
+    <view wx:if="{{preview}}" class="preview-breakdown">
+      <view class="price-line">
+        <text class="price-label">服务套餐费用</text>
+        <text class="price-val">¥{{preview.projectAmount}}</text>
+      </view>
+      <view class="price-line">
+        <text class="price-label">技师上门出行费</text>
+        <text class="price-val">¥{{preview.travelFee}}</text>
+      </view>
+      <view wx:if="{{preview.discountAmount > 0}}" class="price-line discount-line">
+        <text class="price-label">优惠券立减</text>
+        <text class="price-val">-¥{{preview.discountAmount}}</text>
+      </view>
+      <view class="hairline-divider" />
+      <view class="price-line total-line">
+        <text class="total-label">预计实付金额</text>
+        <view class="total-val-box">
+          <text class="total-sym">¥</text>
+          <text class="total-val">{{preview.payableAmount}}</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="preview-empty">
+      <text class="preview-empty-hint">选择服务地址与时间后，点击右上角核算最终费用</text>
+    </view>
+  </view>
+
+  <!-- 错误提示 Banner -->
+  <view wx:if="{{error}}" class="error-banner">
+    <image class="error-icon-img" src="/assets/icons/notice.png" mode="aspectFit" />
+    <text class="error-txt">{{error}}</text>
+  </view>
+
+  <!-- 7. 支付方式卡片 (Apple Inset Grouped) -->
+  <view class="ios-card payment-method-card">
+    <view class="pay-method-left">
+      <view class="pay-icon-wrap">
+        <image class="pay-icon-img" src="/assets/icons/wechat.png" mode="aspectFit" />
+      </view>
+      <view class="pay-text-col">
+        <text class="pay-name">微信支付</text>
+        <text class="pay-sub">官方安全担保交易 · 支持微信零钱/储蓄卡/信用卡</text>
+      </view>
+    </view>
+    <view class="pay-check-circle">
+      <image class="pay-check-img" src="/assets/icons/check.png" mode="aspectFit" />
+    </view>
+  </view>
+
+  <!-- 底部留白避免遮挡 -->
+  <view class="bottom-spacer" />
+
+  <!-- 8. 吸底磨砂毛玻璃结算栏 -->
+  <view class="fixed-footer-bar">
+    <view class="footer-left">
+      <text class="footer-total-label">合计实付：</text>
+      <text class="footer-total-sym">¥</text>
+      <text class="footer-total-num">{{preview ? preview.payableAmount : '—'}}</text>
+      <text wx:if="{{preview && preview.discountAmount > 0}}" class="footer-saved-pill">已省 ¥{{preview.discountAmount}}</text>
+    </view>
     <button
-      class="preview-btn {{loading ? 'preview-btn--loading' : ''}}"
-      bindtap="handlePreview"
-      disabled="{{loading || !startTime}}"
+      class="footer-submit-btn {{submitting ? 'btn--disabled' : ''}} ios-touch-active"
+      bindtap="handleSubmit"
+      disabled="{{submitting || !preview}}"
     >
-      {{loading ? '计算中...' : '计算价格'}}
+      {{submitting ? '处理中…' : '立即下单'}}
     </button>
   </view>
 
-  <!-- 错误提示 -->
-  <view wx:if="{{error}}" class="error-banner">
-    <text class="error-icon">⚠️</text>
-    <text class="error-text">{{error}}</text>
-  </view>
-
-  <!-- 订单预览 -->
-  <view wx:if="{{preview}}" class="preview-card">
-    <view class="preview-title">📋 订单预览</view>
-
-    <view class="preview-info">
-      <view class="preview-row">
-        <text class="preview-label">项目</text>
-        <text class="preview-value">{{preview.projectName}}</text>
-      </view>
-      <view class="preview-row">
-        <text class="preview-label">时长</text>
-        <text class="preview-value">{{preview.durationMinutes}}分钟</text>
-      </view>
-      <view class="preview-row">
-        <text class="preview-label">时间</text>
-        <text class="preview-value">{{preview.serviceDate}} {{preview.startTime}}-{{preview.endTime}}</text>
-      </view>
-    </view>
-
-    <view class="preview-divider"></view>
-
-    <view class="preview-amount">
-      <view class="amount-row">
-        <text>项目费用</text>
-        <text>¥{{preview.projectAmount}}</text>
-      </view>
-      <view class="amount-row">
-        <text>上门费</text>
-        <text>¥{{preview.travelFee}}</text>
-      </view>
-      <view wx:if="{{preview.discountAmount > 0}}" class="amount-row amount-discount">
-        <text>优惠</text>
-        <text>-¥{{preview.discountAmount}}</text>
-      </view>
-    </view>
-
-    <view class="preview-divider"></view>
-
-    <view class="total-row">
-      <text class="total-label">应付金额</text>
-      <text class="total-value">¥{{preview.payableAmount}}</text>
-    </view>
-
-    <view class="submit-section">
-      <button
-        class="submit-btn {{submitting ? 'submit-btn--loading' : ''}}"
-        bindtap="handleSubmit"
-        disabled="{{submitting}}"
-      >
-        {{submitting ? '提交中...' : '确认下单并支付'}}
-      </button>
-    </view>
-  </view>
-
-  <!-- 底部间距 -->
-  <view style="height: 60rpx;"></view>
 </view>

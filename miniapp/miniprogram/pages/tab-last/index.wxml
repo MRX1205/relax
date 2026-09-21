@@ -1,79 +1,76 @@
-<view class="page">
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+<view class="ios-orders-page">
 
-  <!-- USER: Orders -->
+  <view wx:if="{{loading}}" class="loading-feed">
+    <view class="ios-skeleton skeleton-card" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+  </view>
+
+  <!-- ════ USER: 我的订单 ════ -->
   <block wx:elif="{{role === 'USER'}}">
-    <block wx:if="{{orders.length === 0}}">
-      <view class="empty"><view class="empty__icon">📋</view><view class="empty__text">暂无订单</view><view class="empty__desc">去预约一个服务吧</view></view>
-    </block>
-    <view class="order-list">
-      <view wx:for="{{orders}}" wx:key="id" class="order-card surface" data-id="{{item.id}}" bindtap="goToOrderDetail">
-        <view class="order-card__head">
-          <text class="order-card__no">{{item.orderNo}}</text>
-          <text class="order-card__status">{{item.status}}</text>
+    <view class="page-title-bar">
+      <text class="page-main-title">服务订单</text>
+      <text class="page-sub-title">预约记录与履约保障</text>
+    </view>
+
+    <!-- 空订单 -->
+    <view wx:if="{{orders.length === 0}}" class="ios-empty-view">
+      <view class="empty-icon-circle">
+        <image class="empty-svg" src="/assets/icons/order.png" mode="aspectFit" />
+      </view>
+      <text class="empty-primary">暂无服务订单</text>
+      <text class="empty-secondary">预约一个专业上门理疗放松一下吧</text>
+    </view>
+
+    <!-- 订单列表 -->
+    <view wx:else class="orders-feed">
+      <view
+        wx:for="{{orders}}"
+        wx:key="id"
+        class="order-ticket-card ios-card ios-touch-active"
+        data-id="{{item.id || item.orderNo}}"
+        bindtap="goToOrderDetail"
+      >
+        <!-- 头部：单号与状态标签 -->
+        <view class="ticket-header">
+          <text class="ticket-no">订单号：{{item.orderNo}}</text>
+          <view class="ticket-status-pill" style="{{item.statusInfo ? 'color:' + item.statusInfo.color + '; background:' + item.statusInfo.bg : ''}}">
+            {{item.statusInfo ? item.statusInfo.text : (item.status === 'PENDING_PAYMENT' ? '待付款' : item.status === 'PAID' ? '待接单' : item.status === 'ACCEPTED' ? '已接单' : item.status === 'IN_SERVICE' ? '服务中' : item.status === 'COMPLETED' ? '已完成' : item.status === 'CANCELLED' ? '已取消' : item.status)}}
+          </view>
         </view>
-        <view class="order-card__body">
-          <text class="order-card__proj">{{item.projectName}}</text>
-          <text class="order-card__time">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+
+        <!-- 主体：项目与预约时间 -->
+        <view class="ticket-body">
+          <text class="ticket-proj-title">{{item.projectName || '正规理疗上门服务'}}</text>
+          <view class="ticket-meta-line" wx:if="{{item.technicianName}}">
+            <text class="meta-label">技师：</text>
+            <text class="meta-val">{{item.technicianName}}</text>
+          </view>
+          <view class="ticket-meta-line" wx:if="{{item.serviceDate}}">
+            <text class="meta-label">时间：</text>
+            <text class="meta-val">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+          </view>
+          <view class="ticket-meta-line" wx:if="{{item.serviceAddress}}">
+            <text class="meta-label">地址：</text>
+            <text class="meta-val ellipsis">{{item.serviceAddress}}</text>
+          </view>
         </view>
-        <view class="order-card__foot">
-          <text class="order-card__amount">¥{{item.amount || 0}}</text>
-          <text class="order-card__date">{{item.createdAt}}</text>
+
+        <!-- 底部：金额与行动入口 -->
+        <view class="ticket-footer">
+          <view class="ticket-price-box">
+            <text class="price-lbl">实付：</text>
+            <text class="price-curr">¥</text>
+            <text class="price-val">{{item.amount || item.payableAmount || 168}}</text>
+          </view>
+          <view class="ticket-detail-link">
+            <text>查看详情</text>
+            <text class="chev">›</text>
+          </view>
         </view>
       </view>
     </view>
   </block>
 
-  <!-- TECH: Income -->
-  <block wx:elif="{{role === 'TECHNICIAN'}}">
-    <view class="income-stats">
-      <view class="income-stat">
-        <view class="income-stat__num">¥{{incomeStats.total}}</view>
-        <view class="income-stat__label">总收入</view>
-      </view>
-      <view class="income-stat">
-        <view class="income-stat__num">¥{{incomeStats.pending}}</view>
-        <view class="income-stat__label">待结算</view>
-      </view>
-      <view class="income-stat">
-        <view class="income-stat__num">¥{{incomeStats.settled}}</view>
-        <view class="income-stat__label">已结算</view>
-      </view>
-    </view>
-    <view class="section-head">
-      <text class="section-title">收入明细</text>
-      <text class="section-more" bindtap="goToFullIncome">全部 ›</text>
-    </view>
-    <block wx:if="{{income.length === 0}}">
-      <view class="empty"><view class="empty__icon">💰</view><view class="empty__text">暂无收入记录</view></view>
-    </block>
-    <view class="income-list">
-      <view wx:for="{{income}}" wx:key="id" class="income-item surface">
-        <view class="income-item__info">
-          <text class="income-item__order">{{item.orderNo || '订单收入'}}</text>
-          <text class="income-item__date">{{item.createdAt}}</text>
-        </view>
-        <view class="income-item__amount {{item.status === 'SETTLED' ? 'settled' : 'pending'}}">
-          +¥{{item.amount}}
-        </view>
-      </view>
-    </view>
-  </block>
-
-  <!-- ADMIN: Finance -->
-  <block wx:elif="{{role === 'ADMIN' || role === 'SUPER_ADMIN'}}">
-    <view class="finance-title">财务中心</view>
-    <view class="finance-list">
-      <view wx:for="{{financeMenus}}" wx:key="name" class="finance-item surface" data-url="{{item.url}}" bindtap="goToFinancePage">
-        <view class="finance-item__icon">{{item.icon}}</view>
-        <view class="finance-item__content">
-          <view class="finance-item__name">{{item.name}}</view>
-          <view class="finance-item__desc">{{item.desc}}</view>
-        </view>
-        <view class="finance-item__arrow">›</view>
-      </view>
-    </view>
-  </block>
+  <view class="safe-bottom-bar"></view>
 </view>
 
 <custom-tabbar />

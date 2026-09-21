@@ -1,5 +1,10 @@
+import { bindCurrentWechat, getCachedAccount, loadCurrentAccount } from "../../../services/auth";
+import { requireRole } from "../../../utils/auth-guard";
+
 Page({
   data: {
+    authorized: false,
+    account: null as Account | null,
     menus: [
       { code: "categories", name: "分类管理", desc: "服务分类的增删改", url: "/packageAdmin/pages/categories/index" },
       { code: "projects", name: "项目管理", desc: "项目上架、定价和上下架", url: "/packageAdmin/pages/projects/index" },
@@ -10,5 +15,43 @@ Page({
       { code: "banners", name: "轮播图", desc: "管理首页轮播图", url: "/packageAdmin/pages/banners/index" },
     ],
   },
-  handleMenuTap(e: WechatMiniprogram.TouchEvent) { wx.navigateTo({ url: e.currentTarget.dataset.url }); },
+
+  async onShow() {
+    const ok = await requireRole("ADMIN", {
+      deniedMessage: "您不是平台受邀管理员，无权访问管理控制台",
+      fallbackUrl: "/pages/home/index",
+    });
+    if (ok) {
+      let account = getCachedAccount();
+      try {
+        account = await loadCurrentAccount();
+      } catch {
+        // use cached
+      }
+      this.setData({ authorized: true, account });
+    }
+  },
+
+  async handleBindWechat() {
+    wx.showLoading({ title: "正在绑定微信…" });
+    try {
+      const updatedAccount = await bindCurrentWechat();
+      this.setData({ account: updatedAccount });
+      wx.hideLoading();
+      wx.showToast({ title: "微信绑定成功！", icon: "success" });
+    } catch (err: any) {
+      wx.hideLoading();
+      const msg = err?.message || err?.errMsg || "绑定失败，请重试";
+      wx.showModal({ title: "绑定提示", content: msg, showCancel: false });
+    }
+  },
+
+  handleMenuTap(e: WechatMiniprogram.TouchEvent) {
+    if (!this.data.authorized) return;
+    wx.navigateTo({ url: e.currentTarget.dataset.url });
+  },
+
+  returnToUserMode() {
+    wx.switchTab({ url: "/pages/home/index" });
+  },
 });

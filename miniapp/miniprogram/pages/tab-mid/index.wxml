@@ -1,67 +1,119 @@
-<view class="page">
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+<view class="ios-tech-browse-page">
 
-  <!-- USER: Technicians -->
+  <view wx:if="{{loading}}" class="loading-feed">
+    <view class="ios-skeleton skeleton-card" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+  </view>
+
+  <!-- ════ USER: 技师列表 ════ -->
   <block wx:elif="{{role === 'USER'}}">
-    <view class="sort-bar">
-      <view class="sort-item {{sortBy === 'default' ? 'sort-item--active' : ''}}" data-sort="default" bindtap="switchSort">默认</view>
-      <view class="sort-item {{sortBy === 'rating' ? 'sort-item--active' : ''}}" data-sort="rating" bindtap="switchSort">评分</view>
-      <view class="sort-item {{sortBy === 'price' ? 'sort-item--active' : ''}}" data-sort="price" bindtap="switchSort">价格</view>
+    <!-- 顶部 iOS 药丸筛选条 -->
+    <view class="filter-bar-header ios-blur">
+      <view class="filter-pills-row">
+        <view
+          class="filter-pill {{sortBy === 'default' ? 'filter-pill--active' : ''}} ios-touch-active"
+          data-sort="default"
+          bindtap="switchSort"
+        >
+          <text>综合推荐</text>
+        </view>
+        <view
+          class="filter-pill {{sortBy === 'rating' ? 'filter-pill--active' : ''}} ios-touch-active"
+          data-sort="rating"
+          bindtap="switchSort"
+        >
+          <text>评分最高</text>
+        </view>
+        <view
+          class="filter-pill {{sortBy === 'price' ? 'filter-pill--active' : ''}} ios-touch-active"
+          data-sort="price"
+          bindtap="switchSort"
+        >
+          <text>价格优惠</text>
+        </view>
+      </view>
     </view>
 
-    <block wx:if="{{technicians.length === 0}}">
-      <view class="empty"><view class="empty__icon">👤</view><view class="empty__text">暂无可约技师</view></view>
-    </block>
+    <!-- 空状态 -->
+    <view wx:if="{{technicians.length === 0}}" class="ios-empty-view">
+      <view class="empty-icon-circle">
+        <image class="empty-svg" src="/assets/tabbar/technicians.png" mode="aspectFit" />
+      </view>
+      <text class="empty-primary">暂无可约技师</text>
+      <text class="empty-secondary">正在调配更多优质技师为您服务</text>
+    </view>
 
-    <view class="tech-list">
-      <view wx:for="{{technicians}}" wx:key="id" class="tech-card surface" data-id="{{item.id}}" bindtap="goToTechDetail">
-        <view class="tech-card__avatar">
-          <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" mode="aspectFill" class="tech-card__img" />
-          <view wx:else class="tech-card__ph">{{item.serviceName[0]}}</view>
-          <view wx:if="{{item.onlineStatus === 'ONLINE'}}" class="tech-card__dot"></view>
-        </view>
-        <view class="tech-card__info">
-          <view class="tech-card__name">{{item.serviceName}}</view>
-          <view class="tech-card__intro">{{item.intro}}</view>
-          <view class="tech-card__meta">
-            <text>{{item.experienceYears}}年经验</text>
-            <text wx:if="{{item.startPrice}}" class="tech-card__price">¥{{item.startPrice}}起</text>
+    <!-- 技师列表 -->
+    <view wx:else class="tech-feed">
+      <view
+        wx:for="{{technicians}}"
+        wx:key="id"
+        class="tech-card ios-card ios-touch-active"
+        data-id="{{item.id}}"
+        bindtap="goToTechDetail"
+      >
+        <view class="tech-top-row">
+          <!-- 头像与在线绿点 -->
+          <view class="avatar-box">
+            <image src="{{item.displayAvatar || item.avatarUrl || '/assets/images/tech-wang.jpg'}}" mode="aspectFill" class="avatar-img" />
+            <view class="status-dot {{item.onlineStatus === 'ONLINE' ? 'status-dot--on' : 'status-dot--off'}}"></view>
+          </view>
+
+          <!-- 技师核心资料 -->
+          <view class="info-box">
+            <view class="name-line">
+              <text class="service-name">{{item.serviceName}}</text>
+              <view class="verify-badge">
+                <image class="shield-svg" src="/assets/icons/shield.png" mode="aspectFit" />
+                <text>实名</text>
+              </view>
+              <view class="online-tag {{item.onlineStatus === 'ONLINE' ? 'tag--online' : 'tag--offline'}}">
+                {{item.onlineStatus === 'ONLINE' ? '接单中' : '休息中'}}
+              </view>
+            </view>
+
+            <view class="badges-line">
+              <view class="star-rating">
+                <text class="star-char">★</text>
+                <text class="star-val">4.9</text>
+              </view>
+              <text class="dot-separator">•</text>
+              <text class="stat-text">{{item.experienceYears || 5}}年经验</text>
+              <text class="dot-separator">•</text>
+              <text class="stat-text">已服务 800+ 单</text>
+            </view>
+
+            <text class="intro-snippet">{{item.intro || '手法细腻专业，擅长全身放松与深层肌肉理疗。'}}</text>
           </view>
         </view>
-        <view class="tech-card__status {{item.onlineStatus === 'ONLINE' ? 's-on' : 's-off'}}">
-          {{item.onlineStatus === 'ONLINE' ? '可约' : '休息'}}
+
+        <!-- 技师真实风采生活照缩略图 -->
+        <view wx:if="{{item.displayPhotos.length > 0}}" class="tech-photos-strip">
+          <image
+            wx:for="{{item.displayPhotos}}"
+            wx:key="*this"
+            wx:for-item="photo"
+            wx:for-index="pi"
+            wx:if="{{pi < 4}}"
+            class="strip-photo-img"
+            src="{{photo}}"
+            mode="aspectFill"
+          />
+        </view>
+
+        <!-- 底部价格与行动条 -->
+        <view class="card-footer-row">
+          <view class="pricing-group">
+            <text class="currency-sign">¥</text>
+            <text class="start-price">{{item.startPrice || 168}}</text>
+            <text class="price-suffix">起</text>
+          </view>
+          <view class="action-book-btn">去预约 ›</view>
         </view>
       </view>
     </view>
   </block>
 
-  <!-- TECH: Schedules -->
-  <block wx:elif="{{role === 'TECHNICIAN'}}">
-    <view class="quick-grid">
-      <view class="quick-item surface" bindtap="goToSchedules">
-        <view class="quick-item__icon">📅</view>
-        <view class="quick-item__name">排班管理</view>
-        <view class="quick-item__desc">设置可服务时段</view>
-      </view>
-      <view class="quick-item surface" bindtap="goToServiceAreas">
-        <view class="quick-item__icon">📍</view>
-        <view class="quick-item__name">服务区域</view>
-        <view class="quick-item__desc">查看已开通区域</view>
-      </view>
-    </view>
-  </block>
-
-  <!-- ADMIN: Operations -->
-  <block wx:elif="{{role === 'ADMIN' || role === 'SUPER_ADMIN'}}">
-    <view class="ops-title">运营管理</view>
-    <view class="ops-list">
-      <view wx:for="{{opsMenus}}" wx:key="name" class="ops-item surface" data-url="{{item.url}}" bindtap="goToOpsPage">
-        <view class="ops-item__icon">{{item.icon}}</view>
-        <view class="ops-item__name">{{item.name}}</view>
-        <view class="ops-item__arrow">›</view>
-      </view>
-    </view>
-  </block>
+  <view class="safe-bottom-bar"></view>
 </view>
 
 <custom-tabbar />

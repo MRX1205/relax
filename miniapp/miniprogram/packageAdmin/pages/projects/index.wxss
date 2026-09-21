@@ -64,6 +64,25 @@
   justify-content: space-between;
   padding: 24rpx;
 }
+.proj-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.proj-type-tag {
+  font-size: 20rpx;
+  font-weight: 700;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+}
+.tag-custom {
+  background: #FFF3E0;
+  color: #E65100;
+}
+.tag-platform {
+  background: #E3F2FD;
+  color: #1565C0;
+}
 .proj-name {
   font-size: 30rpx;
   font-weight: 600;
@@ -71,7 +90,7 @@
 .proj-meta {
   font-size: 24rpx;
   color: var(--color-muted);
-  margin-top: 4rpx;
+  margin-top: 6rpx;
 }
 .proj-status {
   font-size: 24rpx;

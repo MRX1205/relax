@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "VIP 会员中心",
+  "navigationBarBackgroundColor": "#1F232B",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+    "ui-state": "/components/ui-state/index"
+  }
+}

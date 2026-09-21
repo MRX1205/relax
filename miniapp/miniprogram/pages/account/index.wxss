@@ -1,142 +1,487 @@
-.page { padding-bottom: 140rpx; }
+.ios-account-page {
+  min-height: 100vh;
+  background-color: var(--ios-bg);
+  padding-top: 24rpx;
+  padding-bottom: 30rpx;
+}
 
-.profile-card {
+/* ════ 1. 个人资料头部卡片 ════ */
+.profile-hero-card {
+  margin: 0 32rpx 24rpx;
+  padding: 36rpx 32rpx;
+}
+
+.profile-main-row {
   display: flex;
   align-items: center;
-  padding: 32rpx;
-  margin-bottom: 24rpx;
-  gap: 24rpx;
 }
 
-.avatar-wrap {
+.avatar-container {
   position: relative;
+  width: 128rpx;
+  height: 128rpx;
   flex-shrink: 0;
+  margin-right: 28rpx;
 }
 
-.avatar {
-  width: 120rpx;
-  height: 120rpx;
+.user-avatar {
+  width: 128rpx;
+  height: 128rpx;
   border-radius: 50%;
+  border: 4rpx solid #FFFFFF;
+  box-shadow: 0 8rpx 24rpx -4rpx rgba(0, 0, 0, 0.12);
 }
 
-.avatar--placeholder {
+.user-avatar--placeholder {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF382E 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-primary), #E8704A);
 }
 
-.avatar-text {
-  font-size: 48rpx;
+.avatar-letter {
+  font-size: 52rpx;
   font-weight: 700;
   color: #FFFFFF;
 }
 
-.avatar-edit {
+.avatar-badge {
   position: absolute;
   bottom: 0;
-  left: 0;
   right: 0;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.5);
-  color: #FFFFFF;
-  font-size: 20rpx;
-  padding: 4rpx 0;
-  border-radius: 0 0 60rpx 60rpx;
+  width: 38rpx;
+  height: 38rpx;
+  background: #1D1D1F;
+  border-radius: 50%;
+  border: 3rpx solid #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.profile-info {
+.badge-cam {
+  width: 20rpx;
+  height: 20rpx;
+}
+
+.profile-text-col {
   flex: 1;
   min-width: 0;
 }
 
-.nickname-row {
+.name-display-row {
   display: flex;
   align-items: center;
-  gap: 8rpx;
+  margin-bottom: 8rpx;
 }
 
-.nickname {
-  font-size: 36rpx;
+.user-nickname {
+  font-size: 38rpx;
   font-weight: 700;
+  color: var(--ios-text-primary);
+  margin-right: 12rpx;
+  letter-spacing: -0.5rpx;
 }
 
-.edit-icon {
-  font-size: 24rpx;
+.edit-pencil-svg {
+  width: 28rpx;
+  height: 28rpx;
 }
 
-.nickname-edit {
+.edit-nickname-box {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  margin-bottom: 8rpx;
 }
 
-.nickname-input {
+.edit-input {
   flex: 1;
-  height: 72rpx;
-  padding: 0 16rpx;
-  border: 1rpx solid var(--color-border);
-  border-radius: var(--radius-sm);
-  font-size: 32rpx;
-}
-
-.nickname-save {
-  padding: 12rpx 24rpx;
-  background: var(--color-primary);
-  color: #FFFFFF;
-  border-radius: var(--radius-sm);
-  font-size: 26rpx;
-  font-weight: 600;
-}
-
-.phone-text {
-  margin-top: 8rpx;
-  font-size: 24rpx;
-  color: var(--color-muted);
-}
-
-.role-badge {
-  display: inline-block;
-  margin-top: 8rpx;
-  padding: 4rpx 16rpx;
-  background: #EDF8F3;
-  color: var(--color-accent);
+  height: 64rpx;
+  background: #F2F2F7;
   border-radius: 12rpx;
+  padding: 0 16rpx;
+  font-size: 28rpx;
+  margin-right: 12rpx;
+}
+
+.save-chip {
+  padding: 8rpx 20rpx;
+  background: #1D1D1F;
+  color: #FFFFFF;
   font-size: 22rpx;
+  border-radius: 20rpx;
+}
+
+.phone-chip-row {
+  margin-bottom: 12rpx;
+}
+
+.phone-number {
+  font-size: 24rpx;
+  color: var(--ios-text-secondary);
+}
+
+.phone-link {
+  font-size: 24rpx;
+  color: #007AFF;
+  font-weight: 500;
+}
+
+.role-pill-tags {
+  display: flex;
+  gap: 10rpx;
+}
+
+.role-pill {
+  font-size: 20rpx;
   font-weight: 600;
+  padding: 2rpx 14rpx;
+  border-radius: var(--radius-full);
 }
 
-.menu-group {
-  margin-bottom: 24rpx;
+.pill-user {
+  background: #EBEBF0;
+  color: #6E6E73;
 }
 
-.menu-item {
+.pill-tech {
+  background: #E8F8EE;
+  color: #34C759;
+}
+
+.pill-admin {
+  background: #FEF3C7;
+  color: #D97706;
+}
+
+/* ════ 2. 统计资产卡片 ════ */
+.stats-bar-card {
+  margin: 0 32rpx 24rpx;
+  padding: 28rpx 0;
   display: flex;
   align-items: center;
-  padding: 28rpx 24rpx;
-  border-bottom: 1rpx solid var(--color-border);
 }
 
-.menu-item:last-child {
-  border-bottom: none;
+.stat-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.menu-icon {
-  font-size: 36rpx;
+.stat-figure {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: var(--ios-text-primary);
+  margin-bottom: 4rpx;
+  letter-spacing: -0.5rpx;
+}
+
+.figure-red {
+  color: var(--ios-red);
+}
+
+.stat-caption {
+  font-size: 22rpx;
+  color: var(--ios-text-tertiary);
+  font-weight: 500;
+}
+
+.stat-vert-line {
+  width: 1rpx;
+  height: 48rpx;
+  background: var(--ios-border);
+}
+
+/* ════ 3. Apple Wallet 风格 VIP 黑金卡 ════ */
+.vip-card-banner {
+  margin: 0 32rpx 24rpx;
+  background: linear-gradient(135deg, #2D2723 0%, #1A1715 100%);
+  border-radius: var(--radius-lg);
+  padding: 28rpx 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8rpx 24rpx -4rpx rgba(45, 39, 35, 0.4);
+}
+
+.vip-left-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.vip-crown-icon {
+  font-size: 40rpx;
   margin-right: 16rpx;
 }
 
-.menu-label {
+.vip-text-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.vip-head {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FFE6A0;
+  margin-bottom: 4rpx;
+  letter-spacing: 0.5rpx;
+}
+
+.vip-subline {
+  font-size: 20rpx;
+  color: rgba(255, 230, 160, 0.75);
+}
+
+.vip-cta-pill {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #1A1715;
+  background: linear-gradient(135deg, #FFEAB5 0%, #FFD07A 100%);
+  padding: 10rpx 22rpx;
+  border-radius: var(--radius-full);
+}
+
+/* ════ 4 & 5. 身份专区卡片 ════ */
+.portal-card {
+  margin: 0 32rpx 24rpx;
+  padding: 24rpx 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.portal-left {
+  display: flex;
+  align-items: center;
   flex: 1;
-  font-size: 30rpx;
 }
 
-.menu-arrow {
-  color: var(--color-muted);
+.portal-icon-bg {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.icon-bg-green {
+  background: #E8F8EE;
+}
+
+.icon-bg-gold {
+  background: #FEF3C7;
+}
+
+.portal-text-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.portal-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--ios-text-primary);
+  margin-bottom: 4rpx;
+}
+
+.portal-desc {
+  font-size: 20rpx;
+  color: var(--ios-text-tertiary);
+}
+
+.portal-btn {
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 10rpx 24rpx;
+  border-radius: var(--radius-full);
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+.btn-green {
+  background: #34C759;
+  color: #FFFFFF;
+}
+
+.btn-gold {
+  background: #D97706;
+  color: #FFFFFF;
+}
+
+/* ════ 6. iOS Inset Grouped TableView ════ */
+.cell-icon-wrap {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 22rpx;
+  flex-shrink: 0;
+}
+
+.cell-svg {
+  width: 36rpx;
+  height: 36rpx;
+  display: block;
+}
+
+.icon-blue { background: rgba(0, 122, 255, 0.1); }
+.icon-green { background: rgba(52, 199, 89, 0.1); }
+.icon-orange { background: rgba(255, 149, 0, 0.1); }
+.icon-red { background: rgba(255, 56, 46, 0.1); }
+.icon-purple { background: rgba(175, 82, 222, 0.1); }
+.icon-dark { background: rgba(29, 29, 31, 0.1); }
+.icon-teal { background: rgba(48, 176, 199, 0.1); }
+
+.cell-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--ios-text-primary);
+  flex: 1;
+}
+
+.cell-label-plain {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--ios-text-primary);
+  flex: 1;
+}
+
+.cell-badge {
+  font-size: 20rpx;
+  background: #FFE8E6;
+  color: #FF382E;
+  font-weight: 600;
+  padding: 2rpx 12rpx;
+  border-radius: var(--radius-full);
+  margin-right: 8rpx;
+}
+
+.cell-tag {
+  font-size: 20rpx;
+  background: #E8F8EE;
+  color: #34C759;
+  font-weight: 600;
+  padding: 2rpx 12rpx;
+  border-radius: var(--radius-full);
+  margin-right: 8rpx;
+}
+
+.cell-chevron {
+  font-size: 36rpx;
+  color: #C7C7CC;
+  line-height: 1;
+}
+
+/* ════ 8. 退出登录 ════ */
+.logout-container {
+  padding: 32rpx 32rpx 60rpx;
+}
+
+.logout-btn {
+  background: #FFFFFF;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--ios-shadow-card);
+  border: 1rpx solid var(--ios-border);
+  height: 92rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--ios-red);
+}
+
+/* ════ 管理员 2FA PIN 弹窗 ════ */
+.admin-auth-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+}
+
+.admin-auth-dialog {
+  width: 100%;
+  max-width: 600rpx;
+  border-radius: 36rpx;
+  padding: 44rpx 36rpx;
+  box-sizing: border-box;
+  box-shadow: 0 24rpx 64rpx rgba(0, 0, 0, 0.2);
+}
+
+.dialog-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.d-icon {
+  font-size: 40rpx;
+  margin-right: 12rpx;
+}
+
+.d-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--ios-text-primary);
+}
+
+.d-subtitle {
+  font-size: 24rpx;
+  color: var(--ios-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 32rpx;
+}
+
+.pin-input-wrap {
+  margin-bottom: 36rpx;
+}
+
+.pin-input {
+  height: 84rpx;
+  background: #F2F2F7;
+  border-radius: 18rpx;
+  padding: 0 24rpx;
   font-size: 32rpx;
+  letter-spacing: 6rpx;
+  text-align: center;
 }
 
-.logout-wrap {
-  margin-top: 48rpx;
-  padding: 0 32rpx;
+.d-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.d-btn {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: var(--radius-full);
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-cancel {
+  background: #EBEBF0;
+  color: #6E6E73;
+}
+
+.btn-confirm {
+  background: #1D1D1F;
+  color: #FFFFFF;
 }

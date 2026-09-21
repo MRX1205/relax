@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "收入明细",
-  "usingComponents": {
-    "custom-tabbar": "/components/custom-tabbar/index"
-  }
-}

@@ -1,66 +1,86 @@
-import { getCachedAccount, switchRole, loadCurrentAccount } from "../../services/auth";
+import { getCachedAccount, loadCurrentAccount, switchRole } from "../../services/auth";
 import { getAccessToken } from "../../services/http";
+import { hasRole } from "../../utils/auth-guard";
 
 interface RoleItem {
   code: RoleCode;
   name: string;
   description: string;
   icon: string;
+  badge?: string;
+  authorized?: boolean;
 }
 
-const ROLE_MAP: RoleItem[] = [
-  { code: "USER", name: "用户", description: "浏览项目、预约技师、查看订单", icon: "🏠" },
-  { code: "TECHNICIAN", name: "技师", description: "接单、排班、收入查询", icon: "🔧" },
-  { code: "ADMIN", name: "管理员", description: "项目管理、订单处理、结算", icon: "⚙️" },
-  { code: "SUPER_ADMIN", name: "超级管理员", description: "全部权限、管理员管理", icon: "👑" },
+const ROLE_ITEMS: RoleItem[] = [
+  {
+    code: "USER",
+    name: "顾客端",
+    description: "浏览精选项目、预约上门技师、查看订单",
+    icon: "🏠",
+    badge: "顾客",
+  },
+  {
+    code: "TECHNICIAN",
+    name: "技师端",
+    description: "接单履约、自建项目、收入明细与排班管理",
+    icon: "💆",
+    badge: "服务商",
+  },
+  {
+    code: "ADMIN",
+    name: "管理员端",
+    description: "技师入驻审批、订单调度改派、全平台结算看板",
+    icon: "🛡️",
+    badge: "管理台",
+  },
 ];
 
 Page({
   data: {
-    roles: [] as RoleItem[],
-    currentRole: "" as RoleCode,
-    switching: false,
+    roles: ROLE_ITEMS,
+    currentRole: "USER" as RoleCode,
   },
 
-  async onLoad() {
+  async onShow() {
     if (!getAccessToken()) {
-      wx.reLaunch({ url: "/pages/login/index" });
       return;
     }
-    
     try {
       const account = await loadCurrentAccount();
-      if (!account) {
-        wx.reLaunch({ url: "/pages/login/index" });
-        return;
-      }
-      const roles = ROLE_MAP.filter(r => account.roles.includes(r.code));
-      this.setData({ roles, currentRole: account.lastRole });
+      const currentRole = account?.lastRole || "USER";
+      const roles = this.data.roles.map(r => ({
+        ...r,
+        authorized: r.code === "USER" || hasRole(r.code),
+      }));
+      this.setData({ currentRole, roles });
     } catch {
       const account = getCachedAccount();
-      if (!account) {
-        wx.reLaunch({ url: "/pages/login/index" });
-        return;
-      }
-      const roles = ROLE_MAP.filter(r => account.roles.includes(r.code));
-      this.setData({ roles, currentRole: account.lastRole });
+      const currentRole = account?.lastRole || "USER";
+      const roles = this.data.roles.map(r => ({
+        ...r,
+        authorized: r.code === "USER" || hasRole(r.code),
+      }));
+      this.setData({ currentRole, roles });
     }
   },
 
-  async handleSwitch(e: WechatMiniprogram.TouchEvent) {
+  async handleSelectRole(e: WechatMiniprogram.TouchEvent) {
     const role = e.currentTarget.dataset.role as RoleCode;
-    if (role === this.data.currentRole || this.data.switching) return;
-    this.setData({ switching: true });
-    try {
-      await switchRole(role);
-      wx.showToast({ title: "切换成功", icon: "success" });
-      setTimeout(() => {
-        wx.reLaunch({ url: "/pages/home/index" });
-      }, 500);
-    } catch (err) {
-      wx.showToast({ title: "切换失败", icon: "none" });
-    } finally {
-      this.setData({ switching: false });
+
+    if (role === "USER") {
+      // 切换回用户端并跳转至首页
+      try {
+        await switchRole("USER");
+      } catch {
+        // ignore
+      }
+      wx.switchTab({ url: "/pages/home/index" });
+      return;
     }
+
+    // 技师端或管理员端：跳转至对应的登录页面（支持手机号密码与微信快捷登录）
+    wx.navigateTo({
+      url: `/pages/role-login/index?role=${role}`,
+    });
   },
 });

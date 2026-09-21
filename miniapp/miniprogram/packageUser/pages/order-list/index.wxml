@@ -5,7 +5,7 @@
     <view wx:if="{{orders.length === 0}}" class="empty-state">
       <view class="empty-icon">📋</view>
       <view class="empty-title">暂无订单</view>
-      <view class="empty-desc">去预约一个服务吧</view>
+      <view class="empty-desc">去预约一个专业的到家按摩服务吧</view>
       <button class="empty-btn" bindtap="goToHome">去预约</button>
     </view>
 
@@ -17,23 +17,42 @@
         data-no="{{item.orderNo}}"
         bindtap="handleTap"
       >
+        <!-- 头部：单号 + 中文状态徽章 -->
         <view class="order-header">
-          <view class="order-no">{{item.orderNo}}</view>
-          <view class="order-status status--{{item.status}}">
-            <text class="status-icon">{{statusIcon(item.status)}}</text>
-            <text class="status-text">{{statusLabel(item.status)}}</text>
+          <view class="order-no">单号：{{item.orderNo}}</view>
+          <view class="order-status-badge" style="color: {{item.statusColor}}; background: {{item.statusBg}};">
+            <text class="badge-icon">{{item.statusIcon}}</text>
+            <text class="badge-text">{{item.statusText}}</text>
           </view>
         </view>
 
+        <!-- 主体信息：项目名、技师、服务时间、地址 -->
         <view class="order-body">
-          <view class="order-info">
+          <view class="order-proj-row">
+            <text class="order-proj-name">{{item.projectName || '到家推拿理疗服务'}}</text>
+            <text class="order-price">¥{{item.payableAmount || 0}}</text>
+          </view>
+
+          <view class="order-info-rows">
+            <view class="info-row" wx:if="{{item.technicianName}}">
+              <text class="info-icon">💆</text>
+              <text class="info-label">服务技师：</text>
+              <text class="info-value">{{item.technicianName}}</text>
+            </view>
             <view class="info-row">
               <text class="info-icon">📅</text>
-              <text>{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+              <text class="info-label">预约时间：</text>
+              <text class="info-value">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+            </view>
+            <view class="info-row" wx:if="{{item.serviceAddress}}">
+              <text class="info-icon">📍</text>
+              <text class="info-label">服务地址：</text>
+              <text class="info-value ellipsis">{{item.serviceAddress}}</text>
             </view>
           </view>
         </view>
 
+        <!-- 底部：下单时间与查看详情入口 -->
         <view class="order-footer">
           <text class="order-time">{{item.createdAt}}</text>
           <view class="order-link">

@@ -1,21 +1,334 @@
-.apply-btn { margin-top: 32rpx; }
-.apply-action { display: inline-block; padding: 20rpx 48rpx; background: var(--color-primary); color: #FFFFFF; border-radius: var(--radius-sm); font-size: 30rpx; font-weight: 600; }
-.status-card { padding: 28rpx; margin-top: 24rpx; }
-.status-text { font-size: 30rpx; font-weight: 600; }
-.status-hint { margin-top: 8rpx; font-size: 24rpx; color: var(--color-text-secondary); }
-.profile-header { padding: 32rpx; margin-bottom: 24rpx; }
-.profile-name { font-size: 36rpx; font-weight: 700; }
-.profile-meta { font-size: 26rpx; color: var(--color-text-secondary); margin-top: 8rpx; }
-.online-toggle { display: inline-flex; margin-top: 20rpx; padding: 12rpx 28rpx; border-radius: 32rpx; font-size: 26rpx; font-weight: 600; }
-.online-on { background: #EDF8F3; color: var(--color-success); }
-.online-off { background: #F6F7F9; color: var(--color-muted); }
-.menu-list { display: grid; gap: 20rpx; }
-.menu-item { display: flex; align-items: center; padding: 28rpx 24rpx; gap: 24rpx; }
-.menu-icon { width: 80rpx; height: 80rpx; display: flex; align-items: center; justify-content: center; border-radius: 12rpx; font-size: 28rpx; font-weight: 700; flex-shrink: 0; }
-.menu-icon--orders { background: #FFF1ED; color: var(--color-primary); }
-.menu-icon--schedules { background: #EDF8F3; color: var(--color-accent); }
-.menu-icon--service-areas { background: #EEF2F6; color: #334E68; }
-.menu-content { flex: 1; min-width: 0; }
-.menu-name { font-size: 30rpx; font-weight: 600; }
-.menu-desc { margin-top: 6rpx; font-size: 24rpx; color: var(--color-text-secondary); }
-.menu-arrow { color: var(--color-muted); font-size: 40rpx; line-height: 1; }
+/* ==========================================================================
+   Technician Workbench — Apple HIG Modern Luxury Aesthetics
+   ========================================================================== */
+
+.page {
+  padding: calc(env(safe-area-inset-top) + 24rpx) 28rpx 60rpx;
+  min-height: 100vh;
+  background: #F5F5F7;
+  box-sizing: border-box;
+}
+
+/* ── 空状态 / 申请入驻 ── */
+.empty-role-card {
+  padding: 60rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 40rpx;
+}
+
+.empty-icon-wrap, .status-icon-badge {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: #F2F2F7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28rpx;
+}
+
+.empty-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+  margin-bottom: 12rpx;
+}
+
+.empty-subtitle {
+  font-size: 26rpx;
+  color: #8E8E93;
+  line-height: 1.5;
+  margin-bottom: 40rpx;
+}
+
+.apply-action {
+  padding: 22rpx 56rpx;
+  background: linear-gradient(135deg, #34C759 0%, #28A745 100%);
+  color: #FFFFFF;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  box-shadow: 0 6rpx 20rpx rgba(52, 199, 89, 0.35);
+}
+
+/* ── 技师信息卡片 ── */
+.profile-header {
+  padding: 30rpx 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.profile-info-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.profile-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 26rpx;
+  background: linear-gradient(135deg, #34C759 0%, #28A745 100%);
+  color: #FFFFFF;
+  font-size: 38rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 14rpx rgba(52, 199, 89, 0.25);
+}
+
+.profile-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.profile-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.profile-tag {
+  font-size: 20rpx;
+  color: #34C759;
+  background: rgba(52, 199, 89, 0.12);
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+}
+
+.profile-meta {
+  font-size: 24rpx;
+  color: #8E8E93;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+/* 在线接单开关 */
+.online-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 36rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.online-on {
+  background: rgba(52, 199, 89, 0.12);
+  color: #34C759;
+}
+
+.online-on .toggle-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #34C759;
+  box-shadow: 0 0 10rpx #34C759;
+  animation: pulseDot 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+.online-off {
+  background: #F2F2F7;
+  color: #8E8E93;
+}
+
+.online-off .toggle-dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #8E8E93;
+}
+
+/* ── 微信安全绑定卡片 ── */
+.wechat-binding-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.wb-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: 1;
+}
+
+.wb-icon-box {
+  width: 44rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wb-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.wb-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.wb-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.wb-tag {
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+}
+
+.wb-tag--bound {
+  background: rgba(7, 193, 96, 0.1);
+  color: #07C160;
+}
+
+.wb-tag--unbound {
+  background: rgba(255, 149, 0, 0.12);
+  color: #FF9500;
+}
+
+.wb-desc {
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
+.wb-btn {
+  padding: 10rpx 22rpx;
+  border-radius: 30rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-left: 14rpx;
+}
+
+.wb-btn--action {
+  background: #07C160;
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 12rpx rgba(7, 193, 96, 0.25);
+}
+
+.wb-btn--bound {
+  background: #F2F2F7;
+  color: #636366;
+  border: 1rpx solid rgba(0, 0, 0, 0.06);
+}
+
+/* ── 功能管理列表 (Apple Inset Grouped TableView) ── */
+.menu-group {
+  padding: 8rpx 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 28rpx;
+  gap: 20rpx;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-icon-box {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-icon-img {
+  width: 38rpx;
+  height: 38rpx;
+  display: block;
+}
+
+.wb-icon-img {
+  width: 44rpx;
+  height: 44rpx;
+  display: block;
+}
+
+.menu-icon--projects { background: rgba(255, 56, 46, 0.1); }
+.menu-icon--profile { background: rgba(88, 86, 214, 0.1); }
+.menu-icon--orders { background: rgba(255, 149, 0, 0.12); }
+.menu-icon--income { background: rgba(52, 199, 89, 0.12); }
+.menu-icon--schedules { background: rgba(0, 122, 255, 0.1); }
+.menu-icon--service-areas { background: rgba(100, 116, 139, 0.1); }
+
+.menu-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.menu-desc {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
+.menu-arrow {
+  color: #C7C7CC;
+  font-size: 32rpx;
+  line-height: 1;
+}
+
+/* ── 底部返回按钮 ── */
+.return-wrap {
+  margin-top: 36rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.return-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 36rpx;
+  border-radius: 40rpx;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(0, 0, 0, 0.06);
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #636366;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}

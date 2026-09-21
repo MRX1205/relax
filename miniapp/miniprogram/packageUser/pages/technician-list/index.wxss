@@ -1,82 +1,282 @@
+/* ==========================================================================
+   Technician List — Apple HIG Modern Aesthetics
+   ========================================================================== */
+
+.page {
+  background: #F5F5F7;
+  min-height: 100vh;
+  padding-bottom: 60rpx;
+  box-sizing: border-box;
+}
+
+/* ── Apple Segmented Filter Bar ── */
+.filter-sticky-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(245, 245, 247, 0.9);
+  -webkit-backdrop-filter: blur(25px);
+  backdrop-filter: blur(25px);
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.05);
+  padding: 16rpx 28rpx;
+}
+
+.filter-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.filter-chips {
+  display: inline-flex;
+  gap: 14rpx;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 26rpx;
+  border-radius: 40rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #636366;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(0, 0, 0, 0.06);
+  transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.filter-chip.active {
+  background: #1C1C1E;
+  color: #FFFFFF;
+  border-color: #1C1C1E;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.15);
+}
+
+/* ── 技师列表 ── */
 .tech-list {
-  display: grid;
+  padding: 20rpx 28rpx;
+  display: flex;
+  flex-direction: column;
   gap: 20rpx;
 }
+
 .tech-card {
-  display: flex;
-  align-items: center;
   padding: 28rpx;
-  background: var(--color-surface);
-  border-radius: 20rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.06);
-  gap: 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
 }
-.tech-card__avatar {
+
+.tech-card__top {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+}
+
+/* 头像与呼吸绿灯 */
+.tech-card__avatar-wrap {
   position: relative;
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #EDF8F3, #D4EDDF);
+  flex-shrink: 0;
+}
+
+.tech-card__avatar {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 28rpx;
+  overflow: hidden;
+  background: #F2F2F7;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.tech-card__avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.tech-card__avatar-text {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+  color: #FFFFFF;
+  font-size: 40rpx;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
 }
-.tech-card__avatar-text {
-  font-size: 36rpx;
-  font-weight: 700;
-  color: var(--color-accent);
-}
-.tech-card__online {
+
+.tech-card__dot {
   position: absolute;
-  bottom: 4rpx;
-  right: 4rpx;
-  width: 18rpx;
-  height: 18rpx;
-  background: var(--color-success);
+  bottom: -4rpx;
+  right: -4rpx;
+  width: 22rpx;
+  height: 22rpx;
   border-radius: 50%;
-  border: 3rpx solid var(--color-surface);
+  border: 4rpx solid #FFFFFF;
 }
+
+.dot--online {
+  background: #34C759;
+  box-shadow: 0 0 10rpx #34C759;
+}
+
+.dot--offline {
+  background: #C7C7CC;
+}
+
+/* 信息主体 */
 .tech-card__info {
   flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
 }
+
+.tech-card__row1 {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
 .tech-card__name {
   font-size: 30rpx;
   font-weight: 700;
+  color: #1C1C1E;
 }
-.tech-card__meta {
+
+.tech-card__age-tag {
+  font-size: 20rpx;
+  color: #FF382E;
+  background: #FFF1EE;
+  padding: 2rpx 12rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+}
+
+.tech-card__height {
   font-size: 22rpx;
-  color: var(--color-muted);
-  margin-top: 6rpx;
+  color: #8E8E93;
 }
-.tech-card__intro {
+
+.tech-card__row2 {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
   font-size: 22rpx;
-  color: var(--color-text-secondary);
-  margin-top: 8rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
-.tech-card__right {
-  text-align: right;
-  flex-shrink: 0;
-}
-.tech-card__status {
-  font-size: 22rpx;
-  color: var(--color-muted);
-  padding: 4rpx 16rpx;
-  border-radius: 16rpx;
-  background: #F6F7F9;
-}
-.tech-card__status.online {
-  color: var(--color-success);
-  background: #EDF8F3;
-}
-.tech-card__price {
-  font-size: 28rpx;
+
+.tech-card__rating {
+  color: #FF9500;
   font-weight: 700;
-  color: var(--color-primary);
-  margin-top: 12rpx;
 }
-.empty-wrap { padding-top: 80rpx; }
+
+.tech-card__orders {
+  color: #636366;
+}
+
+.tech-card__distance {
+  color: #007AFF;
+}
+
+.tech-card__certs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.tech-card__cert-chip {
+  font-size: 20rpx;
+  color: #34C759;
+  background: rgba(52, 199, 89, 0.1);
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-weight: 500;
+}
+
+.tech-card__avail {
+  font-size: 22rpx;
+  display: flex;
+  align-items: center;
+  margin-top: 2rpx;
+}
+
+.tech-card__avail-label {
+  color: #8E8E93;
+}
+
+.tech-card__avail-value {
+  color: #34C759;
+  font-weight: 600;
+}
+
+/* 价格与预约按钮 */
+.tech-card__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12rpx;
+}
+
+.tech-card__price-box {
+  display: flex;
+  align-items: baseline;
+  color: #FF382E;
+}
+
+.currency {
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.amount {
+  font-size: 36rpx;
+  font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.unit {
+  font-size: 22rpx;
+  color: #8E8E93;
+  margin-left: 2rpx;
+}
+
+.tech-card__book-btn {
+  padding: 12rpx 28rpx;
+  background: linear-gradient(135deg, #FF5A36 0%, #FF382E 100%);
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 700;
+  border-radius: 40rpx;
+  box-shadow: 0 4rpx 14rpx rgba(255, 56, 46, 0.28);
+}
+
+/* 照片展示行 */
+.tech-card__photos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+}
+
+.tech-card__photo {
+  width: 100%;
+  height: 140rpx;
+  border-radius: 16rpx;
+}
+
+.tech-card__photo-ph {
+  width: 100%;
+  height: 140rpx;
+  border-radius: 16rpx;
+  background: #F2F2F7;
+}
+
+.empty-wrap {
+  padding: 80rpx 0;
+}
+
+.no-more {
+  text-align: center;
+  font-size: 22rpx;
+  color: #C7C7CC;
+  padding: 30rpx 0;
+}

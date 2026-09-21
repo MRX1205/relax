@@ -1,63 +1,196 @@
 <view class="page">
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <!-- 1. 顶部状态快捷筛选 Tab -->
+  <view class="tab-bar">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="tab-item {{activeTab === item.key ? 'tab-item--active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="handleTabChange"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <ui-state wx:if="{{loading && orders.length === 0}}" title="加载中" kind="loading" />
 
   <block wx:else>
     <view wx:if="{{orders.length === 0}}" class="empty-wrap">
-      <ui-state title="暂无订单" />
+      <ui-state title="暂无相关订单" description="当前筛选分类下无订单数据" />
     </view>
-    <view class="order-list">
+
+    <!-- 订单卡片列表 -->
+    <view class="order-list" wx:else>
       <view
         wx:for="{{orders}}"
         wx:key="orderNo"
-        class="surface order-card"
+        class="order-card"
         data-no="{{item.orderNo}}"
         bindtap="handleTap"
       >
         <view class="order-header">
-          <text class="order-no">{{item.orderNo}}</text>
-          <text class="order-status order-status--{{item.status}}">{{statusLabel(item.status)}}</text>
+          <view class="order-no-wrap">
+            <text class="order-no-label">订单号</text>
+            <text class="order-no">{{item.orderNo}}</text>
+          </view>
+          <view class="status-badge" style="background: {{item.statusBg}}; color: {{item.statusColor}};">
+            <text class="status-icon">{{item.statusIcon}}</text>
+            <text class="status-text">{{item.statusText}}</text>
+          </view>
         </view>
-        <view class="order-date">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</view>
+
+        <view class="project-section">
+          <view class="project-info">
+            <text class="project-name">{{item.projectName || '上门按摩项目'}}</text>
+            <text class="project-duration" wx:if="{{item.durationMinutes}}">约 {{item.durationMinutes}} 分钟</text>
+          </view>
+          <view class="price-wrap">
+            <text class="price-symbol">¥</text>
+            <text class="price-val">{{item.payableAmount != null ? item.payableAmount : '--'}}</text>
+          </view>
+        </view>
+
+        <view class="meta-row time-row">
+          <text class="meta-icon">⏱️</text>
+          <text class="meta-label">预约时间：</text>
+          <text class="meta-value">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+        </view>
+
+        <view class="meta-row" wx:if="{{item.technicianName}}">
+          <text class="meta-icon">💆</text>
+          <text class="meta-label">服务技师：</text>
+          <text class="meta-value bold-val">{{item.technicianName}} ({{item.technicianPhone || '无电话'}})</text>
+        </view>
+
+        <view class="meta-row" wx:if="{{item.customerName || item.addressDetail}}">
+          <text class="meta-icon">📍</text>
+          <text class="meta-label">客户地址：</text>
+          <text class="meta-value">{{item.customerName ? item.customerName + ' · ' : ''}}{{item.addressDetail || ''}}</text>
+        </view>
+
         <view class="order-footer">
-          <text class="order-time">{{item.createdAt}}</text>
-          <text wx:if="{{item.note}}" class="order-note">📝 {{item.note}}</text>
+          <view class="order-footer-left">
+            <text class="order-time">{{item.createdAt}}</text>
+            <text wx:if="{{item.note}}" class="order-note-tag">📝 {{item.note}}</text>
+          </view>
+          <text class="order-link">管理详情 ›</text>
         </view>
       </view>
     </view>
   </block>
 
-  <!-- Detail overlay -->
+  <!-- 订单详情抽屉 (Detail overlay) -->
   <view wx:if="{{showDetail && detail}}" class="overlay" bindtap="closeDetail">
     <view class="detail-panel" catchtap="">
       <view class="detail-header">
-        <text class="detail-title">订单 {{detail.order.orderNo}}</text>
-        <text class="detail-close" bindtap="closeDetail">✕</text>
+        <view class="detail-title-col">
+          <text class="detail-title">订单详情</text>
+          <text class="detail-subno">单号：{{detail.order.orderNo}}</text>
+        </view>
+        <view class="detail-close" bindtap="closeDetail">✕</view>
       </view>
+
       <scroll-view scroll-y class="detail-body">
-        <view class="detail-status status-{{detail.order.status}}">{{statusLabel(detail.order.status)}}</view>
-
-        <view wx:if="{{detail.projectSnapshot}}" class="detail-section">
-          <view class="detail-row"><text>项目</text><text>{{detail.projectSnapshot.projectName}}</text></view>
-          <view class="detail-row"><text>时间</text><text>{{detail.order.serviceDate}} {{detail.order.startTime}}-{{detail.order.endTime}}</text></view>
+        <!-- 状态横幅 -->
+        <view class="drawer-status-banner" style="background: {{detailStatusInfo.bg}};">
+          <text class="drawer-status-icon">{{detailStatusInfo.icon}}</text>
+          <view class="drawer-status-text">
+            <text class="drawer-status-title" style="color: {{detailStatusInfo.color}};">{{detailStatusInfo.text}}</text>
+            <text class="drawer-status-desc">{{detailStatusInfo.desc}}</text>
+          </view>
         </view>
 
-        <view wx:if="{{detail.amount}}" class="detail-section">
-          <view class="detail-row"><text>应付</text><text>¥{{detail.amount.payableAmount}}</text></view>
-          <view class="detail-row"><text>已付</text><text>¥{{detail.amount.paidAmount}}</text></view>
+        <!-- 技师与客户卡片 -->
+        <view class="drawer-card">
+          <view class="drawer-section-title">人员信息</view>
+          <view class="person-row">
+            <view class="person-info">
+              <text class="person-role">接单技师</text>
+              <text class="person-name">{{detail.technicianName || '暂未接单'}}</text>
+              <text class="person-phone">{{detail.technicianPhone || ''}}</text>
+            </view>
+            <view class="mini-call-btn" wx:if="{{detail.technicianPhone}}" data-phone="{{detail.technicianPhone}}" bindtap="callPhone">
+              拨打
+            </view>
+          </view>
+
+          <view class="person-row" wx:if="{{detail.addressSnapshot}}">
+            <view class="person-info">
+              <text class="person-role">预约客户</text>
+              <text class="person-name">{{detail.addressSnapshot.contactName}}</text>
+              <text class="person-phone">{{detail.addressSnapshot.contactPhone}}</text>
+            </view>
+            <view class="mini-call-btn" wx:if="{{detail.addressSnapshot.contactPhone}}" data-phone="{{detail.addressSnapshot.contactPhone}}" bindtap="callPhone">
+              拨打
+            </view>
+          </view>
         </view>
 
-        <view class="detail-section">
-          <view class="detail-label">备注</view>
-          <textarea class="note-input" value="{{noteInput}}" bindinput="handleNoteInput" placeholder="输入备注" />
+        <!-- 服务项目与地址 -->
+        <view class="drawer-card">
+          <view class="drawer-section-title">服务信息</view>
+          <view class="detail-row" wx:if="{{detail.projectSnapshot}}">
+            <text class="d-label">服务项目</text>
+            <text class="d-val">{{detail.projectSnapshot.projectName}} ({{detail.projectSnapshot.durationMinutes}}分钟)</text>
+          </view>
+          <view class="detail-row">
+            <text class="d-label">预约时间</text>
+            <text class="d-val">{{detail.order.serviceDate}} {{detail.order.startTime}}-{{detail.order.endTime}}</text>
+          </view>
+          <view class="detail-row" wx:if="{{detail.addressSnapshot}}">
+            <text class="d-label">服务地址</text>
+            <view class="d-val-address">
+              <text>{{detail.addressSnapshot.regionName}} {{detail.addressSnapshot.detail}}</text>
+              <view class="map-link-btn" bindtap="openLocationMap">🗺️ 地图</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 费用信息 -->
+        <view wx:if="{{detail.amount}}" class="drawer-card">
+          <view class="drawer-section-title">财务明细</view>
+          <view class="detail-row">
+            <text class="d-label">项目费用</text>
+            <text class="d-val">¥{{detail.amount.projectAmount}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="d-label">出行交通费</text>
+            <text class="d-val">¥{{detail.amount.travelFee}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="d-label">应付总额</text>
+            <text class="d-val bold-val" style="color: #E54D42;">¥{{detail.amount.payableAmount}}</text>
+          </view>
+          <view class="detail-row" wx:if="{{detail.amount.paidAmount != null}}">
+            <text class="d-label">实付总额</text>
+            <text class="d-val bold-val" style="color: #2E7D32;">¥{{detail.amount.paidAmount}}</text>
+          </view>
+        </view>
+
+        <!-- 管理员备注 -->
+        <view class="drawer-card">
+          <view class="drawer-section-title">管理备注 (仅管理员可见)</view>
+          <textarea class="note-input" value="{{noteInput}}" bindinput="handleNoteInput" placeholder="输入跟进备注或特殊要求" />
           <view class="note-save" bindtap="handleSaveNote">保存备注</view>
         </view>
 
-        <view wx:if="{{detail.order.status === 'PAID' || detail.order.status === 'ACCEPTED'}}" class="detail-section">
-          <view class="reassign-btn" bindtap="handleReassign">改派技师</view>
-        </view>
+        <!-- 操作按钮 -->
+        <view class="drawer-actions">
+          <view
+            wx:if="{{detail.order.status === 'PAID' || detail.order.status === 'ACCEPTED'}}"
+            class="action-drawer-btn btn-reassign"
+            bindtap="handleReassign"
+          >
+            改派技师
+          </view>
 
-        <view wx:if="{{detail.order.status !== 'CANCELLED' && detail.order.status !== 'EXPIRED'}}" class="detail-section">
-          <view class="cancel-btn" bindtap="handleCancel">取消订单</view>
+          <view
+            wx:if="{{detail.order.status !== 'CANCELLED' && detail.order.status !== 'EXPIRED' && detail.order.status !== 'COMPLETED'}}"
+            class="action-drawer-btn btn-cancel"
+            bindtap="handleCancel"
+          >
+            强制取消订单并退款
+          </view>
         </view>
       </scroll-view>
     </view>

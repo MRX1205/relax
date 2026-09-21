@@ -1,42 +1,98 @@
-import { getTechOrderDetail, acceptOrder, rejectOrder, departOrder, arriveOrder, startService, completeService } from "../../services/order";
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING_PAYMENT: "待支付", PAID: "待接单", ACCEPTED: "已接单", DEPARTED: "已出发",
-  ARRIVED: "已到达", IN_SERVICE: "服务中", COMPLETED: "已完成",
-  CANCELLED: "已取消", EXPIRED: "已过期", REJECTED: "已拒单",
-};
+import {
+  getTechOrderDetail,
+  acceptOrder,
+  rejectOrder,
+  departOrder,
+  arriveOrder,
+  startService,
+  completeService,
+} from "../../services/order";
+import { formatOrderStatus, OrderStatusInfo } from "../../../utils/order-status";
 
 const NEXT_ACTIONS: Record<string, { label: string; action: string }[]> = {
   PAID: [
-    { label: "接单", action: "accept" },
-    { label: "拒单", action: "reject" },
+    { label: "确认接单", action: "accept" },
+    { label: "无法接单(拒单)", action: "reject" },
   ],
-  ACCEPTED: [{ label: "出发", action: "depart" }],
-  DEPARTED: [{ label: "到达", action: "arrive" }],
+  ACCEPTED: [{ label: "我已出发", action: "depart" }],
+  DEPARTED: [{ label: "我已到达", action: "arrive" }],
   ARRIVED: [{ label: "开始服务", action: "start" }],
-  IN_SERVICE: [{ label: "完成服务", action: "complete" }],
+  IN_SERVICE: [{ label: "服务完成", action: "complete" }],
 };
 
 Page({
   data: {
     loading: true,
     detail: null as OrderDetailView | null,
+    statusInfo: null as OrderStatusInfo | null,
+    formattedLogs: [] as Array<{ text: string; time: string; reason?: string }>,
     actions: [] as { label: string; action: string }[],
     processing: false,
   },
 
-  async onLoad(query: Record<string, string>) {
-    try {
-      const detail = await getTechOrderDetail(query.orderNo!);
-      this.setData({
-        detail,
-        actions: NEXT_ACTIONS[detail.order.status] || [],
-        loading: false,
-      });
-    } catch { this.setData({ loading: false }); }
+  onLoad(query: Record<string, string>) {
+    const orderNo = query.orderNo || "";
+    this.loadDetail(orderNo);
   },
 
-  statusLabel(s: string): string { return STATUS_LABELS[s] || s; },
+  async loadDetail(orderNo: string) {
+    if (!orderNo) return;
+    this.setData({ loading: true });
+    try {
+      const detail = await getTechOrderDetail(orderNo);
+      const s = detail.order.status;
+      const statusInfo = formatOrderStatus(s);
+
+      const formattedLogs = (detail.statusLogs || []).map(log => ({
+        text: formatOrderStatus(log.toStatus).text,
+        time: log.createdAt,
+        reason: log.reason || undefined,
+      }));
+
+      this.setData({
+        detail,
+        statusInfo,
+        formattedLogs,
+        actions: NEXT_ACTIONS[s] || [],
+        loading: false,
+      });
+    } catch {
+      this.setData({ loading: false });
+    }
+  },
+
+  openLocationMap() {
+    const addr = this.data.detail?.addressSnapshot;
+    if (!addr || !addr.latitude || !addr.longitude) {
+      wx.showToast({ title: "该订单暂无客户精确定位", icon: "none" });
+      return;
+    }
+    wx.openLocation({
+      latitude: Number(addr.latitude),
+      longitude: Number(addr.longitude),
+      name: (addr.contactName || "客户") + "的服务地址",
+      address: `${addr.regionName || ""} ${addr.detail || ""}`.trim(),
+      scale: 16,
+    });
+  },
+
+  callCustomer() {
+    const phone = this.data.detail?.addressSnapshot?.contactPhone;
+    if (!phone) {
+      wx.showToast({ title: "暂无客户电话", icon: "none" });
+      return;
+    }
+    wx.makePhoneCall({ phoneNumber: phone });
+  },
+
+  copyOrderNo() {
+    const orderNo = this.data.detail?.order?.orderNo;
+    if (!orderNo) return;
+    wx.setClipboardData({
+      data: orderNo,
+      success: () => wx.showToast({ title: "单号已复制", icon: "success" }),
+    });
+  },
 
   async handleAction(e: WechatMiniprogram.TouchEvent) {
     const action = e.currentTarget.dataset.action as string;
@@ -45,7 +101,7 @@ Page({
 
     if (action === "reject") {
       const confirmed = await new Promise<boolean>(r => {
-        wx.showModal({ title: "拒单", content: "确认拒绝该订单？", success: res => r(res.confirm) });
+        wx.showModal({ title: "拒单提示", content: "确认拒绝该订单吗？拒单后订单将重新派单或全额退回客户", success: res => r(res.confirm) });
       });
       if (!confirmed) return;
     }
@@ -53,15 +109,32 @@ Page({
     this.setData({ processing: true });
     try {
       switch (action) {
-        case "accept": await acceptOrder(orderNo); break;
-        case "reject": await rejectOrder(orderNo, "技师拒单"); break;
-        case "depart": await departOrder(orderNo); break;
-        case "arrive": await arriveOrder(orderNo); break;
-        case "start": await startService(orderNo); break;
-        case "complete": await completeService(orderNo); break;
+        case "accept":
+          await acceptOrder(orderNo);
+          wx.showToast({ title: "已接单", icon: "success" });
+          break;
+        case "reject":
+          await rejectOrder(orderNo, "技师临时有事无法接单");
+          wx.showToast({ title: "已拒单", icon: "none" });
+          break;
+        case "depart":
+          await departOrder(orderNo);
+          wx.showToast({ title: "已出发", icon: "success" });
+          break;
+        case "arrive":
+          await arriveOrder(orderNo);
+          wx.showToast({ title: "已到达", icon: "success" });
+          break;
+        case "start":
+          await startService(orderNo);
+          wx.showToast({ title: "开始服务", icon: "success" });
+          break;
+        case "complete":
+          await completeService(orderNo);
+          wx.showToast({ title: "服务完成", icon: "success" });
+          break;
       }
-      wx.showToast({ title: "操作成功", icon: "success" });
-      this.onLoad({ orderNo });
+      await this.loadDetail(orderNo);
     } catch (err) {
       wx.showToast({ title: err instanceof Error ? err.message : "操作失败", icon: "none" });
     } finally {

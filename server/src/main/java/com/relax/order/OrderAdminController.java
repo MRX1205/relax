@@ -31,7 +31,7 @@ public class OrderAdminController {
     }
 
     @GetMapping
-    ApiResponse<List<OrderMapper.OrderView>> listOrders(
+    ApiResponse<List<OrderMapper.OrderListItem>> listOrders(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "20") int size) {
         return ApiResponse.success(orderService.listAllOrders(page, size));

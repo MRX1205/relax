@@ -1,26 +1,49 @@
+/* ==========================================================================
+   Project Detail — Apple HIG Modern Luxury Aesthetics
+   ========================================================================== */
+
 .page {
-  background: #F8F9FA;
+  background: #F5F5F7;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
-/* Hero Section */
-.hero-section {
+/* ── 顶部电影感 Hero 区域 ── */
+.hero-card {
   position: relative;
-  padding: 60rpx 32rpx 48rpx;
-  background: linear-gradient(135deg, #FF6B6B, #E84545);
-  border-radius: 0 0 40rpx 40rpx;
+  background: linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 100%);
+  padding: calc(env(safe-area-inset-top) + 40rpx) 36rpx 48rpx;
   overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.18);
 }
 
-.hero-bg {
+.hero-cover-bg {
   position: absolute;
   top: 0;
-  right: 0;
-  width: 300rpx;
-  height: 300rpx;
-  background: rgba(255, 255, 255, 0.1);
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.38;
+}
+
+.hero-cover-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(28,28,30,0.6) 0%, rgba(28,28,30,0.95) 100%);
+}
+
+.hero-bg-glow {
+  position: absolute;
+  top: -80rpx;
+  right: -80rpx;
+  width: 360rpx;
+  height: 360rpx;
+  background: radial-gradient(circle, rgba(255, 56, 46, 0.35) 0%, transparent 70%);
   border-radius: 50%;
-  transform: translate(30%, -30%);
+  pointer-events: none;
 }
 
 .hero-content {
@@ -28,216 +51,347 @@
   z-index: 1;
 }
 
-.hero-tag {
-  display: inline-block;
-  padding: 8rpx 20rpx;
-  background: rgba(255, 255, 255, 0.2);
-  color: #FFFFFF;
-  font-size: 24rpx;
-  font-weight: 600;
-  border-radius: 20rpx;
+.hero-pill-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
   margin-bottom: 20rpx;
 }
 
-.hero-name {
-  font-size: 44rpx;
-  font-weight: 800;
+.hero-category-pill {
+  display: inline-block;
+  padding: 8rpx 22rpx;
+  background: rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
   color: #FFFFFF;
-  margin-bottom: 24rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  border-radius: 40rpx;
 }
 
-.hero-meta {
-  display: flex;
-  gap: 32rpx;
-  margin-bottom: 24rpx;
-}
-
-.meta-item {
-  display: flex;
+.hero-meta-pill {
+  display: inline-flex;
   align-items: center;
   gap: 8rpx;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 26rpx;
+  padding: 8rpx 20rpx;
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border: 1rpx solid rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 500;
+  border-radius: 40rpx;
 }
 
-.meta-icon {
-  font-size: 28rpx;
+.hero-title {
+  font-size: 46rpx;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.8rpx;
+  margin-bottom: 28rpx;
+  line-height: 1.25;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
 }
 
-.hero-price {
+.hero-bottom-row {
   display: flex;
   align-items: baseline;
-  gap: 4rpx;
+  justify-content: space-between;
+}
+
+.hero-price-wrap {
+  display: flex;
+  align-items: baseline;
+  color: #FF5A36;
 }
 
 .price-symbol {
-  font-size: 28rpx;
-  color: #FFFFFF;
-  font-weight: 600;
+  font-size: 32rpx;
+  font-weight: 800;
 }
 
-.price-value {
-  font-size: 56rpx;
+.price-val {
+  font-size: 60rpx;
   font-weight: 800;
-  color: #FFFFFF;
+  line-height: 1;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
 }
 
 .price-unit {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 26rpx;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
   margin-left: 8rpx;
 }
 
-/* Cards */
-.section {
-  padding: 0 32rpx;
-  margin-bottom: 24rpx;
-}
-
-.card {
-  background: #FFFFFF;
-  border-radius: 20rpx;
-  padding: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
-}
-
-.card-title {
+.tech-count-badge {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  gap: 10rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.12);
+  padding: 8rpx 20rpx;
+  border-radius: 40rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.15);
+}
+
+/* ── 容器内容流 ── */
+.detail-container {
+  padding: 24rpx 28rpx 60rpx;
+  margin-top: -12rpx;
+}
+
+/* ── 通用卡片头部 ── */
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-bottom: 20rpx;
+}
+
+.title-between {
+  justify-content: space-between;
+}
+
+.title-left {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.icon-bubble {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-bubble--blue { background: rgba(0, 122, 255, 0.1); }
+.icon-bubble--amber { background: rgba(255, 149, 0, 0.12); }
+.icon-bubble--coral { background: rgba(255, 56, 46, 0.1); }
+
+.sec-heading {
   font-size: 30rpx;
   font-weight: 700;
-  color: #333;
-  margin-bottom: 20rpx;
+  color: #1C1C1E;
+  letter-spacing: -0.4rpx;
 }
 
-.card-icon {
-  font-size: 32rpx;
+.sec-subtitle {
+  font-size: 24rpx;
+  color: #8E8E93;
 }
 
-.card-content {
-  font-size: 28rpx;
-  color: #666;
-  line-height: 1.8;
+.card-content-body {
+  font-size: 26rpx;
+  color: #3A3A3C;
+  line-height: 1.7;
 }
 
-.card-content.notice {
-  color: #E67E22;
-  background: #FFF8E1;
-  padding: 20rpx;
-  border-radius: 12rpx;
+/* ── 温馨提示卡片 ── */
+.notice-card {
+  background: #FFFBF0;
+  border: 1rpx solid rgba(255, 149, 0, 0.2);
 }
 
-/* Section Header */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20rpx;
+.notice-content-body {
+  font-size: 24rpx;
+  color: #8A5300;
+  line-height: 1.65;
 }
 
-.section-title {
-  font-size: 32rpx;
-  font-weight: 700;
-  color: #333;
-}
-
-/* Tech List */
+/* ── 技师列表 ── */
 .tech-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
 }
 
-.tech-card {
-  background: #FFFFFF;
-  border-radius: 20rpx;
-  padding: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
-}
-
-.tech-main {
+.tech-item {
   display: flex;
   align-items: center;
-  margin-bottom: 20rpx;
+  justify-content: space-between;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.tech-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.tech-item:first-child {
+  padding-top: 0;
+}
+
+.tech-item-main {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  flex: 1;
 }
 
 .tech-avatar {
   width: 96rpx;
   height: 96rpx;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border-radius: 50%;
+  border-radius: 24rpx;
+  overflow: hidden;
+  background: #F2F2F7;
+  flex-shrink: 0;
+}
+
+.tech-avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.tech-avatar-ph {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+  color: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 20rpx;
 }
 
-.tech-avatar-text {
-  font-size: 40rpx;
-  font-weight: 700;
-  color: #FFFFFF;
+.tech-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
 }
 
-.tech-info {
-  flex: 1;
+.tech-item-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
 }
 
 .tech-name {
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 700;
-  color: #333;
-  margin-bottom: 8rpx;
+  color: #1C1C1E;
 }
 
-.tech-meta {
+.tech-badge-light {
+  font-size: 20rpx;
+  color: #34C759;
+  background: rgba(52, 199, 89, 0.12);
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+}
+
+.tech-meta-row {
   display: flex;
-  gap: 16rpx;
+  align-items: center;
+  gap: 14rpx;
 }
 
 .tech-exp {
-  font-size: 24rpx;
-  color: #666;
+  font-size: 22rpx;
+  color: #8E8E93;
 }
 
-.tech-price {
-  font-size: 36rpx;
-  font-weight: 800;
-  color: #FF6B6B;
-}
-
-.tech-action {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.book-btn {
-  padding: 16rpx 40rpx;
-  background: linear-gradient(135deg, #FF6B6B, #E84545);
-  color: #FFFFFF;
-  font-size: 28rpx;
+.tech-star {
+  font-size: 22rpx;
+  color: #FF9500;
   font-weight: 600;
+}
+
+.tech-item-right {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.tech-price-wrap {
+  display: flex;
+  align-items: baseline;
+  color: #FF382E;
+}
+
+.tech-currency {
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.tech-price-num {
+  font-size: 34rpx;
+  font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.ios-btn-coral {
+  padding: 12rpx 28rpx;
+  background: linear-gradient(135deg, #FF5A36 0%, #FF382E 100%);
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 700;
   border-radius: 40rpx;
-  border: none;
-  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+  box-shadow: 0 4rpx 14rpx rgba(255, 56, 46, 0.28);
 }
 
-.book-btn:active {
-  transform: scale(0.98);
-}
-
-/* Empty State */
+/* ── 空状态 ── */
 .empty-state {
-  text-align: center;
-  padding: 60rpx 0;
-}
-
-.empty-icon {
-  font-size: 80rpx;
-  margin-bottom: 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 0 24rpx;
+  gap: 16rpx;
 }
 
 .empty-text {
-  font-size: 28rpx;
-  color: #999;
+  font-size: 26rpx;
+  color: #8E8E93;
+}
+
+/* ── 服务保障底栏 ── */
+.guarantee-card {
+  padding: 24rpx 28rpx;
+  background: #FFFFFF;
+}
+
+.g-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.shield-badge {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 12rpx;
+  background: rgba(0, 122, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.g-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.g-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.g-pill {
+  font-size: 22rpx;
+  color: #636366;
+  background: #F2F2F7;
+  padding: 8rpx 18rpx;
+  border-radius: 30rpx;
 }

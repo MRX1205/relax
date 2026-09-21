@@ -39,7 +39,7 @@ public class OrderController {
     }
 
     @GetMapping("/orders")
-    ApiResponse<List<OrderMapper.OrderView>> listOrders(@AuthenticationPrincipal CurrentUser currentUser,
+    ApiResponse<List<OrderMapper.OrderListItem>> listOrders(@AuthenticationPrincipal CurrentUser currentUser,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "20") int size) {
         return ApiResponse.success(orderService.listUserOrders(currentUser.id(), page, size));

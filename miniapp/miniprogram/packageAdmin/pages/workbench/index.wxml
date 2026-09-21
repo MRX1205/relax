@@ -1,21 +1,60 @@
 <view class="page">
-  <view class="page-title">管理工作台</view>
-  <view class="page-subtitle">管理项目、技师和运营内容</view>
+  <view class="header-section">
+    <view class="page-title">平台控制台</view>
+    <view class="page-desc">统筹项目、审批技师入驻及全平台财务结算</view>
+  </view>
 
-  <view class="menu-list">
+  <!-- ═══ 微信安全绑定管理卡片 ═══ -->
+  <view class="ios-card wechat-binding-card" wx:if="{{authorized}}">
+    <view class="wb-left">
+      <view class="wb-icon-box">
+        <image class="wb-icon-img" src="/assets/icons/wechat.png" mode="aspectFit" />
+      </view>
+      <view class="wb-info">
+        <view class="wb-title-row">
+          <text class="wb-title">微信号安全绑定</text>
+          <text class="wb-tag {{account.wechatBound ? 'wb-tag--bound' : 'wb-tag--unbound'}}">
+            {{account.wechatBound ? '已绑定' : '未绑定'}}
+          </text>
+        </view>
+        <text class="wb-desc">{{account.wechatBound ? '已开启管理员微信一键快捷登录' : '绑定微信后可在登录页直接一键快捷登录'}}</text>
+      </view>
+    </view>
+    <view class="wb-btn {{account.wechatBound ? 'wb-btn--bound' : 'wb-btn--action'}} ios-touch-active" bindtap="handleBindWechat">
+      <text>{{account.wechatBound ? '更换绑定' : '一键绑定'}}</text>
+    </view>
+  </view>
+
+  <!-- ═══ 管理菜单列表 (Apple Inset Grouped TableView) ═══ -->
+  <view class="ios-card menu-group">
     <view
       wx:for="{{menus}}"
       wx:key="code"
-      class="surface menu-item"
+      class="menu-item ios-touch-active"
       data-url="{{item.url}}"
       bindtap="handleMenuTap"
     >
-      <view class="menu-icon menu-icon--{{item.code}}">{{item.name[0]}}</view>
+      <view class="menu-icon-box menu-icon--{{item.code}}">
+        <image wx:if="{{item.code === 'categories'}}" class="menu-icon-img" src="/assets/tabbar/projects.png" mode="aspectFit" />
+        <image wx:elif="{{item.code === 'projects'}}" class="menu-icon-img" src="/assets/tabbar/projects-active.png" mode="aspectFit" />
+        <image wx:elif="{{item.code === 'technicians'}}" class="menu-icon-img" src="/assets/icons/tech.png" mode="aspectFit" />
+        <image wx:elif="{{item.code === 'orders'}}" class="menu-icon-img" src="/assets/icons/order.png" mode="aspectFit" />
+        <image wx:elif="{{item.code === 'refunds'}}" class="menu-icon-img" src="/assets/icons/flame.png" mode="aspectFit" />
+        <image wx:elif="{{item.code === 'settlements'}}" class="menu-icon-img" src="/assets/icons/invite.png" mode="aspectFit" />
+        <image wx:else class="menu-icon-img" src="/assets/icons/star.png" mode="aspectFit" />
+      </view>
       <view class="menu-content">
         <view class="menu-name">{{item.name}}</view>
         <view class="menu-desc">{{item.desc}}</view>
       </view>
       <view class="menu-arrow">›</view>
+    </view>
+  </view>
+
+  <view class="return-wrap">
+    <view class="return-btn ios-touch-active" bindtap="returnToUserMode">
+      <text style="font-size: 32rpx; line-height: 1; color: #636366; margin-right: 4rpx;">‹</text>
+      <text>返回顾客端首页</text>
     </view>
   </view>
 </view>

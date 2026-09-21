@@ -2,83 +2,125 @@
   <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
 
   <block wx:elif="{{detail}}">
-    <!-- 项目头部 -->
-    <view class="hero-section">
-      <view class="hero-bg"></view>
+    <!-- 顶部电影感 Hero 区域 -->
+    <view class="hero-card">
+      <image class="hero-cover-bg" src="{{detail.project.displayCover || detail.project.coverUrl || '/assets/defaults/default-cover.png'}}" mode="aspectFill" />
+      <view class="hero-cover-mask"></view>
+      <view class="hero-bg-glow"></view>
       <view class="hero-content">
-        <view class="hero-tag">{{detail.project.categoryName}}</view>
-        <view class="hero-name">{{detail.project.name}}</view>
-        <view class="hero-meta">
-          <view class="meta-item">
-            <text class="meta-icon">⏱️</text>
-            <text>{{detail.project.durationMinutes}}分钟</text>
-          </view>
-          <view class="meta-item">
-            <text class="meta-icon">👥</text>
-            <text>{{detail.technicianCount}}位技师</text>
+        <view class="hero-pill-row">
+          <text class="hero-category-pill">{{detail.project.categoryName || '精选理疗'}}</text>
+          <view class="hero-meta-pill">
+            <image src="/assets/icons/clock.png" style="width: 24rpx; height: 24rpx;" mode="aspectFit" />
+            <text>{{detail.project.durationMinutes}} 分钟</text>
           </view>
         </view>
-        <view class="hero-price">
-          <text class="price-symbol">¥</text>
-          <text class="price-value">{{detail.project.basePrice}}</text>
-          <text class="price-unit">起</text>
+
+        <view class="hero-title">{{detail.project.name}}</view>
+
+        <view class="hero-bottom-row">
+          <view class="hero-price-wrap">
+            <text class="price-symbol">¥</text>
+            <text class="price-val">{{detail.project.basePrice}}</text>
+            <text class="price-unit">起</text>
+          </view>
+          <view class="tech-count-badge">
+            <image src="/assets/tabbar/technicians.png" style="width: 28rpx; height: 28rpx;" mode="aspectFit" />
+            <text>{{detail.technicianCount}} 位技师在岗</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 服务介绍 -->
-    <view wx:if="{{detail.project.description}}" class="card section">
-      <view class="card-title">
-        <text class="card-icon">📋</text>
-        <text>服务介绍</text>
-      </view>
-      <view class="card-content">{{detail.project.description}}</view>
-    </view>
+    <view class="detail-container">
 
-    <!-- 温馨提示 -->
-    <view wx:if="{{detail.project.notice}}" class="card section">
-      <view class="card-title">
-        <text class="card-icon">💡</text>
-        <text>温馨提示</text>
-      </view>
-      <view class="card-content notice">{{detail.project.notice}}</view>
-    </view>
-
-    <!-- 可服务技师 -->
-    <view class="section">
-      <view class="section-header">
-        <view class="section-title">可服务技师（{{detail.technicianCount}}）</view>
+      <!-- 服务功效与介绍 (Apple Inset Grouped) -->
+      <view wx:if="{{detail.project.description}}" class="ios-card info-card">
+        <view class="card-title-row">
+          <view class="icon-bubble icon-bubble--blue">
+            <image class="bubble-icon-img" src="/assets/icons/edit.png" mode="aspectFit" />
+          </view>
+          <text class="sec-heading">服务详情与手法国标</text>
+        </view>
+        <text class="card-content-body">{{detail.project.description}}</text>
       </view>
 
-      <view wx:if="{{detail.technicians.length === 0}}" class="empty-state">
-        <view class="empty-icon">👥</view>
-        <view class="empty-text">暂无可服务技师</view>
+      <!-- 温馨提示 / 禁忌卡片 -->
+      <view wx:if="{{detail.project.notice}}" class="ios-card notice-card">
+        <view class="card-title-row">
+          <view class="icon-bubble icon-bubble--amber">
+            <image class="bubble-icon-img" src="/assets/icons/shield.png" mode="aspectFit" />
+          </view>
+          <text class="sec-heading" style="color: #995B00;">预约与体验须知</text>
+        </view>
+        <text class="notice-content-body">{{detail.project.notice}}</text>
       </view>
 
-      <view class="tech-list">
-        <view wx:for="{{detail.technicians}}" wx:key="id" class="tech-card">
-          <view class="tech-main" data-id="{{item.id}}" bindtap="goToTechnician">
-            <view class="tech-avatar">
-              <view class="tech-avatar-text">{{item.serviceName[0]}}</view>
+      <!-- 可预约执业技师 -->
+      <view class="ios-card tech-section-card">
+        <view class="card-title-row title-between">
+          <view class="title-left">
+            <view class="icon-bubble icon-bubble--coral">
+              <image class="bubble-icon-img" src="/assets/tabbar/technicians.png" mode="aspectFit" />
             </view>
-            <view class="tech-info">
-              <view class="tech-name">{{item.serviceName}}</view>
-              <view class="tech-meta">
-                <text class="tech-exp">{{item.experienceYears}}年经验</text>
+            <text class="sec-heading">可服务技师团队</text>
+          </view>
+          <text class="sec-subtitle">（{{detail.technicianCount}} 人在线）</text>
+        </view>
+
+        <!-- 暂无技师 -->
+        <view wx:if="{{detail.technicians.length === 0}}" class="empty-state">
+          <image src="/assets/tabbar/technicians.png" style="width: 72rpx; height: 72rpx; opacity: 0.4;" mode="aspectFit" />
+          <text class="empty-text">当前该项目暂无空闲技师，请稍后查看</text>
+        </view>
+
+        <!-- 技师列表 -->
+        <view class="tech-list">
+          <view wx:for="{{detail.technicians}}" wx:key="id" class="tech-item">
+            <view class="tech-item-main ios-touch-active" data-id="{{item.id}}" bindtap="goToTechnician">
+              <view class="tech-avatar">
+                <image class="tech-avatar-img" src="{{item.displayAvatar || item.avatarUrl || '/assets/images/tech-wang.jpg'}}" mode="aspectFill" />
+              </view>
+              <view class="tech-item-info">
+                <view class="tech-item-title-row">
+                  <text class="tech-name">{{item.serviceName}}</text>
+                  <text class="tech-badge-light">持证</text>
+                </view>
+                <view class="tech-meta-row">
+                  <text class="tech-exp">{{item.experienceYears}} 年从业</text>
+                  <text class="tech-star">★ 4.9</text>
+                </view>
               </view>
             </view>
-            <view class="tech-price">¥{{item.price}}</view>
-          </view>
-          <view class="tech-action">
-            <button class="book-btn" data-id="{{item.id}}" data-name="{{item.serviceName}}" bindtap="goToBooking">
-              立即预约
-            </button>
+            <view class="tech-item-right">
+              <view class="tech-price-wrap">
+                <text class="tech-currency">¥</text>
+                <text class="tech-price-num">{{item.price}}</text>
+              </view>
+              <view class="ios-btn-coral ios-touch-active" data-id="{{item.id}}" data-name="{{item.serviceName}}" bindtap="goToBooking">
+                预约
+              </view>
+            </view>
           </view>
         </view>
       </view>
-    </view>
 
-    <!-- 底部间距 -->
-    <view style="height: 40rpx;"></view>
+      <!-- 服务标准保障 -->
+      <view class="ios-card guarantee-card">
+        <view class="g-header">
+          <view class="shield-badge">
+            <image src="/assets/icons/shield.png" style="width: 32rpx; height: 32rpx;" mode="aspectFit" />
+          </view>
+          <text class="g-title">东莞到家 · 严选品质承诺</text>
+        </view>
+        <view class="g-row">
+          <text class="g-pill">一客一换一消毒</text>
+          <text class="g-pill">未服务随时全额退</text>
+          <text class="g-pill">不满意免费重按</text>
+        </view>
+      </view>
+
+      <view style="height: 60rpx;"></view>
+    </view>
   </block>
 </view>

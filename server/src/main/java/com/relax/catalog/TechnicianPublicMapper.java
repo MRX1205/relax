@@ -12,8 +12,9 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface TechnicianPublicMapper {
 
-    @Select("SELECT t.id, t.service_name AS serviceName, u.avatar_url AS avatarUrl, "
+    @Select("SELECT t.id, t.service_name AS serviceName, COALESCE(t.avatar_url, u.avatar_url) AS avatarUrl, "
             + "t.intro, t.experience_years AS experienceYears, t.online_status AS onlineStatus, "
+            + "t.age, t.age_tag AS ageTag, t.latitude, t.longitude, "
             + "(SELECT MIN(COALESCE(tp.override_price, p.base_price)) FROM technician_project tp "
             + " JOIN service_project p ON p.id = tp.project_id AND p.status = 'ON_SHELF' "
             + " WHERE tp.technician_id = t.id AND tp.status = 'ENABLED') AS startPrice "
@@ -24,8 +25,10 @@ public interface TechnicianPublicMapper {
     List<TechnicianItem> findPublished(@Param("onlineOnly") boolean onlineOnly,
             @Param("limit") int limit, @Param("offset") int offset);
 
-    @Select("SELECT t.id, t.service_name AS serviceName, u.avatar_url AS avatarUrl, "
-            + "t.intro, t.experience_years AS experienceYears, t.online_status AS onlineStatus "
+    @Select("SELECT t.id, t.service_name AS serviceName, COALESCE(t.avatar_url, u.avatar_url) AS avatarUrl, "
+            + "t.intro, t.experience_years AS experienceYears, t.online_status AS onlineStatus, "
+            + "t.age, t.age_tag AS ageTag, t.height, t.weight, t.latitude, t.longitude, "
+            + "t.base_address AS baseAddress, t.certifications_json AS certificationsJson "
             + "FROM technician t JOIN platform_user u ON u.id = t.user_id "
             + "WHERE t.id = #{id} AND t.status = 'ACTIVE'")
     Optional<TechnicianDetail> findPublishedById(@Param("id") long id);
@@ -48,10 +51,14 @@ public interface TechnicianPublicMapper {
             @Param("fromDate") LocalDate fromDate);
 
     record TechnicianItem(long id, String serviceName, String avatarUrl,
-            String intro, int experienceYears, String onlineStatus, BigDecimal startPrice) {}
+            String intro, int experienceYears, String onlineStatus,
+            Integer age, String ageTag, BigDecimal latitude, BigDecimal longitude,
+            BigDecimal startPrice) {}
 
     record TechnicianDetail(long id, String serviceName, String avatarUrl,
-            String intro, int experienceYears, String onlineStatus) {}
+            String intro, int experienceYears, String onlineStatus,
+            Integer age, String ageTag, Integer height, Integer weight,
+            BigDecimal latitude, BigDecimal longitude, String baseAddress, String certificationsJson) {}
 
     record TechnicianProjectItem(long id, long projectId, String projectName,
             int durationMinutes, BigDecimal price) {}

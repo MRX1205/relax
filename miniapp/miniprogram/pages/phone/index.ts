@@ -23,15 +23,10 @@ Page({
   },
 
   handleSkip() {
-    wx.reLaunch({ url: "/packageUser/pages/workbench/index" });
+    wx.reLaunch({ url: "/pages/home/index" });
   },
 
   navigateAfterBind(account: Account) {
-    const target = account.lastRole === "TECHNICIAN"
-      ? "/packageTech/pages/workbench/index"
-      : account.lastRole === "ADMIN" || account.lastRole === "SUPER_ADMIN"
-        ? "/packageAdmin/pages/workbench/index"
-        : "/packageUser/pages/workbench/index";
-    wx.reLaunch({ url: target });
+    wx.reLaunch({ url: "/pages/home/index" });
   },
 });

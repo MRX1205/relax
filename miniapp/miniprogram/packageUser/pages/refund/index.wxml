@@ -1,0 +1,85 @@
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+
+  <block wx:elif="{{detail}}">
+    <!-- 订单信息 -->
+    <view class="order-info-card">
+      <view class="card-title">退款订单</view>
+      <view class="info-row">
+        <text class="info-label">订单编号</text>
+        <text class="info-value">{{detail.order.orderNo}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">服务项目</text>
+        <text class="info-value">{{detail.projectSnapshot.projectName || '—'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">服务时间</text>
+        <text class="info-value">{{detail.order.serviceDate}} {{detail.order.startTime}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">实付金额</text>
+        <text class="info-value price">¥{{detail.amount.payableAmount}}</text>
+      </view>
+    </view>
+
+    <!-- 退款金额 -->
+    <view class="section-card">
+      <view class="section-label">退款金额</view>
+      <view class="amount-row">
+        <text class="amount-sym">¥</text>
+        <input
+          class="amount-input"
+          type="digit"
+          value="{{refundAmount}}"
+          bindinput="handleAmountInput"
+          placeholder="0.00"
+        />
+        <text class="amount-max">最多 ¥{{maxRefundAmount}}</text>
+      </view>
+    </view>
+
+    <!-- 退款原因 -->
+    <view class="section-card">
+      <view class="section-label">退款原因</view>
+      <view class="reason-list">
+        <view
+          wx:for="{{['行程有变，无法等待','技师未按时到达','服务质量不满意','误操作下单','其他原因']}}"
+          wx:key="*this"
+          wx:for-index="idx"
+          class="reason-item {{reasonIndex === idx ? 'reason-item--active' : ''}}"
+          data-index="{{idx}}"
+          bindtap="handleReasonSelect"
+        >
+          <view class="reason-check">
+            <view wx:if="{{reasonIndex === idx}}" class="reason-check-dot"></view>
+          </view>
+          <text class="reason-text">{{item}}</text>
+        </view>
+      </view>
+
+      <view class="custom-reason">
+        <textarea
+          class="custom-input"
+          placeholder="或在此输入其他原因..."
+          value="{{customReason}}"
+          bindinput="handleCustomReasonInput"
+          maxlength="200"
+          auto-height
+        />
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-wrap">
+      <button
+        class="submit-btn {{submitting ? 'submit-btn--loading' : ''}}"
+        bindtap="handleSubmit"
+        disabled="{{submitting}}"
+      >
+        {{submitting ? '提交中...' : '提交退款申请'}}
+      </button>
+      <view class="tip-text">退款申请提交后，将在 1-3 个工作日内处理</view>
+    </view>
+  </block>
+</view>

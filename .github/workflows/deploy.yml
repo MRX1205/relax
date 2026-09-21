@@ -1,0 +1,128 @@
+name: CI & CD Automated Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: 1. 代码质量与单元测试验证
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: miniapp/package-lock.json
+
+      - name: Miniapp Check (TypeCheck & Tests)
+        working-directory: miniapp
+        run: |
+          npm ci
+          npm run check
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Server Maven Verify
+        working-directory: server
+        run: ./mvnw --batch-mode verify
+
+      - name: Validate Docker Compose
+        run: docker compose --file deploy/docker-compose.yml config
+
+  deploy-server:
+    name: 2. 后端构建与云服务器自动部署
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Build Lightweight Spring Boot JAR
+        working-directory: server
+        run: ./mvnw --batch-mode clean package -DskipTests
+
+      - name: Copy Prebuilt JAR to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST || '8.163.88.167' }}
+          username: ${{ secrets.SERVER_USER || 'root' }}
+          password: ${{ secrets.SERVER_PASSWORD || 'Hhcj@1205' }}
+          source: "server/target/relax-server-*.jar"
+          target: "/www/server/relax"
+          overwrite: true
+
+      - name: Trigger Remote Deployment via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST || '8.163.88.167' }}
+          username: ${{ secrets.SERVER_USER || 'root' }}
+          password: ${{ secrets.SERVER_PASSWORD || 'Hhcj@1205' }}
+          script: |
+            mkdir -p /www/server/relax
+            cd /www/server/relax
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/MRX1205/relax.git .
+            else
+              git fetch origin main
+              git reset --hard origin/main
+            fi
+            chmod +x deploy/scripts/remote-deploy.sh
+            bash deploy/scripts/remote-deploy.sh
+
+  upload-miniapp:
+    name: 3. 微信小程序代码自动上传 (miniprogram-ci)
+    needs: verify
+    runs-on: ubuntu-latest
+    if: env.HAS_WX_KEY == 'true'
+    env:
+      HAS_WX_KEY: ${{ secrets.WX_PRIVATE_KEY != '' }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        working-directory: miniapp
+        run: npm ci
+
+      - name: Setup WeChat Upload Private Key
+        working-directory: miniapp
+        run: |
+          echo "${{ secrets.WX_PRIVATE_KEY }}" > private.wxee1086d1aae0e823.key
+
+      - name: Upload Mini Program to WeChat MP
+        working-directory: miniapp
+        run: |
+          npm install --no-save miniprogram-ci
+          npm run upload
+
+      - name: Save Preview QR Code Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: miniapp-preview-qrcode
+          path: miniapp/preview.jpg
+          if-no-files-found: ignore

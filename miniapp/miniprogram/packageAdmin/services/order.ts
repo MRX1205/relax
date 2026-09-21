@@ -7,6 +7,7 @@ export function createOrder(data: {
   serviceDate: string;
   startTime: string;
   note?: string;
+  couponId?: string;
 }): Promise<OrderDetailView> {
   return request<OrderDetailView>({ url: "/api/v1/orders", method: "POST", data });
 }
@@ -162,8 +163,24 @@ export function getAdminBanners(): Promise<Banner[]> {
   return request<Banner[]>({ url: "/api/v1/admin/banners" });
 }
 
-export function createBanner(data: { title: string; sort: number }): Promise<Banner> {
+export function createBanner(data: {
+  title: string;
+  sort: number;
+  imageFileId?: number | string | null;
+  linkType?: string | null;
+  linkValue?: string | null;
+}): Promise<Banner> {
   return request<Banner>({ url: "/api/v1/admin/banners", method: "POST", data });
+}
+
+export function updateBanner(id: string, data: {
+  title: string;
+  sort: number;
+  imageFileId?: number | string | null;
+  linkType?: string | null;
+  linkValue?: string | null;
+}): Promise<Banner> {
+  return request<Banner>({ url: `/api/v1/admin/banners/${id}`, method: "PUT", data });
 }
 
 export function updateBannerStatus(id: string, status: string): Promise<void> {

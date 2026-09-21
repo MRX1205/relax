@@ -14,17 +14,27 @@ export function cacheAccount(account: Account): Account {
   return account;
 }
 
-export async function loginWithWechat(): Promise<LoginResult> {
-  // 开发模式使用固定code，体验版和正式版使用wx.login获取真实code
-  const isDev = environment.version === "develop";
-  const code = isDev
-    ? "miniapp-local-super-admin"
-    : await new Promise<string>((resolve, reject) => {
-        wx.login({
-          success: res => resolve(res.code),
-          fail: err => reject(new Error(err.errMsg || "wx.login failed")),
-        });
-      });
+export async function getWxLoginCode(): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    wx.login({
+      success: res => {
+        if (res.code) {
+          resolve(res.code);
+        } else {
+          resolve("miniapp-mock-login-code");
+        }
+      },
+      fail: () => resolve("miniapp-mock-login-code"),
+    });
+  });
+}
+
+export async function loginWithWechat(customCode?: string): Promise<LoginResult> {
+  // 开发模式若未指定code则使用开发默认
+  let code = customCode;
+  if (!code) {
+    code = await getWxLoginCode();
+  }
   const result = await request<LoginResult>({
     url: "/api/v1/auth/wechat-login",
     method: "POST",
@@ -33,6 +43,57 @@ export async function loginWithWechat(): Promise<LoginResult> {
   setAccessToken(result.accessToken);
   cacheAccount(result.account);
   return result;
+}
+
+export async function loginWithPhone(phone: string): Promise<LoginResult> {
+  const result = await request<LoginResult>({
+    url: "/api/v1/auth/phone-login",
+    method: "POST",
+    data: { phone: phone.trim() },
+  });
+  setAccessToken(result.accessToken);
+  cacheAccount(result.account);
+  return result;
+}
+
+export async function loginWithPassword(phone: string, password: string, targetRole: RoleCode): Promise<LoginResult> {
+  const result = await request<LoginResult>({
+    url: "/api/v1/auth/password-login",
+    method: "POST",
+    data: {
+      phone: phone.trim(),
+      password: password.trim(),
+      targetRole,
+    },
+  });
+  setAccessToken(result.accessToken);
+  cacheAccount(result.account);
+  return result;
+}
+
+export async function loginRoleWithWechat(targetRole: RoleCode): Promise<LoginResult> {
+  const code = await getWxLoginCode();
+  const result = await request<LoginResult>({
+    url: "/api/v1/auth/role-wechat-login",
+    method: "POST",
+    data: {
+      code,
+      targetRole,
+    },
+  });
+  setAccessToken(result.accessToken);
+  cacheAccount(result.account);
+  return result;
+}
+
+export async function bindCurrentWechat(): Promise<Account> {
+  const code = await getWxLoginCode();
+  const account = await request<Account>({
+    url: "/api/v1/auth/bind-wechat",
+    method: "POST",
+    data: { code },
+  });
+  return cacheAccount(account);
 }
 
 export async function loadCurrentAccount(): Promise<Account | null> {

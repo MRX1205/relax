@@ -1,156 +1,220 @@
-/* === 全局设计系统 === */
+/* ═════════════════════════════════════════════════════════════ */
+/* Apple HIG (Human Interface Guidelines) 全局设计规范系统         */
+/* ═════════════════════════════════════════════════════════════ */
+
 page {
-  --color-primary: #FF6B6B;
-  --color-primary-light: #FF8E8E;
-  --color-primary-dark: #E84545;
-  --color-secondary: #4ECDC4;
-  --color-accent: #45B7D1;
-  --color-success: #2ECC71;
-  --color-warning: #F39C12;
-  --color-danger: #E74C3C;
-  --color-text: #2D3436;
-  --color-text-secondary: #636E72;
-  --color-muted: #B2BEC3;
-  --color-bg: #F8F9FA;
-  --color-surface: #FFFFFF;
-  --color-border: #E9ECEF;
+  /* 苹果核心调色盘 (Apple Color Palette) */
+  --ios-bg: #F5F5F7;                       /* 苹果签名灰白画布背景 */
+  --ios-card: #FFFFFF;                     /* 纯净白卡片底色 */
+  --ios-card-secondary: #FBFBFD;           /* 次级浅色底 */
+  --ios-border: rgba(0, 0, 0, 0.05);        /* 极细微结构分割线 */
+  --ios-border-light: rgba(0, 0, 0, 0.03);  /* 超微边框 */
   
-  --radius-sm: 8rpx;
-  --radius-md: 16rpx;
-  --radius-lg: 24rpx;
-  --radius-xl: 32rpx;
+  /* 苹果系统标签文字层次 (SF Typography Hierarchy) */
+  --ios-text-primary: #1D1D1F;             /* Primary Label: 暖炭黑，清晰温润 */
+  --ios-text-secondary: #6E6E73;           /* Secondary Label: 系统次级灰 */
+  --ios-text-tertiary: #86868B;            /* Tertiary Label: 辅助信息灰 */
+  --ios-text-quaternary: #C7C7CC;          /* Quaternary Label: 占位微灰 */
+  
+  /* 品牌核心与功能高光色 */
+  --ios-red: #FF382E;                      /* Apple System Red: 经典珊瑚红 */
+  --ios-red-gradient: linear-gradient(135deg, #FF453A 0%, #FF382E 100%);
+  --ios-red-light: rgba(255, 56, 46, 0.08); /* 珊瑚红极浅弥散底 */
+  --ios-green: #34C759;                    /* Apple Green: 薄荷翡翠绿 */
+  --ios-green-light: rgba(52, 199, 89, 0.1);
+  --ios-blue: #007AFF;                     /* Apple Blue: 克莱因蓝 */
+  --ios-blue-light: rgba(0, 122, 255, 0.08);
+  --ios-gold: #FF9500;                     /* Apple Gold/Amber: 皇室琥珀金 */
+  --ios-gold-gradient: linear-gradient(135deg, #FFB340 0%, #FF9500 100%);
+  --ios-purple: #AF52DE;                   /* Apple Purple: 极光紫 */
+  
+  /* 苹果圆角曲率规范 (Squircle Border Radius) */
+  --radius-xs: 12rpx;
+  --radius-sm: 16rpx;
+  --radius-md: 24rpx;
+  --radius-lg: 32rpx;
+  --radius-xl: 40rpx;
   --radius-full: 9999rpx;
   
-  --shadow-sm: 0 2rpx 8rpx rgba(0,0,0,0.04);
-  --shadow-md: 0 4rpx 16rpx rgba(0,0,0,0.08);
-  --shadow-lg: 0 8rpx 32rpx rgba(0,0,0,0.12);
+  /* 苹果多层环境漫反射阴影 (Ambient Diffuse Shadows) */
+  --ios-shadow-subtle: 0 2rpx 8rpx rgba(0, 0, 0, 0.02);
+  --ios-shadow-card: 0 4rpx 24rpx -2rpx rgba(0, 0, 0, 0.04), 0 2rpx 6rpx -1rpx rgba(0, 0, 0, 0.02);
+  --ios-shadow-float: 0 16rpx 40rpx -8rpx rgba(0, 0, 0, 0.08), 0 4rpx 12rpx -2rpx rgba(0, 0, 0, 0.03);
+  --ios-shadow-red: 0 8rpx 24rpx -4rpx rgba(255, 56, 46, 0.35);
   
-  --font-xs: 20rpx;
-  --font-sm: 24rpx;
-  --font-md: 28rpx;
-  --font-lg: 32rpx;
-  --font-xl: 36rpx;
-  --font-2xl: 40rpx;
-  --font-3xl: 48rpx;
-  
-  --space-xs: 8rpx;
-  --space-sm: 16rpx;
-  --space-md: 24rpx;
-  --space-lg: 32rpx;
-  --space-xl: 48rpx;
-  
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: var(--font-md);
-  color: var(--color-text);
-  background: var(--color-bg);
-  line-height: 1.6;
+  /* 字体族系 */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: 28rpx;
+  color: var(--ios-text-primary);
+  background-color: var(--ios-bg);
+  line-height: 1.5;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* === 通用组件 === */
-.surface {
-  background: var(--color-surface);
+/* ═════════════════════════════════════════════════════════════ */
+/* 苹果经典动效与交互触控反馈 (Tactile Motion & Transitions)      */
+/* ═════════════════════════════════════════════════════════════ */
+
+/* 触控弹性微压缩动效 (iOS Signature Spring Press) */
+.ios-touch-active {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+.ios-touch-active:active {
+  transform: scale(0.97);
+  opacity: 0.88;
+}
+
+/* 页面与卡片上浮渐入动画 (Staggered Fade-in) */
+@keyframes iosSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes iosFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes iosPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+.ios-animate-in {
+  animation: iosSlideUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ═════════════════════════════════════════════════════════════ */
+/* 苹果标准毛玻璃与卡片系统 (Glassmorphism & Surfaces)            */
+/* ═════════════════════════════════════════════════════════════ */
+
+/* 苹果悬浮毛玻璃 (Frosted Glass) */
+.ios-blur {
+  -webkit-backdrop-filter: blur(25px);
+  backdrop-filter: blur(25px);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1rpx solid rgba(255, 255, 255, 0.6);
+}
+
+/* 苹果卡片标准 */
+.ios-card {
+  background: var(--ios-card);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--ios-shadow-card);
+  border: 1rpx solid var(--ios-border);
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.card {
-  background: var(--color-surface);
+.ios-card:active {
+  transform: scale(0.985);
+}
+
+/* iOS Inset Grouped TableView 分组容器 */
+.ios-grouped-list {
+  background: var(--ios-card);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--ios-shadow-card);
+  border: 1rpx solid var(--ios-border);
+  overflow: hidden;
+  margin: 0 32rpx 28rpx;
 }
 
-.badge {
+.ios-cell {
+  display: flex;
+  align-items: center;
+  padding: 30rpx 32rpx;
+  position: relative;
+  transition: background-color 0.15s ease;
+}
+
+.ios-cell:active {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.ios-cell-divider {
+  position: absolute;
+  bottom: 0;
+  left: 96rpx;
+  right: 0;
+  height: 1rpx;
+  background-color: var(--ios-border-light);
+}
+
+/* 苹果药丸徽章 (Pill Badges) */
+.ios-badge {
   display: inline-flex;
   align-items: center;
-  padding: 4rpx 12rpx;
+  padding: 4rpx 14rpx;
   border-radius: var(--radius-full);
-  font-size: var(--font-xs);
+  font-size: 22rpx;
   font-weight: 600;
+  letter-spacing: 0.5rpx;
 }
 
-.badge--primary {
-  background: rgba(255, 107, 107, 0.1);
-  color: var(--color-primary);
+.ios-badge--red {
+  background: var(--ios-red-light);
+  color: var(--ios-red);
 }
 
-.badge--success {
-  background: rgba(46, 204, 113, 0.1);
-  color: var(--color-success);
+.ios-badge--green {
+  background: var(--ios-green-light);
+  color: var(--ios-green);
 }
 
-.badge--warning {
-  background: rgba(243, 156, 18, 0.1);
-  color: var(--color-warning);
+.ios-badge--blue {
+  background: var(--ios-blue-light);
+  color: var(--ios-blue);
 }
 
-.badge--danger {
-  background: rgba(231, 76, 60, 0.1);
-  color: var(--color-danger);
+.ios-badge--gold {
+  background: rgba(255, 149, 0, 0.12);
+  color: #D97706;
 }
 
-/* === 渐变背景 === */
-.gradient-primary {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+/* 苹果主按钮与行动胶囊 */
+.ios-btn-primary {
+  background: var(--ios-red-gradient);
+  color: #FFFFFF;
+  border-radius: var(--radius-full);
+  font-size: 30rpx;
+  font-weight: 600;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  box-shadow: var(--ios-shadow-red);
+  border: none;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
 }
 
-.gradient-secondary {
-  background: linear-gradient(135deg, var(--color-secondary), #45B7D1);
+.ios-btn-primary:active {
+  transform: scale(0.97);
+  opacity: 0.9;
 }
 
-.gradient-accent {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+/* 骨架与加载微光 */
+@keyframes iosShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-/* === 动画 === */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20rpx); }
-  to { opacity: 1; transform: translateY(0); }
+.ios-skeleton {
+  background: linear-gradient(90deg, #EEEEF0 25%, #F7F7F8 50%, #EEEEF0 75%);
+  background-size: 200% 100%;
+  animation: iosShimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
 }
 
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+/* 通用占位安全区 */
+.safe-bottom-bar {
+  height: calc(140rpx + env(safe-area-inset-bottom));
+  width: 100%;
 }
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.animate-slide-up {
-  animation: slideUp 0.3s ease-out;
-}
-
-/* === 工具类 === */
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
-.text-primary { color: var(--color-primary); }
-.text-success { color: var(--color-success); }
-.text-warning { color: var(--color-warning); }
-.text-danger { color: var(--color-danger); }
-.text-muted { color: var(--color-muted); }
-.text-secondary { color: var(--color-text-secondary); }
-.font-bold { font-weight: 700; }
-.font-semibold { font-weight: 600; }
-.mt-xs { margin-top: var(--space-xs); }
-.mt-sm { margin-top: var(--space-sm); }
-.mt-md { margin-top: var(--space-md); }
-.mt-lg { margin-top: var(--space-lg); }
-.mb-xs { margin-bottom: var(--space-xs); }
-.mb-sm { margin-bottom: var(--space-sm); }
-.mb-md { margin-bottom: var(--space-md); }
-.mb-lg { margin-bottom: var(--space-lg); }
-.p-xs { padding: var(--space-xs); }
-.p-sm { padding: var(--space-sm); }
-.p-md { padding: var(--space-md); }
-.p-lg { padding: var(--space-lg); }
-.rounded-sm { border-radius: var(--radius-sm); }
-.rounded-md { border-radius: var(--radius-md); }
-.rounded-lg { border-radius: var(--radius-lg); }
-.rounded-full { border-radius: var(--radius-full); }

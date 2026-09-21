@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "服务项目",
-  "enablePullDownRefresh": true,
-  "usingComponents": {
-    "custom-tabbar": "/components/custom-tabbar/index",
-    "ui-state": "/components/ui-state/index"
-  }
-}

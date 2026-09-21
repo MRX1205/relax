@@ -1,23 +1,82 @@
 <view class="page">
-  <view class="page-title">切换身份</view>
-  <view class="page-desc">选择您要使用的功能模块</view>
+  <view class="header-section">
+    <view class="page-title">身份专区与切换</view>
+    <view class="page-desc">请选择进入的服务端通道，或随时返回顾客端</view>
+  </view>
 
   <view class="role-list">
+    <!-- 顾客端 -->
     <view 
-      wx:for="{{roles}}" 
-      wx:key="code" 
-      class="role-card {{item.code === currentRole ? 'role-card--active' : ''}}"
-      data-role="{{item.code}}"
-      bindtap="handleSwitch"
+      class="ios-card role-card role-card--user {{'USER' === currentRole ? 'role-card--active' : ''}} ios-touch-active"
+      data-role="USER"
+      bindtap="handleSelectRole"
     >
-      <view class="role-card__icon">{{item.icon}}</view>
-      <view class="role-card__info">
-        <view class="role-card__name">{{item.name}}</view>
-        <view class="role-card__desc">{{item.description}}</view>
+      <view class="role-icon-box role-icon-box--user">
+        <image src="/assets/tabbar/home-active.png" style="width: 44rpx; height: 44rpx;" mode="aspectFit" />
       </view>
-      <view class="role-card__check" wx:if="{{item.code === currentRole}}">✓</view>
+      <view class="role-card__info">
+        <view class="role-card__name-row">
+          <text class="role-card__name">顾客端</text>
+          <text class="role-card__badge role-card__badge--user">顾客专区</text>
+        </view>
+        <view class="role-card__desc">浏览精选理疗项目、预约上门技师、查看订单</view>
+      </view>
+      <view class="role-card__action">
+        <text class="role-action-txt">{{'USER' === currentRole ? '当前身份' : '进入 ›'}}</text>
+      </view>
+    </view>
+
+    <!-- 技师端 -->
+    <view 
+      class="ios-card role-card role-card--technician {{'TECHNICIAN' === currentRole ? 'role-card--active' : ''}} ios-touch-active"
+      data-role="TECHNICIAN"
+      bindtap="handleSelectRole"
+    >
+      <view class="role-icon-box role-icon-box--tech">
+        <image src="/assets/icons/tech.png" style="width: 44rpx; height: 44rpx;" mode="aspectFit" />
+      </view>
+      <view class="role-card__info">
+        <view class="role-card__name-row">
+          <text class="role-card__name">技师工作台</text>
+          <text class="role-card__badge role-card__badge--tech">执业认证</text>
+        </view>
+        <view class="role-card__desc">接单履约、自建项目、收入结算与排班设置</view>
+      </view>
+      <view class="role-card__action">
+        <text class="role-action-txt role-action-txt--tech">{{'TECHNICIAN' === currentRole ? '当前在岗' : '登录验证 ›'}}</text>
+      </view>
+    </view>
+
+    <!-- 管理员端 -->
+    <view 
+      class="ios-card role-card role-card--admin {{'ADMIN' === currentRole ? 'role-card--active' : ''}} ios-touch-active"
+      data-role="ADMIN"
+      bindtap="handleSelectRole"
+    >
+      <view class="role-icon-box role-icon-box--admin">
+        <image src="/assets/icons/shield.png" style="width: 44rpx; height: 44rpx;" mode="aspectFit" />
+      </view>
+      <view class="role-card__info">
+        <view class="role-card__name-row">
+          <text class="role-card__name">平台管理台</text>
+          <text class="role-card__badge role-card__badge--admin">总控权限</text>
+        </view>
+        <view class="role-card__desc">技师入驻审批、全盘订单调度、财务结算对账</view>
+      </view>
+      <view class="role-card__action">
+        <text class="role-action-txt role-action-txt--admin">{{'ADMIN' === currentRole ? '当前控台' : '安全登入 ›'}}</text>
+      </view>
     </view>
   </view>
 
-  <view class="tip">切换身份后，首页将显示对应的功能模块</view>
+  <!-- 提示卡片 (Apple Inset Grouped) -->
+  <view class="ios-card notice-card">
+    <view class="notice-icon-box">
+      <image src="/assets/icons/shield.png" style="width: 32rpx; height: 32rpx;" mode="aspectFit" />
+    </view>
+    <view class="notice-text-col">
+      <text class="notice-title">多身份安全隔离机制</text>
+      <text class="notice-txt">点击「技师工作台」或「平台管理台」将前往安全验证页。首次可通过手机号密码登入，登入后可关联微信号，下次即可使用微信快捷安全登入。</text>
+    </view>
+  </view>
 </view>

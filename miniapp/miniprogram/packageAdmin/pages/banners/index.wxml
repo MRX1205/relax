@@ -1,35 +1,85 @@
 <view class="page">
   <view class="list-header">
-    <view class="page-title">轮播图</view>
-    <view class="add-btn" bindtap="handleAdd">+ 新增</view>
+    <view class="page-title">轮播图管理</view>
+    <view class="add-btn" bindtap="handleAdd">＋ 新增轮播</view>
   </view>
 
+  <!-- 编辑/新建表单弹层卡片 -->
   <view wx:if="{{showForm}}" class="surface form-card">
+    <view class="form-title">{{editingId ? '编辑轮播图' : '新建轮播图'}}</view>
+
+    <!-- 图片上传与预览 -->
+    <view class="field">
+      <text class="field-label">轮播图片</text>
+      <view class="banner-uploader" bindtap="handleChooseImage">
+        <image wx:if="{{formImageUrl}}" class="banner-preview-img" src="{{formImageUrl}}" mode="aspectFill" />
+        <view wx:else class="banner-upload-ph">
+          <text class="ph-icon">📷</text>
+          <text class="ph-txt">点击上传轮播海报</text>
+        </view>
+      </view>
+    </view>
+
     <view class="field">
       <text class="field-label">标题</text>
-      <input class="field-input" value="{{formTitle}}" placeholder="轮播图标题" bindinput="handleTitleInput" />
+      <input class="field-input" value="{{formTitle}}" placeholder="例如：绿色正规 · 专业理疗到家" bindinput="handleTitleInput" />
     </view>
+
     <view class="field">
-      <text class="field-label">排序</text>
-      <input class="field-input" type="number" value="{{formSort}}" placeholder="数字越小越靠前" bindinput="handleSortInput" />
+      <text class="field-label">跳转类型</text>
+      <picker range="{{linkTypes}}" range-key="label" value="{{linkTypeIndex}}" bindchange="handleLinkTypeChange">
+        <view class="picker-box">
+          <text class="picker-txt">{{linkTypes[linkTypeIndex].label}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
     </view>
+
+    <view class="field" wx:if="{{formLinkType !== 'NONE'}}">
+      <text class="field-label">跳转参数 / 链接</text>
+      <input class="field-input" value="{{formLinkValue}}" placeholder="项目ID、技师ID或跳转路径" bindinput="handleLinkValueInput" />
+    </view>
+
+    <view class="field">
+      <text class="field-label">显示排序</text>
+      <input class="field-input" type="number" value="{{formSort}}" placeholder="数字越小排在越前" bindinput="handleSortInput" />
+    </view>
+
     <view class="form-actions">
       <view class="form-btn form-btn--cancel" bindtap="handleCancel">取消</view>
-      <view class="form-btn form-btn--save" bindtap="handleSave">保存</view>
+      <view class="form-btn form-btn--save {{saving ? 'btn--disabled' : ''}}" bindtap="handleSave">
+        {{saving ? '保存中…' : '确认保存'}}
+      </view>
     </view>
   </view>
 
+  <!-- 列表状态 -->
   <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
   <block wx:else>
-    <view wx:if="{{banners.length === 0}}" class="empty-tip">暂无轮播图</view>
-    <view class="list">
-      <view wx:for="{{banners}}" wx:key="id" class="surface card">
-        <view class="card-main">
-          <view class="card-title">{{item.title}}</view>
-          <view class="card-meta">排序：{{item.sort}}</view>
+    <view wx:if="{{banners.length === 0}}" class="empty-tip">暂无轮播图，请点击右上角新增</view>
+    <view class="banner-list">
+      <view wx:for="{{banners}}" wx:key="id" class="surface banner-item-card">
+        <!-- 封面预览 -->
+        <view class="banner-item-thumb">
+          <image wx:if="{{item.imageFileId}}" class="banner-thumb-img" src="{{item.imageFileId}}" mode="aspectFill" />
+          <view wx:else class="banner-thumb-ph">🖼️</view>
         </view>
-        <view class="card-toggle {{item.status === 'ENABLED' ? 'toggle-on' : 'toggle-off'}}" data-item="{{item}}" bindtap="handleToggle">
-          {{item.status === 'ENABLED' ? '启用' : '停用'}}
+
+        <!-- 信息 -->
+        <view class="banner-item-main">
+          <view class="banner-item-title">{{item.title}}</view>
+          <view class="banner-item-meta">
+            <text class="meta-tag">排序: {{item.sort}}</text>
+            <text wx:if="{{item.linkType}}" class="meta-tag meta-tag--link">{{item.linkType}}</text>
+          </view>
+        </view>
+
+        <!-- 操作区 -->
+        <view class="banner-item-actions">
+          <view class="edit-btn" data-item="{{item}}" bindtap="handleEdit">编辑</view>
+          <view class="card-toggle {{item.status === 'ENABLED' ? 'toggle-on' : 'toggle-off'}}" data-item="{{item}}" bindtap="handleToggle">
+            {{item.status === 'ENABLED' ? '启用中' : '已停用'}}
+          </view>
         </view>
       </view>
     </view>

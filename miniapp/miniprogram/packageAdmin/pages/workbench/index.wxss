@@ -1,52 +1,205 @@
-.menu-list {
-  margin-top: 32rpx;
-  display: grid;
-  gap: 20rpx;
+/* ==========================================================================
+   Admin Workbench — Apple HIG Modern Luxury Aesthetics
+   ========================================================================== */
+
+.page {
+  padding: calc(env(safe-area-inset-top) + 24rpx) 28rpx 60rpx;
+  min-height: 100vh;
+  background: #F5F5F7;
+  box-sizing: border-box;
 }
-.menu-item {
+
+.header-section {
+  margin-bottom: 30rpx;
+  padding: 0 4rpx;
+}
+
+.page-title {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #1C1C1E;
+  letter-spacing: -0.8rpx;
+  margin-bottom: 8rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.page-desc {
+  font-size: 26rpx;
+  color: #8E8E93;
+}
+
+/* ── 微信绑定卡片 ── */
+.wechat-binding-card {
   display: flex;
   align-items: center;
-  padding: 28rpx 24rpx;
-  gap: 24rpx;
+  justify-content: space-between;
+  padding: 24rpx 28rpx;
+  margin-bottom: 20rpx;
 }
-.menu-icon {
-  width: 80rpx;
-  height: 80rpx;
+
+.wb-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: 1;
+}
+
+.wb-icon-box {
+  width: 44rpx;
+  height: 44rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12rpx;
+}
+
+.wb-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.wb-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.wb-title {
   font-size: 28rpx;
   font-weight: 700;
+  color: #1C1C1E;
+}
+
+.wb-tag {
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  font-weight: 600;
+}
+
+.wb-tag--bound {
+  background: rgba(7, 193, 96, 0.1);
+  color: #07C160;
+}
+
+.wb-tag--unbound {
+  background: rgba(255, 149, 0, 0.12);
+  color: #FF9500;
+}
+
+.wb-desc {
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
+.wb-btn {
+  padding: 10rpx 22rpx;
+  border-radius: 30rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-left: 14rpx;
+}
+
+.wb-btn--action {
+  background: #1C1C1E;
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.18);
+}
+
+.wb-btn--bound {
+  background: #F2F2F7;
+  color: #636366;
+  border: 1rpx solid rgba(0, 0, 0, 0.06);
+}
+
+/* ── 管理菜单列表 (Apple Inset Grouped TableView) ── */
+.menu-group {
+  padding: 8rpx 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 28rpx;
+  gap: 20rpx;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-icon-box {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
-.menu-icon--categories {
-  background: #FFF1ED;
-  color: var(--color-primary);
+
+.menu-icon-img {
+  width: 38rpx;
+  height: 38rpx;
+  display: block;
 }
-.menu-icon--projects {
-  background: #EDF8F3;
-  color: var(--color-accent);
+
+.wb-icon-img {
+  width: 44rpx;
+  height: 44rpx;
+  display: block;
 }
-.menu-icon--technicians {
-  background: #EEF2F6;
-  color: #334E68;
-}
+
+.menu-icon--categories { background: rgba(255, 90, 54, 0.1); }
+.menu-icon--projects { background: rgba(0, 122, 255, 0.1); }
+.menu-icon--technicians { background: rgba(52, 199, 89, 0.12); }
+.menu-icon--orders { background: rgba(255, 149, 0, 0.12); }
+.menu-icon--refunds { background: rgba(255, 56, 46, 0.1); }
+.menu-icon--settlements { background: rgba(88, 86, 214, 0.1); }
+.menu-icon--banners { background: rgba(100, 116, 139, 0.1); }
+
 .menu-content {
   flex: 1;
   min-width: 0;
 }
+
 .menu-name {
-  font-size: 30rpx;
-  font-weight: 600;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
 }
+
 .menu-desc {
-  margin-top: 6rpx;
-  font-size: 24rpx;
-  color: var(--color-text-secondary);
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: #8E8E93;
 }
+
 .menu-arrow {
-  color: var(--color-muted);
-  font-size: 40rpx;
+  color: #C7C7CC;
+  font-size: 32rpx;
   line-height: 1;
+}
+
+/* ── 底部返回 ── */
+.return-wrap {
+  margin-top: 36rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.return-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 36rpx;
+  border-radius: 40rpx;
+  background: #FFFFFF;
+  border: 1rpx solid rgba(0, 0, 0, 0.06);
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #636366;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
 }

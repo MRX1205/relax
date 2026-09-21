@@ -1,13 +1,37 @@
 <view class="page">
-  <view class="page-title">东莞服务区域</view>
-  <view class="page-subtitle">以下为平台当前已开通的上门服务区域。</view>
+  <view class="header-box">
+    <view class="page-title">我的接单服务片区</view>
+    <view class="page-subtitle">您可以自定义开启或关闭以下片区，关闭后系统将不再向您派发对应区域的预约订单。</view>
+  </view>
 
   <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
 
-  <view wx:else class="area-list">
-    <view wx:for="{{areas}}" wx:key="id" class="surface area-item">
-      <view class="area-name">{{item.name}}</view>
-      <view class="area-status area-status--{{item.status}}">{{item.status === 'ENABLED' ? '已开通' : '暂停'}}</view>
+  <block wx:else>
+    <view class="actions-bar">
+      <text class="select-hint">已选 {{selectedIds.length}} / {{areas.length}} 个片区</text>
+      <text class="select-all-btn" bindtap="handleSelectAll">全部开启</text>
     </view>
-  </view>
+
+    <view class="area-grid">
+      <view
+        wx:for="{{areas}}"
+        wx:key="id"
+        class="area-card {{selectedIds.includes(item.id) ? 'area-card--active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="handleToggleArea"
+      >
+        <view class="area-check-dot">
+          <text wx:if="{{selectedIds.includes(item.id)}}">✓</text>
+        </view>
+        <view class="area-info">
+          <text class="area-name">{{item.name}}</text>
+          <text class="area-status-txt">{{item.status === 'ENABLED' ? '平台正常运营' : '暂停服务'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="save-bar">
+      <button class="save-btn" bindtap="handleSave">保存片区设置</button>
+    </view>
+  </block>
 </view>

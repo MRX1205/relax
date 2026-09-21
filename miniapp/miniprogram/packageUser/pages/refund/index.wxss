@@ -1,0 +1,178 @@
+/* Refund page styles */
+.page {
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.order-info-card,
+.section-card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.info-row:last-child { border-bottom: none; }
+
+.info-label {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.info-value.price {
+  color: #e54d42;
+  font-weight: 600;
+  font-size: 32rpx;
+}
+
+.section-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+/* Amount input */
+.amount-row {
+  display: flex;
+  align-items: center;
+  background: #f9f9f9;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+}
+
+.amount-sym {
+  font-size: 36rpx;
+  color: #e54d42;
+  font-weight: 600;
+  margin-right: 8rpx;
+}
+
+.amount-input {
+  flex: 1;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #e54d42;
+  border: none;
+  background: transparent;
+}
+
+.amount-max {
+  font-size: 22rpx;
+  color: #bbb;
+}
+
+/* Reason list */
+.reason-list {
+  margin-bottom: 20rpx;
+}
+
+.reason-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  margin-bottom: 12rpx;
+  background: #f9f9f9;
+  border: 2rpx solid transparent;
+  transition: all 0.2s;
+}
+
+.reason-item--active {
+  background: #fff5f5;
+  border-color: #e54d42;
+}
+
+.reason-check {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  border: 2rpx solid #ddd;
+  margin-right: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.reason-item--active .reason-check {
+  border-color: #e54d42;
+  background: #e54d42;
+}
+
+.reason-check-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.reason-text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.custom-input {
+  width: 100%;
+  min-height: 120rpx;
+  font-size: 28rpx;
+  color: #333;
+  background: #f9f9f9;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+/* Submit */
+.submit-wrap {
+  padding: 0 32rpx;
+  margin-top: 16rpx;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 96rpx;
+  background: #e54d42;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(229,77,66,0.35);
+}
+
+.submit-btn--loading {
+  opacity: 0.7;
+}
+
+.tip-text {
+  text-align: center;
+  font-size: 22rpx;
+  color: #bbb;
+  margin-top: 16rpx;
+}

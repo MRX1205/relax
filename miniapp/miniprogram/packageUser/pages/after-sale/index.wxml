@@ -1,18 +1,61 @@
 <view class="page">
-  <view class="page-title">售后申请</view>
+  <view class="page-title">售后服务申请</view>
 
   <view class="surface section">
     <view class="label">问题类型</view>
     <view class="type-grid">
-      <view wx:for="{{types}}" wx:key="*this" class="type-chip {{selectedType === item ? 'type-chip--active' : ''}}"
-        data-type="{{item}}" bindtap="handleTypeTap">{{item}}</view>
+      <view
+        wx:for="{{types}}"
+        wx:key="*this"
+        class="type-chip {{selectedType === item ? 'type-chip--active' : ''}}"
+        data-type="{{item}}"
+        bindtap="handleTypeTap"
+      >
+        {{item}}
+      </view>
     </view>
   </view>
 
   <view class="surface section">
-    <view class="label">问题描述</view>
-    <textarea class="content-input" placeholder="请详细描述您遇到的问题" value="{{content}}" bindinput="handleContentInput" maxlength="500" />
+    <view class="label">问题详细描述</view>
+    <textarea
+      class="content-input"
+      placeholder="请详细描述您遇到的问题或诉求，我们将第一时间妥善处理"
+      value="{{content}}"
+      bindinput="handleContentInput"
+      maxlength="500"
+    />
   </view>
 
-  <ui-button label="提交申请" loading="{{submitting}}" bind:action="handleSubmit" />
+  <!-- 图片凭证上传 -->
+  <view class="surface section">
+    <view class="label-row">
+      <text class="label">图片凭证</text>
+      <text class="sub-label">最多4张，支持服务现场/沟通记录截图</text>
+    </view>
+    <view class="uploader-grid">
+      <view
+        wx:for="{{evidenceFiles}}"
+        wx:key="id"
+        class="thumb-wrap"
+      >
+        <image class="thumb-img" src="{{item.url}}" mode="aspectFill" />
+        <view class="remove-btn" data-index="{{index}}" bindtap="handleRemoveImage">×</view>
+      </view>
+      <view
+        wx:if="{{evidenceFiles.length < 4}}"
+        class="upload-btn"
+        bindtap="handleChooseImage"
+      >
+        <text class="upload-icon">📷</text>
+        <text class="upload-txt">上传凭证</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="btn-wrap">
+    <button class="submit-btn {{submitting ? 'btn--disabled' : ''}}" bindtap="handleSubmit" disabled="{{submitting}}">
+      {{submitting ? '提交中…' : '提交售后申请'}}
+    </button>
+  </view>
 </view>

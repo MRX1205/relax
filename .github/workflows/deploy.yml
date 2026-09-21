@@ -92,9 +92,7 @@ jobs:
     name: 3. 微信小程序代码自动上传 (miniprogram-ci)
     needs: verify
     runs-on: ubuntu-latest
-    if: env.HAS_WX_KEY == 'true'
-    env:
-      HAS_WX_KEY: ${{ secrets.WX_PRIVATE_KEY != '' }}
+    if: ${{ secrets.WX_PRIVATE_KEY != '' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

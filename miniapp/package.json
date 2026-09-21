@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "miniprogram-api-typings": "5.2.3",
+    "miniprogram-ci": "^2.1.31",
     "typescript": "5.9.3",
     "vitest": "4.1.10"
   }

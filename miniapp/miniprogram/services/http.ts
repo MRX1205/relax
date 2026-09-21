@@ -77,17 +77,17 @@ export function request<T>({ url, method = "GET", data }: RequestOptions): Promi
         console.error(`[HTTP] 请求失败: ${targetUrl}`, error);
         if (environment.version !== "release") {
           wx.showModal({
-            title: "网络连接失败",
-            content: `无法连接服务器:\n${environment.apiBaseUrl}\n\n排查提示：\n1. 手机真机调试：请确保手机与电脑在同一WiFi，并在电脑真机调试面板中勾选【不校验合法域名】\n2. 若电脑IP变动，可点击下方按钮直接修改`,
+            title: "网络连接提示",
+            content: `无法连接云端服务器:\n${targetUrl}\n\n排查建议：\n1. 若初次在手机扫码，请点击小程序右上角「···」-> 进入【开发版/体验版设置】-> 开启【开发调试】(打开vConsole) 即可直接绕过微信域名白名单限制正常使用！\n2. 微信公众平台后台管理员需在【开发管理】->【开发设置】->【服务器域名】将 https://realxback.lyhlz.cn 添加到 request 合法域名。\n3. 如需临时更换调试接口，可点击下方【修改地址】。`,
             showCancel: true,
             cancelText: "关闭",
-            confirmText: "修改IP",
+            confirmText: "修改地址",
             success(res) {
               if (res.confirm) {
                 wx.showModal({
-                  title: "修改后端IP地址",
+                  title: "修改后端API地址",
                   editable: true,
-                  placeholderText: `如: http://${DEFAULT_LAN_IP}:8080`,
+                  placeholderText: `如: https://realxback.lyhlz.cn`,
                   content: environment.apiBaseUrl,
                   success(inputRes) {
                     if (inputRes.confirm && inputRes.content) {

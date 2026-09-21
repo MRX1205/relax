@@ -47,8 +47,10 @@ services:
       start_period: 30s
 
   server:
+    image: relax-server:latest
     build:
       context: ../server
+      dockerfile: Dockerfile.slim
     restart: unless-stopped
     deploy:
       resources:

@@ -44,7 +44,9 @@ public interface TechnicianAuditMapper {
     Optional<Long> findTechnicianIdByUserId(@Param("userId") long userId);
 
     @Select("SELECT id, user_id AS userId, service_name AS serviceName, real_name AS realName, "
-            + "phone, intro, experience_years AS experienceYears, status, created_at AS createdAt "
+            + "phone, intro, experience_years AS experienceYears, service_area_codes AS serviceAreaCodes, "
+            + "photo_file_id AS photoFileId, certificate_file_id AS certificateFileId, "
+            + "status, reject_reason AS rejectReason, created_at AS createdAt "
             + "FROM technician_application WHERE id = #{id}")
     Optional<TechnicianApplicationView> findApplicationById(@Param("id") long id);
 

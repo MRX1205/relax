@@ -2,11 +2,13 @@ import { getHomeData } from "../../services/catalog";
 import { getCachedAccount, loadCurrentAccount } from "../../services/auth";
 import { request, getAccessToken } from "../../services/http";
 import { getProjectCover, getTechAvatar, getTechPhotos } from "../../utils/assets";
+import { getPublicSystemSettings } from "../../services/system";
 
 Page({
   data: {
     role: "USER" as string,
     loading: true,
+    appName: "东莞到家",
     home: null as any,
     account: null as any,
     techProfile: null as any,
@@ -26,6 +28,14 @@ Page({
   },
 
   async onShow() {
+    try {
+      const settings = await getPublicSystemSettings();
+      if (settings?.appName) {
+        this.setData({ appName: settings.appName });
+        wx.setNavigationBarTitle({ title: settings.appName });
+      }
+    } catch {}
+
     const hasToken = !!getAccessToken();
     
     if (hasToken) {
@@ -86,6 +96,10 @@ Page({
     } catch {
       this.setData({ loading: false });
     }
+  },
+
+  goToSearch() {
+    wx.navigateTo({ url: "/packageUser/pages/search/index" });
   },
 
   goToProjectList() {

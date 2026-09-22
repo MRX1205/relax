@@ -44,10 +44,12 @@ Page({
     // 供给与系统配置模块
     configMenus: [
       { code: "technicians", name: "技师审核与管理", desc: "入驻资质 · 提成与状态", icon: "tech", url: "/packageAdmin/pages/technicians/index", badge: "" },
+      { code: "users", name: "用户会员管理", desc: "注册顾客 · 状态冻结/解冻", icon: "user", url: "/packageAdmin/pages/users/index", badge: "" },
       { code: "projects", name: "服务项目配置", desc: "平台项目 · 定价上下架", icon: "project", url: "/packageAdmin/pages/projects/index", badge: "" },
       { code: "categories", name: "服务分类目录", desc: "分类管理与展示排序", icon: "category", url: "/packageAdmin/pages/categories/index", badge: "" },
       { code: "banners", name: "首页轮播管理", desc: "运营海报 · 页面跳转", icon: "banner", url: "/packageAdmin/pages/banners/index", badge: "" },
       { code: "payment", name: "支付与结算模式", desc: "Mock / 微信 / 现场支付", icon: "pay", url: "/packageAdmin/pages/payment-config/index", badge: "核心" },
+      { code: "system", name: "系统基本设置", desc: "平台名称 · VIP入口开关", icon: "setting", url: "/packageAdmin/pages/system-settings/index", badge: "" },
     ],
   },
 

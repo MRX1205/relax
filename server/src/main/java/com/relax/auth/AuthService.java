@@ -120,20 +120,29 @@ public class AuthService {
 
         // Verify role
         List<String> roles = authMapper.findRoleCodes(user.id());
-        if ("ADMIN".equals(targetRole)) {
+        String effectiveRole = targetRole;
+        if (effectiveRole == null || effectiveRole.isBlank() || "STAFF".equalsIgnoreCase(effectiveRole)) {
+            if (roles.contains("SUPER_ADMIN") || roles.contains("ADMIN")) {
+                effectiveRole = "ADMIN";
+            } else if (roles.contains("TECHNICIAN")) {
+                effectiveRole = "TECHNICIAN";
+            } else {
+                throw new BusinessException(HttpStatus.FORBIDDEN, "ROLE_NOT_GRANTED", "该账号尚未开通技师或管理员服务端权限");
+            }
+        } else if ("ADMIN".equals(effectiveRole)) {
             if (!roles.contains("ADMIN") && !roles.contains("SUPER_ADMIN")) {
                 throw new BusinessException(HttpStatus.FORBIDDEN, "ROLE_NOT_GRANTED", "该账号尚未获得管理员权限");
             }
-        } else if ("TECHNICIAN".equals(targetRole)) {
+        } else if ("TECHNICIAN".equals(effectiveRole)) {
             if (!roles.contains("TECHNICIAN")) {
                 throw new BusinessException(HttpStatus.FORBIDDEN, "ROLE_NOT_GRANTED", "该账号尚未获得技师权限");
             }
-        } else if (!roles.contains(targetRole)) {
+        } else if (!roles.contains(effectiveRole)) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "ROLE_NOT_GRANTED", "该账号尚未获得该身份权限");
         }
 
         requireActive(user);
-        authMapper.updateLastRole(user.id(), targetRole);
+        authMapper.updateLastRole(user.id(), effectiveRole);
         TokenService.IssuedToken token = tokenService.issue(user.id());
         return new LoginResult(token.value(), token.expiresAt(), account(user.id()));
     }
@@ -143,25 +152,35 @@ public class AuthService {
         WechatGateway.WechatIdentity identity = wechatGateway.exchangeLoginCode(code);
         UserAccount user = authMapper.findUserByOpenId(identity.openId())
                 .orElseThrow(() -> new BusinessException(HttpStatus.FORBIDDEN, "WECHAT_NOT_BOUND",
-                        "当前微信号尚未绑定" + ("ADMIN".equals(targetRole) ? "管理员" : "技师") + "账号，请先使用手机号密码登录并在工作台绑定微信"));
+                        "当前微信号尚未绑定服务端账号，请先使用手机号密码登录并在对应工作台绑定微信"));
 
         List<String> roles = authMapper.findRoleCodes(user.id());
-        if ("ADMIN".equals(targetRole)) {
+        String effectiveRole = targetRole;
+        if (effectiveRole == null || effectiveRole.isBlank() || "STAFF".equalsIgnoreCase(effectiveRole)) {
+            if (roles.contains("SUPER_ADMIN") || roles.contains("ADMIN")) {
+                effectiveRole = "ADMIN";
+            } else if (roles.contains("TECHNICIAN")) {
+                effectiveRole = "TECHNICIAN";
+            } else {
+                throw new BusinessException(HttpStatus.FORBIDDEN, "ROLE_NOT_GRANTED",
+                        "当前微信号未开通技师或管理员权限，请先返回用户端或使用已授权账号登录");
+            }
+        } else if ("ADMIN".equals(effectiveRole)) {
             if (!roles.contains("ADMIN") && !roles.contains("SUPER_ADMIN")) {
                 throw new BusinessException(HttpStatus.FORBIDDEN, "ROLE_NOT_GRANTED",
                         "当前微信号未获得管理员权限，请先返回用户端或使用已授权账号登录");
             }
-        } else if ("TECHNICIAN".equals(targetRole)) {
+        } else if ("TECHNICIAN".equals(effectiveRole)) {
             if (!roles.contains("TECHNICIAN")) {
                 throw new BusinessException(HttpStatus.FORBIDDEN, "ROLE_NOT_GRANTED",
                         "当前微信号未获得技师权限，请先返回用户端或使用已审核的技师账号登录");
             }
-        } else if (!roles.contains(targetRole)) {
+        } else if (!roles.contains(effectiveRole)) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "ROLE_NOT_GRANTED", "当前微信号未获得该身份权限");
         }
 
         requireActive(user);
-        authMapper.updateLastRole(user.id(), targetRole);
+        authMapper.updateLastRole(user.id(), effectiveRole);
         TokenService.IssuedToken token = tokenService.issue(user.id());
         return new LoginResult(token.value(), token.expiresAt(), account(user.id()));
     }
@@ -199,7 +218,12 @@ public class AuthService {
 
     @Transactional
     public AccountView bindPhone(long userId, String phoneCode) {
-        String phone = wechatGateway.exchangePhoneCode(phoneCode);
+        String phone;
+        if (phoneCode != null && phoneCode.trim().matches("1\\d{10}")) {
+            phone = phoneCode.trim();
+        } else {
+            phone = wechatGateway.exchangePhoneCode(phoneCode);
+        }
         try {
             authMapper.updatePhone(userId, phone);
         } catch (DuplicateKeyException exception) {

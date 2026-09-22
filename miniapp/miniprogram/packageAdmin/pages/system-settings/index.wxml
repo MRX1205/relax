@@ -1,0 +1,56 @@
+<view class="system-settings-page">
+  <!-- 顶部说明头 -->
+  <view class="hero-header">
+    <view class="hero-tag">PLATFORM CONFIG</view>
+    <view class="hero-title">系统基本配置</view>
+    <view class="hero-desc">管理平台对外展示品牌名称与特色会员服务入口。</view>
+  </view>
+
+  <!-- 1. 品牌名称设置卡片 -->
+  <view class="settings-card">
+    <view class="card-header">
+      <view class="card-icon-box">🏷️</view>
+      <view class="card-title-wrap">
+        <text class="card-title">平台品牌对外名称</text>
+        <text class="card-sub">显示在小程序首页顶部、登录页、分享卡片等全端位置</text>
+      </view>
+    </view>
+
+    <view class="input-wrap">
+      <input
+        class="name-input"
+        value="{{appName}}"
+        placeholder="例如: 东莞到家"
+        bindinput="handleAppNameInput"
+      />
+    </view>
+  </view>
+
+  <!-- 2. VIP 会员开关卡片 -->
+  <view class="settings-card">
+    <view class="switch-row">
+      <view class="switch-left">
+        <view class="card-icon-box">👑</view>
+        <view class="card-title-wrap">
+          <text class="card-title">VIP 会员服务入口</text>
+          <text class="card-sub">{{vipEnabled ? '已开启：顾客端「我的」呈现黑金VIP尊享卡' : '已关闭：顾客端「我的」不显示VIP入口（默认）'}}</text>
+        </view>
+      </view>
+      <switch checked="{{vipEnabled}}" color="#E54D42" bindchange="handleVipToggle" />
+    </view>
+  </view>
+
+  <!-- 3. 操作说明卡片 -->
+  <view class="help-card">
+    <view class="help-title">💡 配置说明</view>
+    <view class="help-item">• <strong>品牌名称</strong>：修改后点击保存，所有登录用户重新进入或刷新页面后即可看到最新品牌名。</view>
+    <view class="help-item">• <strong>VIP会员开关</strong>：在业务起步期建议关闭，待有专属会员权益政策时随时开启。</view>
+  </view>
+
+  <!-- 底部固定保存栏 -->
+  <view class="bottom-bar">
+    <button class="save-btn" loading="{{saving}}" bindtap="handleSave">
+      {{saving ? '保存中...' : '保存并应用配置'}}
+    </button>
+  </view>
+</view>

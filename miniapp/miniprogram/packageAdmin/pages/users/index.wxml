@@ -1,0 +1,79 @@
+<view class="admin-users-page">
+  <!-- 搜索栏 -->
+  <view class="search-header">
+    <view class="search-input-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索用户手机号 / 昵称"
+        value="{{keyword}}"
+        bindinput="handleKeywordInput"
+        bindconfirm="handleSearch"
+      />
+      <text wx:if="{{keyword}}" class="clear-btn" bindtap="handleClearSearch">✕</text>
+    </view>
+    <view class="search-btn" bindtap="handleSearch">搜索</view>
+  </view>
+
+  <view class="users-count-bar">
+    <text class="count-txt">平台已注册用户 ({{users.length}})</text>
+    <text class="refresh-tip">下拉可刷新列表</text>
+  </view>
+
+  <ui-state wx:if="{{loading && users.length === 0}}" title="加载中" kind="loading" />
+
+  <block wx:else>
+    <view wx:if="{{users.length === 0}}" class="empty-wrap">
+      <ui-state title="暂无匹配用户" description="未找到符合条件的用户账号" />
+    </view>
+
+    <view class="user-card-list" wx:else>
+      <view
+        wx:for="{{users}}"
+        wx:key="userId"
+        class="user-card {{item.status === 'ACTIVE' ? '' : 'user-card--disabled'}}"
+      >
+        <view class="card-top-row">
+          <!-- 头像 -->
+          <view class="user-avatar-wrap">
+            <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" class="avatar-img" mode="aspectFill" />
+            <view wx:else class="avatar-placeholder">
+              <text>{{item.nickname ? item.nickname[0] : '用'}}</text>
+            </view>
+          </view>
+
+          <!-- 用户核心信息 -->
+          <view class="user-info-col">
+            <view class="user-name-line">
+              <text class="user-nickname">{{item.nickname || '未设置昵称'}}</text>
+              <text class="status-chip {{item.status === 'ACTIVE' ? 'chip-active' : 'chip-disabled'}}">
+                {{item.status === 'ACTIVE' ? '正常' : '已冻结'}}
+              </text>
+            </view>
+            <text class="user-phone">📱 {{item.phone || '未绑定手机号'}}</text>
+            <view class="user-roles-row">
+              <text wx:for="{{item.roles}}" wx:for-item="role" wx:key="*this" class="role-badge role-badge--{{role}}">
+                {{role === 'SUPER_ADMIN' ? '超级管理员' : (role === 'ADMIN' ? '管理员' : (role === 'TECHNICIAN' ? '技师' : '顾客'))}}
+              </text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 卡片底部操作 -->
+        <view class="card-action-row">
+          <text class="uid-tag">UID: {{item.userId}}</text>
+          <view class="btn-group">
+            <view
+              class="action-btn {{item.status === 'ACTIVE' ? 'btn-freeze' : 'btn-unfreeze'}}"
+              data-id="{{item.userId}}"
+              data-status="{{item.status}}"
+              bindtap="handleToggleStatus"
+            >
+              {{item.status === 'ACTIVE' ? '冻结账号' : '解除冻结'}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

@@ -14,10 +14,19 @@ const NEXT_ACTIONS: Record<string, { label: string; action: string }[]> = {
     { label: "确认接单", action: "accept" },
     { label: "无法接单(拒单)", action: "reject" },
   ],
-  ACCEPTED: [{ label: "我已出发", action: "depart" }],
-  DEPARTED: [{ label: "我已到达", action: "arrive" }],
-  ARRIVED: [{ label: "开始服务", action: "start" }],
-  IN_SERVICE: [{ label: "服务完成", action: "complete" }],
+  ACCEPTED: [
+    { label: "一键完成服务", action: "complete" },
+    { label: "我已出发", action: "depart" },
+  ],
+  DEPARTED: [
+    { label: "一键完成服务", action: "complete" },
+    { label: "我已到达", action: "arrive" },
+  ],
+  ARRIVED: [
+    { label: "一键完成服务", action: "complete" },
+    { label: "开始服务", action: "start" },
+  ],
+  IN_SERVICE: [{ label: "确认完成服务", action: "complete" }],
 };
 
 Page({

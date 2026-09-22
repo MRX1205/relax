@@ -32,7 +32,8 @@
         "pages/notifications/index",
         "pages/refund/index",
         "pages/invite/index",
-        "pages/vip/index"
+        "pages/vip/index",
+        "pages/search/index"
       ]
     },
     {
@@ -47,6 +48,7 @@
         "pages/order-detail/index",
         "pages/income/index",
         "pages/projects/index",
+        "pages/project-edit/index",
         "pages/profile-edit/index"
       ]
     },
@@ -63,7 +65,9 @@
         "pages/refunds/index",
         "pages/settlements/index",
         "pages/banners/index",
-        "pages/payment-config/index"
+        "pages/payment-config/index",
+        "pages/users/index",
+        "pages/system-settings/index"
       ]
     }
   ],

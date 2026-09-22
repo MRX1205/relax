@@ -1,0 +1,152 @@
+.system-settings-page {
+  min-height: 100vh;
+  background: #F6F7F9;
+  padding: 32rpx 32rpx 160rpx;
+  box-sizing: border-box;
+}
+
+.hero-header {
+  margin-bottom: 32rpx;
+}
+
+.hero-tag {
+  font-size: 20rpx;
+  font-weight: 800;
+  color: #D97706;
+  letter-spacing: 2rpx;
+  margin-bottom: 6rpx;
+}
+
+.hero-title {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #1C1C1E;
+  margin-bottom: 10rpx;
+}
+
+.hero-desc {
+  font-size: 24rpx;
+  color: #8E8E93;
+}
+
+.settings-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.03);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.card-icon-box {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 16rpx;
+  background: #F5F6F8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.card-title-wrap {
+  flex: 1;
+}
+
+.card-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+  display: block;
+}
+
+.card-sub {
+  font-size: 22rpx;
+  color: #8E8E93;
+  margin-top: 4rpx;
+  display: block;
+}
+
+.input-wrap {
+  background: #F8F9FA;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  border: 1.5rpx solid rgba(0, 0, 0, 0.05);
+}
+
+.name-input {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.switch-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: 1;
+  padding-right: 20rpx;
+}
+
+.help-card {
+  background: #F0F4FF;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  margin-top: 10rpx;
+}
+
+.help-title {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #2B4C7E;
+  margin-bottom: 12rpx;
+}
+
+.help-item {
+  font-size: 22rpx;
+  color: #4A6B9B;
+  line-height: 1.6;
+  margin-bottom: 8rpx;
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  padding: 24rpx 32rpx calc(24rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}
+
+.save-btn {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, #1C1C1E, #3A3A3C);
+  color: #FFFFFF;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.25);
+}

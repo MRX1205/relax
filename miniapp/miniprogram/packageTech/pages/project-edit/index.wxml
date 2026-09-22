@@ -1,0 +1,115 @@
+<view class="project-edit-page">
+  <view class="edit-header">
+    <text class="header-tag">{{isEdit ? 'EDIT PROJECT' : 'NEW PROJECT'}}</text>
+    <text class="header-title">{{isEdit ? '编辑接单项目' : '自主创建接单项目'}}</text>
+    <text class="header-sub">自由设定项目内容与价格，创建后即可自主上架接单</text>
+  </view>
+
+  <!-- 1. 基本信息卡片 -->
+  <view class="form-card">
+    <view class="card-title">基本信息</view>
+
+    <view class="form-item">
+      <text class="form-label">项目名称 <text class="req">*</text></text>
+      <input
+        class="form-input"
+        value="{{name}}"
+        data-field="name"
+        placeholder="例如: 头部经络放松SPA"
+        bindinput="handleInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">服务分类 <text class="req">*</text></text>
+      <picker
+        mode="selector"
+        range="{{categories}}"
+        range-key="name"
+        value="{{categoryIndex}}"
+        bindchange="handleCategoryChange"
+      >
+        <view class="picker-value-box">
+          <text class="picker-txt {{categoryIndex >= 0 ? '' : 'placeholder-txt'}}">
+            {{categoryIndex >= 0 ? categories[categoryIndex].name : '请选择服务分类'}}
+          </text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">服务时长 (分钟) <text class="req">*</text></text>
+      <input
+        class="form-input"
+        type="number"
+        value="{{durationMinutes}}"
+        data-field="durationMinutes"
+        placeholder="如: 60"
+        bindinput="handleInput"
+      />
+    </view>
+  </view>
+
+  <!-- 2. 价格与上架卡片 -->
+  <view class="form-card">
+    <view class="card-title">价格与接单设置</view>
+
+    <view class="form-item">
+      <text class="form-label">接单价格 (元) <text class="req">*</text></text>
+      <view class="price-input-wrap">
+        <text class="price-prefix">¥</text>
+        <input
+          class="form-input price-input"
+          type="digit"
+          value="{{basePrice}}"
+          data-field="basePrice"
+          placeholder="如: 198"
+          bindinput="handleInput"
+        />
+      </view>
+    </view>
+
+    <view class="form-switch-item" wx:if="{{!isEdit}}">
+      <view class="switch-left">
+        <text class="switch-title">立即上架接单</text>
+        <text class="switch-desc">开启后顾客端可立即浏览并预约该项目</text>
+      </view>
+      <switch checked="{{onShelf}}" color="#E54D42" bindchange="handleShelfChange" />
+    </view>
+  </view>
+
+  <!-- 3. 详细介绍与须知 -->
+  <view class="form-card">
+    <view class="card-title">详细介绍与须知</view>
+
+    <view class="form-item">
+      <text class="form-label">项目特色与手法介绍</text>
+      <textarea
+        class="form-textarea"
+        value="{{description}}"
+        data-field="description"
+        placeholder="介绍手法特色、针对人群与调理功效（如：适合长期久坐、肩颈僵硬低头族）"
+        bindinput="handleInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">服务须知 / 温馨提示</text>
+      <input
+        class="form-input"
+        value="{{notice}}"
+        data-field="notice"
+        placeholder="如：请保持室内空气流通，饭后半小时内不宜理疗"
+        bindinput="handleInput"
+      />
+    </view>
+  </view>
+
+  <!-- 底部固定保存栏 -->
+  <view class="bottom-action-bar">
+    <button class="save-submit-btn" loading="{{submitting}}" bindtap="handleSave">
+      {{submitting ? '保存中...' : (isEdit ? '保存更新' : '确认创建并接单')}}
+    </button>
+  </view>
+</view>

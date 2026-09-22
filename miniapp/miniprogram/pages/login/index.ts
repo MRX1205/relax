@@ -1,6 +1,5 @@
-import { loginWithWechat, loginWithPhone, getCachedAccount, switchRole } from "../../services/auth";
-import { environment } from "../../config/environment";
-import { setCustomApiBaseUrl, clearCustomApiBaseUrl } from "../../config/api-environment";
+import { loginWithWechat, loginWithPassword, loginRoleWithWechat, switchRole } from "../../services/auth";
+import { getPublicSystemSettings } from "../../services/system";
 
 Page({
   data: {
@@ -10,36 +9,17 @@ Page({
     phone: "",
     password: "",
     agreed: true,
-    cachedAccount: null as Account | null,
-
-    // 网络与环境配置
-    showEnvModal: false,
-    currentApiBaseUrl: "",
-    inputApiUrl: "",
-    envVersion: "",
-    presets: [
-      { label: "电脑本地模拟器", url: "http://127.0.0.1:8080" },
-      { label: "手机同一WiFi局域网", url: "http://192.168.1.7:8080" },
-      { label: "云端生产正式域名", url: "https://realxback.lyhlz.cn" },
-    ],
+    appName: "东莞到家",
   },
 
-  onLoad(options: { relogin?: string }) {
-    const account = getCachedAccount();
-    this.setData({
-      cachedAccount: account,
-      currentApiBaseUrl: environment.apiBaseUrl,
-      inputApiUrl: environment.apiBaseUrl,
-      envVersion: environment.version,
-    });
-  },
-
-  onShow() {
-    this.setData({
-      currentApiBaseUrl: environment.apiBaseUrl,
-      inputApiUrl: environment.apiBaseUrl,
-      envVersion: environment.version,
-    });
+  async onLoad() {
+    try {
+      const settings = await getPublicSystemSettings();
+      if (settings?.appName) {
+        this.setData({ appName: settings.appName });
+        wx.setNavigationBarTitle({ title: settings.appName });
+      }
+    } catch {}
   },
 
   switchTab(e: WechatMiniprogram.TouchEvent) {
@@ -52,121 +32,105 @@ Page({
   },
 
   handlePhoneInput(e: WechatMiniprogram.Input) {
-    this.setData({ phone: e.detail.value });
+    this.setData({ phone: e.detail.value, error: "" });
   },
 
   handlePasswordInput(e: WechatMiniprogram.Input) {
-    this.setData({ password: e.detail.value });
+    this.setData({ password: e.detail.value, error: "" });
   },
 
-  // 微信授权一键快捷登录（普通用户端）
-  async handleWechatLogin() {
+  // 微信授权快捷登录（用户端）
+  async handleUserWechatLogin() {
     if (!this.checkAgreement()) return;
     if (this.data.loading) return;
 
     this.setData({ loading: true, error: "" });
     try {
       const result = await loginWithWechat();
-      // 普通用户端登录，若有多个身份，确保当前角色切换为 USER
       if (result.account.roles.includes("USER")) {
         await switchRole("USER").catch(() => {});
       }
       wx.showToast({ title: "登录成功", icon: "success" });
       setTimeout(() => {
-        this.navigateAfterLogin();
-      }, 600);
-    } catch (err) {
-      this.setData({ error: err instanceof Error ? err.message : "登录失败，请重试" });
+        wx.switchTab({ url: "/pages/home/index" });
+      }, 500);
+    } catch (err: any) {
+      this.setData({ error: err?.message || "登录失败，请重试" });
     } finally {
       this.setData({ loading: false });
     }
   },
 
-  // 快速体验：普通顾客
-  async handleQuickUserLogin() {
+  // 账号密码登录（服务端）
+  async handleStaffPasswordLogin() {
     if (!this.checkAgreement()) return;
+    const { phone, password } = this.data;
+    if (!phone || !phone.trim()) {
+      wx.showToast({ title: "请输入手机号", icon: "none" });
+      return;
+    }
+    if (!password || !password.trim()) {
+      wx.showToast({ title: "请输入密码", icon: "none" });
+      return;
+    }
+    if (this.data.loading) return;
+
     this.setData({ loading: true, error: "" });
     try {
-      const result = await loginWithWechat("test-user-001");
-      if (result.account.roles.includes("USER")) {
-        await switchRole("USER").catch(() => {});
-      }
-      wx.showToast({ title: "已进入顾客端", icon: "success" });
+      const result = await loginWithPassword(phone.trim(), password.trim(), "STAFF");
+      wx.showToast({ title: "验证成功", icon: "success" });
       setTimeout(() => {
-        this.navigateAfterLogin();
-      }, 600);
-    } catch (err) {
-      this.setData({ error: err instanceof Error ? err.message : "快捷登录失败" });
+        this.dispatchStaffRoute(result.account);
+      }, 500);
+    } catch (err: any) {
+      this.setData({ error: err?.message || "登录失败，请检查账号密码" });
     } finally {
       this.setData({ loading: false });
     }
   },
 
-  goToTechRoleLogin() {
+  // 微信快捷登录（服务端：微信号已绑定管理员/技师账号）
+  async handleStaffWechatLogin() {
     if (!this.checkAgreement()) return;
-    wx.navigateTo({ url: "/pages/role-login/index?role=TECHNICIAN" });
+    if (this.data.loading) return;
+
+    this.setData({ loading: true, error: "" });
+    try {
+      const result = await loginRoleWithWechat("STAFF");
+      wx.showToast({ title: "验证成功", icon: "success" });
+      setTimeout(() => {
+        this.dispatchStaffRoute(result.account);
+      }, 500);
+    } catch (err: any) {
+      this.setData({ error: err?.message || "微信登录失败，请确认是否已绑定服务端账号" });
+    } finally {
+      this.setData({ loading: false });
+    }
   },
 
-  goToAdminRoleLogin() {
-    if (!this.checkAgreement()) return;
-    wx.navigateTo({ url: "/pages/role-login/index?role=ADMIN" });
+  dispatchStaffRoute(account: Account) {
+    const roles = account.roles || [];
+    if (roles.includes("ADMIN") || roles.includes("SUPER_ADMIN")) {
+      wx.reLaunch({ url: "/packageAdmin/pages/workbench/index" });
+    } else if (roles.includes("TECHNICIAN")) {
+      wx.reLaunch({ url: "/packageTech/pages/workbench/index" });
+    } else {
+      wx.showModal({
+        title: "提示",
+        content: "当前账号尚未开通服务端权限，已为您进入顾客端。",
+        showCancel: false,
+        success: () => {
+          wx.switchTab({ url: "/pages/home/index" });
+        },
+      });
+    }
   },
 
-  // 检查协议勾选
   checkAgreement(): boolean {
     if (!this.data.agreed) {
       wx.showToast({ title: "请先阅读并同意用户协议与隐私政策", icon: "none" });
       return false;
     }
     return true;
-  },
-
-  navigateAfterLogin() {
-    wx.reLaunch({ url: "/pages/home/index" });
-  },
-
-  // ══ 网络与环境配置弹窗 ══
-  openEnvModal() {
-    this.setData({
-      showEnvModal: true,
-      inputApiUrl: this.data.currentApiBaseUrl,
-    });
-  },
-
-  closeEnvModal() {
-    this.setData({ showEnvModal: false });
-  },
-
-  handleApiUrlInput(e: WechatMiniprogram.Input) {
-    this.setData({ inputApiUrl: e.detail.value });
-  },
-
-  selectPresetUrl(e: WechatMiniprogram.TouchEvent) {
-    const url = e.currentTarget.dataset.url as string;
-    this.setData({ inputApiUrl: url });
-  },
-
-  saveEnvUrl() {
-    const url = this.data.inputApiUrl.trim();
-    if (!url || !url.startsWith("http")) {
-      wx.showToast({ title: "请输入以 http:// 或 https:// 开头的有效地址", icon: "none" });
-      return;
-    }
-    setCustomApiBaseUrl(url);
-    this.setData({
-      currentApiBaseUrl: url,
-      showEnvModal: false,
-    });
-    wx.showToast({ title: "后端地址已切换", icon: "success" });
-  },
-
-  resetEnvUrl() {
-    clearCustomApiBaseUrl();
-    this.setData({
-      currentApiBaseUrl: environment.apiBaseUrl,
-      inputApiUrl: environment.apiBaseUrl,
-      showEnvModal: false,
-    });
-    wx.showToast({ title: "已恢复默认配置", icon: "none" });
   },
 });

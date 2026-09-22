@@ -56,28 +56,36 @@ public class PaymentController {
 
     @org.springframework.web.bind.annotation.PutMapping("/admin/payment-config")
     ApiResponse<Void> updateAdminPaymentConfig(@RequestBody java.util.Map<String, Object> body) {
-        if (body.containsKey("paymentMode")) {
+        if (body.containsKey("paymentMode") && body.get("paymentMode") != null) {
             configService.setPaymentMode(String.valueOf(body.get("paymentMode")));
-        } else if (body.containsKey("payment.mode")) {
+        } else if (body.containsKey("payment.mode") && body.get("payment.mode") != null) {
             configService.setPaymentMode(String.valueOf(body.get("payment.mode")));
-        }
-        if (body.containsKey("appId")) configService.updateValue("wxpay.app-id", String.valueOf(body.get("appId")));
-        if (body.containsKey("mchId")) configService.updateValue("wxpay.mch-id", String.valueOf(body.get("mchId")));
-        if (body.containsKey("apiKey") && body.get("apiKey") != null && !String.valueOf(body.get("apiKey")).isBlank()) {
-            configService.updateValue("wxpay.api-key", String.valueOf(body.get("apiKey")));
-        }
-        if (body.containsKey("serialNo")) configService.updateValue("wxpay.serial-no", String.valueOf(body.get("serialNo")));
-        if (body.containsKey("privateKey") && body.get("privateKey") != null && !String.valueOf(body.get("privateKey")).isBlank()) {
-            configService.updateValue("wxpay.private-key", String.valueOf(body.get("privateKey")));
-        }
-        if (body.containsKey("notifyUrl")) configService.updateValue("wxpay.notify-url", String.valueOf(body.get("notifyUrl")));
-        if (body.containsKey("enabled")) {
+        } else if (body.containsKey("enabled") && body.get("enabled") != null) {
             boolean en = Boolean.parseBoolean(String.valueOf(body.get("enabled")));
             if (en) {
                 configService.setPaymentMode("WXPAY");
             } else if ("WXPAY".equalsIgnoreCase(configService.getPaymentMode())) {
                 configService.setPaymentMode("MOCK");
             }
+        }
+
+        if (body.containsKey("appId") && body.get("appId") != null && !String.valueOf(body.get("appId")).isBlank()) {
+            configService.updateValue("wxpay.app-id", String.valueOf(body.get("appId")).trim());
+        }
+        if (body.containsKey("mchId") && body.get("mchId") != null && !String.valueOf(body.get("mchId")).isBlank()) {
+            configService.updateValue("wxpay.mch-id", String.valueOf(body.get("mchId")).trim());
+        }
+        if (body.containsKey("apiKey") && body.get("apiKey") != null && !String.valueOf(body.get("apiKey")).isBlank()) {
+            configService.updateValue("wxpay.api-key", String.valueOf(body.get("apiKey")).trim());
+        }
+        if (body.containsKey("serialNo") && body.get("serialNo") != null && !String.valueOf(body.get("serialNo")).isBlank()) {
+            configService.updateValue("wxpay.serial-no", String.valueOf(body.get("serialNo")).trim());
+        }
+        if (body.containsKey("privateKey") && body.get("privateKey") != null && !String.valueOf(body.get("privateKey")).isBlank()) {
+            configService.updateValue("wxpay.private-key", String.valueOf(body.get("privateKey")).trim());
+        }
+        if (body.containsKey("notifyUrl") && body.get("notifyUrl") != null && !String.valueOf(body.get("notifyUrl")).isBlank()) {
+            configService.updateValue("wxpay.notify-url", String.valueOf(body.get("notifyUrl")).trim());
         }
         return ApiResponse.success(null);
     }

@@ -66,19 +66,24 @@ Page({
     this.setData({ saving: true });
     try {
       const { selectedMode, formData } = this.data;
-      await updatePaymentConfig({
+      const payload: any = {
         paymentMode: selectedMode,
-        appId: formData.appId,
-        mchId: formData.mchId,
-        apiKey: formData.apiKey || undefined,
-        serialNo: formData.serialNo,
-        privateKey: formData.privateKey || undefined,
-        notifyUrl: formData.notifyUrl,
         enabled: selectedMode === "WXPAY",
-      });
+      };
+      if (formData.appId && formData.appId.trim()) payload.appId = formData.appId.trim();
+      if (formData.mchId && formData.mchId.trim()) payload.mchId = formData.mchId.trim();
+      if (formData.apiKey && formData.apiKey.trim()) payload.apiKey = formData.apiKey.trim();
+      if (formData.serialNo && formData.serialNo.trim()) payload.serialNo = formData.serialNo.trim();
+      if (formData.privateKey && formData.privateKey.trim()) payload.privateKey = formData.privateKey.trim();
+      if (formData.notifyUrl && formData.notifyUrl.trim()) payload.notifyUrl = formData.notifyUrl.trim();
+
+      await updatePaymentConfig(payload);
       wx.showToast({ title: "配置已更新", icon: "success" });
-    } catch {
-      wx.showToast({ title: "保存失败", icon: "none" });
+      setTimeout(() => {
+        wx.navigateBack();
+      }, 600);
+    } catch (err: any) {
+      wx.showToast({ title: err?.message || "保存失败", icon: "none" });
     } finally {
       this.setData({ saving: false });
     }

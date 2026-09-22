@@ -56,14 +56,14 @@ export async function loginWithPhone(phone: string): Promise<LoginResult> {
   return result;
 }
 
-export async function loginWithPassword(phone: string, password: string, targetRole: RoleCode): Promise<LoginResult> {
+export async function loginWithPassword(phone: string, password: string, targetRole?: RoleCode | "STAFF"): Promise<LoginResult> {
   const result = await request<LoginResult>({
     url: "/api/v1/auth/password-login",
     method: "POST",
     data: {
       phone: phone.trim(),
       password: password.trim(),
-      targetRole,
+      targetRole: targetRole || "STAFF",
     },
   });
   setAccessToken(result.accessToken);
@@ -71,14 +71,14 @@ export async function loginWithPassword(phone: string, password: string, targetR
   return result;
 }
 
-export async function loginRoleWithWechat(targetRole: RoleCode): Promise<LoginResult> {
+export async function loginRoleWithWechat(targetRole?: RoleCode | "STAFF"): Promise<LoginResult> {
   const code = await getWxLoginCode();
   const result = await request<LoginResult>({
     url: "/api/v1/auth/role-wechat-login",
     method: "POST",
     data: {
       code,
-      targetRole,
+      targetRole: targetRole || "STAFF",
     },
   });
   setAccessToken(result.accessToken);

@@ -50,6 +50,10 @@ Page({
     this.loadData();
   },
 
+  onShow() {
+    this.loadData();
+  },
+
   async onPullDownRefresh() {
     await this.loadData();
     wx.stopPullDownRefresh();
@@ -127,20 +131,9 @@ Page({
     }
   },
 
-  // === 自主创建项目弹窗 ===
+  // === 自主创建项目 ===
   openCustomModal() {
-    this.setData({
-      showCustomModal: true,
-      customForm: {
-        name: "",
-        categoryId: 101,
-        durationMinutes: "60",
-        basePrice: "198",
-        description: "",
-        notice: "服务前后保持室内通风",
-        onShelf: true,
-      },
-    });
+    wx.navigateTo({ url: "/packageTech/pages/project-edit/index?mode=create" });
   },
 
   closeCustomModal() {
@@ -252,11 +245,16 @@ Page({
     }
   },
 
-  // === 编辑项目弹窗 ===
+  // === 编辑项目 ===
   openEditModal(e: WechatMiniprogram.TouchEvent) {
     const id = e.currentTarget.dataset.id as number;
     const project = this.data.projects.find(p => p.id === id);
     if (!project) return;
+
+    if (project.creatorType === "TECHNICIAN") {
+      wx.navigateTo({ url: `/packageTech/pages/project-edit/index?mode=edit&id=${id}` });
+      return;
+    }
 
     this.setData({
       showEditModal: true,

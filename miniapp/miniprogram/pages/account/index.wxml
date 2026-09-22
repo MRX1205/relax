@@ -75,11 +75,11 @@
   </view>
 
   <!-- ════ 3. Apple Wallet 风格 VIP 黑金尊享卡 ════ -->
-  <view class="vip-card-banner ios-touch-active" bindtap="goToVip">
+  <view class="vip-card-banner ios-touch-active" wx:if="{{vipEnabled}}" bindtap="goToVip">
     <view class="vip-left-wrap">
       <view class="vip-crown-icon">👑</view>
       <view class="vip-text-wrap">
-        <text class="vip-head">东莞到家 VIP 尊享会员</text>
+        <text class="vip-head">{{appName || '东莞到家'}} VIP 尊享会员</text>
         <text class="vip-subline">专享全场9折 · 免交通费 · 优先调度履约</text>
       </view>
     </view>
@@ -160,17 +160,6 @@
       </view>
       <text class="cell-label">消息通知</text>
       <text class="cell-chevron">›</text>
-      <view class="ios-cell-divider"></view>
-    </view>
-
-    <!-- 身份切换与专区 -->
-    <view class="ios-cell ios-touch-active" bindtap="goToRoleSwitch">
-      <view class="cell-icon-wrap icon-dark">
-        <image class="cell-svg" src="/assets/icons/role.png" mode="aspectFit" />
-      </view>
-      <text class="cell-label">身份专区 · 切换通道</text>
-      <text class="cell-tag" wx:if="{{isTechnician || isAdmin}}">已认证</text>
-      <text class="cell-chevron">›</text>
       <view class="ios-cell-divider" wx:if="{{!isTechnician}}"></view>
     </view>
 
@@ -205,7 +194,7 @@
   <!-- ════ 8. 退出登录按钮 ════ -->
   <view class="logout-container">
     <view class="logout-btn ios-touch-active" bindtap="handleLogout">
-      <text class="logout-text">退出登录</text>
+      <text class="logout-text">退出登录 / 切换账号</text>
     </view>
   </view>
 

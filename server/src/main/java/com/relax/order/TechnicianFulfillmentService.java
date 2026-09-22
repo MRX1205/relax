@@ -105,9 +105,13 @@ public class TechnicianFulfillmentService {
         long techId = getTechnicianId(userId);
         OrderMapper.OrderView order = requireOrder(orderNo);
         if (order.technicianId() != techId) throw new BusinessException(HttpStatus.FORBIDDEN, "ORDER_NOT_ASSIGNED", "无权操作");
-        if (!"IN_SERVICE".equals(order.status())) throw new BusinessException("ORDER_STATE_INVALID", "当前状态不可完成服务");
-        if (orderMapper.completeService(orderNo, "IN_SERVICE", "COMPLETED", order.version()) == 0) throw new BusinessException("ORDER_STATE_CHANGED", "订单状态已变更");
-        logStatus(order.id(), "IN_SERVICE", "COMPLETED", "TECHNICIAN", userId, "服务完成");
+        if (!java.util.Set.of("ACCEPTED", "DEPARTED", "ARRIVED", "IN_SERVICE").contains(order.status())) {
+            throw new BusinessException("ORDER_STATE_INVALID", "当前状态不可完成服务");
+        }
+        if (orderMapper.completeService(orderNo, order.status(), "COMPLETED", order.version()) == 0) {
+            throw new BusinessException("ORDER_STATE_CHANGED", "订单状态已变更");
+        }
+        logStatus(order.id(), order.status(), "COMPLETED", "TECHNICIAN", userId, "服务完成");
         notificationService.send(order.userId(), "ORDER_COMPLETED", "服务已完成", "请对本次服务进行评价", orderNo);
         // Create income for technician
         OrderMapper.AmountView amount = orderMapper.findAmount(order.id()).orElse(null);

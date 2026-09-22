@@ -1,11 +1,11 @@
 <view class="login-page">
 
-  <!-- 顶部渐变光晕与品牌区域 -->
+  <!-- 顶部渐变与品牌区域 -->
   <view class="brand-hero">
-    <view class="brand-logo-box" bindtap="openEnvModal">
+    <view class="brand-logo-box">
       <text class="brand-logo-icon">💆</text>
     </view>
-    <text class="brand-title">东莞到家</text>
+    <text class="brand-title">{{appName || '东莞到家'}}</text>
     <text class="brand-sub">专业理疗 · 上门到家 · 正规安全</text>
   </view>
 
@@ -26,7 +26,7 @@
         data-tab="staff"
         bindtap="switchTab"
       >
-        <text class="tab-btn-txt">服务端 (技师/BOSS)</text>
+        <text class="tab-btn-txt">服务端 (技师/管理员)</text>
       </view>
     </view>
 
@@ -36,7 +36,7 @@
       <text class="error-strip-txt">{{error}}</text>
     </view>
 
-    <!-- ══ 用户端登录模式 ══ -->
+    <!-- ══ 1. 用户端登录模式 ══ -->
     <block wx:if="{{loginTab === 'user'}}">
       <!-- 3大品质保障胶囊 -->
       <view class="feature-badges">
@@ -57,71 +57,69 @@
       <!-- 微信登录主按钮 -->
       <button
         class="wechat-login-btn {{loading ? 'btn--loading' : ''}}"
-        bindtap="handleWechatLogin"
+        bindtap="handleUserWechatLogin"
         disabled="{{loading}}"
       >
         <text class="wx-icon">💬</text>
-        <text class="wx-btn-txt">{{loading ? '正在接入…' : '微信一键快捷登录'}}</text>
+        <text class="wx-btn-txt">{{loading ? '正在登录…' : '微信一键快捷登录'}}</text>
       </button>
-
-      <!-- 快捷调试模式 -->
-      <view class="quick-persona-box">
-        <view class="quick-persona-title">
-          <text class="quick-persona-line"></text>
-          <text class="quick-persona-label">调试体验通道</text>
-          <text class="quick-persona-line"></text>
-        </view>
-        <view class="quick-persona-btn" bindtap="handleQuickUserLogin">
-          <text class="quick-persona-icon">👤</text>
-          <view class="quick-persona-info">
-            <text class="quick-persona-main">普通顾客体验直通</text>
-            <text class="quick-persona-desc">逛项目 · 挑技师 · 模拟下单与支付</text>
-          </view>
-          <text class="quick-persona-arrow">›</text>
-        </view>
-      </view>
     </block>
 
-    <!-- ══ 服务端登录模式 (技师/BOSS) ══ -->
+    <!-- ══ 2. 服务端登录模式 (技师/管理员) ══ -->
     <block wx:else>
       <view class="staff-header-hint">
-        <text class="staff-hint-title">服务端专属通道</text>
-        <text class="staff-hint-sub">实名认证技师及平台管理员请点击对应通道完成登录验证</text>
+        <text class="staff-hint-title">服务端专属安全通道</text>
+        <text class="staff-hint-sub">实名认证技师及平台管理员请使用账号密码或已绑定微信登录</text>
       </view>
 
-      <!-- 服务端入口导航卡片 -->
-      <view class="staff-gateway-grid">
-        <view class="staff-gateway-card staff-gateway-card--tech ios-touch-active" bindtap="goToTechRoleLogin">
-          <view class="staff-gw-icon-box tech-icon-bg">
-            <text class="staff-gw-icon">💆</text>
-          </view>
-          <view class="staff-gw-info">
-            <view class="staff-gw-title-row">
-              <text class="staff-gw-name">技师接单工作台</text>
-              <text class="staff-gw-badge tech-badge-bg">技师端</text>
-            </view>
-            <text class="staff-gw-sub">接单履约 · 自建项目 · 收入排班</text>
-          </view>
-          <text class="staff-gw-arrow">验证登入 ›</text>
+      <view class="staff-form-wrap">
+        <view class="input-field-item">
+          <text class="field-icon">📱</text>
+          <input
+            class="form-input"
+            type="number"
+            maxlength="11"
+            value="{{phone}}"
+            placeholder="请输入已授权手机号"
+            bindinput="handlePhoneInput"
+          />
         </view>
 
-        <view class="staff-gateway-card staff-gateway-card--admin ios-touch-active" bindtap="goToAdminRoleLogin">
-          <view class="staff-gw-icon-box admin-icon-bg">
-            <text class="staff-gw-icon">🛡️</text>
-          </view>
-          <view class="staff-gw-info">
-            <view class="staff-gw-title-row">
-              <text class="staff-gw-name">平台管理控制台</text>
-              <text class="staff-gw-badge admin-badge-bg">管理端</text>
-            </view>
-            <text class="staff-gw-sub">技师审核 · 订单调度 · 结算与系统配置</text>
-          </view>
-          <text class="staff-gw-arrow">安全登入 ›</text>
+        <view class="input-field-item">
+          <text class="field-icon">🔐</text>
+          <input
+            class="form-input"
+            password="{{true}}"
+            value="{{password}}"
+            placeholder="请输入登录密码"
+            bindinput="handlePasswordInput"
+          />
         </view>
-      </view>
 
-      <view class="staff-security-tip">
-        <text>🛡️ 服务端为敏感业务专区，需凭已授权账号及密码或已绑定微信登入。</text>
+        <!-- 密码登录主按钮 -->
+        <button
+          class="staff-submit-btn {{loading ? 'btn--loading' : ''}}"
+          bindtap="handleStaffPasswordLogin"
+          disabled="{{loading}}"
+        >
+          <text class="submit-btn-txt">{{loading ? '正在验证…' : '安全验证登录'}}</text>
+        </button>
+
+        <view class="staff-divider-row">
+          <view class="divider-line"></view>
+          <text class="divider-txt">或快捷登入</text>
+          <view class="divider-line"></view>
+        </view>
+
+        <!-- 微信已绑定账号快捷登录 -->
+        <button
+          class="staff-wx-btn"
+          bindtap="handleStaffWechatLogin"
+          disabled="{{loading}}"
+        >
+          <text class="wx-icon">💬</text>
+          <text class="staff-wx-txt">微信一键登录 (需已绑定微信号)</text>
+        </button>
       </view>
     </block>
 
@@ -140,63 +138,10 @@
 
   </view>
 
-  <!-- 底部网络与环境切换入口（真机调试与本地调试必备神器） -->
-  <view class="env-bar" bindtap="openEnvModal">
-    <text class="env-bar-icon">⚙️</text>
-    <text class="env-bar-txt">后端服务: {{currentApiBaseUrl}}</text>
-    <text class="env-bar-btn">切换 ›</text>
-  </view>
-
   <!-- 底部正规倡议 -->
   <view class="footer-note">
     <text class="shield-icon">🛡️</text>
     <text>正规健康平台 · 绿色阳光服务 · 严禁索要小费</text>
-  </view>
-
-  <!-- ══ 服务器地址配置弹窗 ══ -->
-  <view wx:if="{{showEnvModal}}" class="env-modal-mask" bindtap="closeEnvModal">
-    <view class="env-modal-card" catchtap>
-      <view class="env-modal-header">
-        <text class="env-modal-title">⚙️ 后端网络连接配置</text>
-        <text class="env-modal-close" bindtap="closeEnvModal">✕</text>
-      </view>
-      <view class="env-modal-desc">
-        <text>当前环境：<text class="env-tag">{{envVersion}}</text></text>
-        <text class="env-modal-tip">在真机体验版上调试，可将地址设为电脑局域网IP（如192.168.x.x），并开启手机微信「开发调试」模式。</text>
-      </view>
-
-      <!-- 预设快捷地址选项 -->
-      <view class="env-presets-label">快捷预设选项：</view>
-      <view class="env-presets-list">
-        <view
-          wx:for="{{presets}}"
-          wx:key="url"
-          class="env-preset-chip {{inputApiUrl === item.url ? 'env-preset-chip--active' : ''}}"
-          data-url="{{item.url}}"
-          bindtap="selectPresetUrl"
-        >
-          <text class="preset-label">{{item.label}}</text>
-          <text class="preset-url">{{item.url}}</text>
-        </view>
-      </view>
-
-      <!-- 输入框 -->
-      <view class="env-input-box">
-        <input
-          class="env-input"
-          type="text"
-          value="{{inputApiUrl}}"
-          bindinput="handleApiUrlInput"
-          placeholder="请输入以 http:// 开头的地址"
-        />
-      </view>
-
-      <!-- 操作按钮 -->
-      <view class="env-modal-actions">
-        <button class="env-action-btn env-action-btn--reset" bindtap="resetEnvUrl">恢复默认</button>
-        <button class="env-action-btn env-action-btn--save" bindtap="saveEnvUrl">保存并生效</button>
-      </view>
-    </view>
   </view>
 
 </view>

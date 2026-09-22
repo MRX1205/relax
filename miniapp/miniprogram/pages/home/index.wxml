@@ -6,10 +6,10 @@
       <view class="location-pin">
         <image class="pin-svg" src="/assets/icons/pin.png" mode="aspectFit" />
       </view>
-      <text class="city-name">东莞市</text>
+      <text class="city-name">{{appName || '东莞到家'}}</text>
       <text class="brand-tag">正规理疗 · 安心上门</text>
     </view>
-    <view class="search-entry ios-touch-active" bindtap="goToProjectList">
+    <view class="search-entry ios-touch-active" bindtap="goToSearch">
       <image class="search-icon" src="/assets/icons/search.png" mode="aspectFit" />
       <text class="search-placeholder">搜索服务项目或技师</text>
     </view>

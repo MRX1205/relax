@@ -1,0 +1,152 @@
+<view class="search-page">
+  <!-- 顶部搜索输入栏 -->
+  <view class="search-bar-wrap">
+    <view class="search-input-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        focus="{{true}}"
+        confirm-type="search"
+        placeholder="搜索推拿项目、SPA或技师名字"
+        value="{{keyword}}"
+        bindinput="handleInput"
+        bindconfirm="handleSearch"
+      />
+      <text wx:if="{{keyword}}" class="clear-icon" bindtap="handleClear">✕</text>
+    </view>
+    <text class="cancel-btn" bindtap="handleBack">取消</text>
+  </view>
+
+  <!-- 热门快捷推荐（搜索词为空时呈现） -->
+  <view wx:if="{{!hasSearched && !keyword}}" class="recommend-box">
+    <view class="recommend-title">🔥 热门搜索推荐</view>
+    <view class="tag-chips">
+      <view
+        wx:for="{{hotTags}}"
+        wx:key="*this"
+        class="chip-tag"
+        data-tag="{{item}}"
+        bindtap="handleSelectTag"
+      >
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索结果区 -->
+  <block wx:else>
+    <!-- 分类筛选 Tab -->
+    <view class="search-tabs">
+      <view
+        class="tab-item {{currentTab === 'all' ? 'tab-item--active' : ''}}"
+        data-tab="all"
+        bindtap="switchTab"
+      >
+        <text>全部 ({{projects.length + technicians.length}})</text>
+      </view>
+      <view
+        class="tab-item {{currentTab === 'projects' ? 'tab-item--active' : ''}}"
+        data-tab="projects"
+        bindtap="switchTab"
+      >
+        <text>服务项目 ({{projects.length}})</text>
+      </view>
+      <view
+        class="tab-item {{currentTab === 'technicians' ? 'tab-item--active' : ''}}"
+        data-tab="technicians"
+        bindtap="switchTab"
+      >
+        <text>理疗技师 ({{technicians.length}})</text>
+      </view>
+    </view>
+
+    <!-- 加载中 -->
+    <ui-state wx:if="{{loading}}" title="正在搜索..." kind="loading" />
+
+    <!-- 无结果空状态 -->
+    <view wx:elif="{{projects.length === 0 && technicians.length === 0}}" class="empty-wrap">
+      <ui-state title="未找到相关结果" description="换个关键词试试，例如：推拿、精油、SPA" />
+    </view>
+
+    <!-- 结果列表 -->
+    <scroll-view wx:else scroll-y class="result-scroll">
+
+      <!-- 1. 服务项目模块 -->
+      <view wx:if="(currentTab === 'all' || currentTab === 'projects') && projects.length > 0" class="section-group">
+        <view class="section-header">
+          <text class="sec-title">💆 匹配服务项目 ({{projects.length}})</text>
+        </view>
+
+        <view class="project-list">
+          <view
+            wx:for="{{projects}}"
+            wx:key="id"
+            class="project-card ios-card"
+            data-id="{{item.id}}"
+            bindtap="goToProjectDetail"
+          >
+            <view class="p-media">
+              <image class="p-img" src="{{item.displayCover || '/assets/defaults/default-cover.png'}}" mode="aspectFill" />
+              <text class="p-cat">{{item.categoryName}}</text>
+            </view>
+            <view class="p-info">
+              <view class="p-title-row">
+                <text class="p-title">{{item.name}}</text>
+              </view>
+              <text class="p-desc">{{item.description}}</text>
+              <view class="p-bottom">
+                <view class="p-price">
+                  <text class="symbol">¥</text>
+                  <text class="amount">{{item.basePrice}}</text>
+                  <text class="unit">/{{item.durationMinutes}}分钟</text>
+                </view>
+                <view class="p-cta">去预约</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 2. 理疗技师模块 -->
+      <view wx:if="(currentTab === 'all' || currentTab === 'technicians') && technicians.length > 0" class="section-group">
+        <view class="section-header">
+          <text class="sec-title">👑 匹配理疗技师 ({{technicians.length}})</text>
+        </view>
+
+        <view class="tech-list">
+          <view
+            wx:for="{{technicians}}"
+            wx:key="id"
+            class="tech-card ios-card"
+            data-id="{{item.id}}"
+            bindtap="goToTechDetail"
+          >
+            <view class="tech-avatar-wrap">
+              <image class="tech-avatar" src="{{item.displayAvatar || '/assets/defaults/default-avatar.png'}}" mode="aspectFill" />
+              <text class="tech-status-dot {{item.onlineStatus === 'ONLINE' ? 'dot-online' : 'dot-offline'}}"></text>
+            </view>
+            <view class="tech-info">
+              <view class="tech-name-row">
+                <text class="tech-name">{{item.serviceName}}</text>
+                <text class="online-tag {{item.onlineStatus === 'ONLINE' ? 'tag-online' : 'tag-offline'}}">
+                  {{item.onlineStatus === 'ONLINE' ? '● 在线接单' : '○ 休息中'}}
+                </text>
+              </view>
+              <view class="tech-meta">
+                <text class="exp-tag">从业{{item.experienceYears}}年</text>
+                <text class="auth-tag">实名认证</text>
+              </view>
+              <text class="tech-intro">{{item.intro || '手法细腻专业，为您定制个性化放松理疗体验。'}}</text>
+              <view class="tech-price-row">
+                <text class="price-txt">起步价 <text class="price-bold">¥{{item.startPrice || 198}}</text></text>
+                <view class="tech-cta">查看主页</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view style="height: 60rpx;"></view>
+    </scroll-view>
+  </block>
+</view>

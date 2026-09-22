@@ -55,9 +55,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 400M
+          memory: 500M
     environment:
-      JAVA_TOOL_OPTIONS: "-Xms128m -Xmx320m -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+ExitOnOutOfMemoryError"
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx220m -XX:+UseSerialGC -Xss256k -XX:MaxMetaspaceSize=96m -XX:+ExitOnOutOfMemoryError"
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
       DB_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-relax}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
       DB_USERNAME: ${MYSQL_USER:-relax}

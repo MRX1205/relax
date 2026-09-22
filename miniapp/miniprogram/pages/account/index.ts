@@ -2,6 +2,7 @@ import { getCachedAccount, loadCurrentAccount, updateProfile, logout, clearSessi
 import { getAccessToken, request } from "../../services/http";
 import { uploadPrivateFile } from "../../services/file";
 import { environment } from "../../config/environment";
+import { getPublicSystemSettings } from "../../services/system";
 
 Page({
   data: {
@@ -9,6 +10,8 @@ Page({
     editing: false,
     editNickname: "",
     saving: false,
+    vipEnabled: false,
+    appName: "东莞到家",
 
     // 角色身份判定
     isTechnician: false,
@@ -25,6 +28,15 @@ Page({
       wx.reLaunch({ url: "/pages/login/index" });
       return;
     }
+
+    getPublicSystemSettings().then(settings => {
+      if (settings) {
+        this.setData({
+          vipEnabled: settings.vipEnabled,
+          appName: settings.appName,
+        });
+      }
+    }).catch(() => {});
 
     let account = getCachedAccount();
     if (!account) {
@@ -120,9 +132,7 @@ Page({
     wx.navigateTo({ url: "/packageUser/pages/coupons/index" });
   },
 
-  goToRoleSwitch() {
-    wx.navigateTo({ url: "/pages/role-switch/index" });
-  },
+
 
   goToTechWorkbench() {
     wx.navigateTo({ url: "/packageTech/pages/workbench/index" });

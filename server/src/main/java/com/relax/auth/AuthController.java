@@ -104,12 +104,12 @@ public class AuthController {
     public record PasswordLoginRequest(
             @NotBlank @Pattern(regexp = "1\\d{10}") String phone,
             @NotBlank @Size(max = 64) String password,
-            @NotBlank @Pattern(regexp = "USER|TECHNICIAN|ADMIN|SUPER_ADMIN") String targetRole) {
+            String targetRole) {
     }
 
     public record RoleWechatLoginRequest(
             @NotBlank @Size(max = 200) String code,
-            @NotBlank @Pattern(regexp = "USER|TECHNICIAN|ADMIN|SUPER_ADMIN") String targetRole) {
+            String targetRole) {
     }
 
     public record WechatRequest(@NotBlank @Size(max = 200) String code) {

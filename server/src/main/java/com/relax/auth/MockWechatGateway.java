@@ -24,11 +24,17 @@ class MockWechatGateway implements WechatGateway {
 
     @Override
     public String exchangePhoneCode(String code) {
-        String phone = code != null && code.startsWith("mock-phone-") ? code.substring(11) : "";
-        if (!phone.matches("1\\d{10}")) {
-            throw new BusinessException("WECHAT_PHONE_CODE_INVALID", "手机号授权凭证无效");
+        if (code != null && code.startsWith("mock-phone-")) {
+            return code.substring(11);
         }
-        return phone;
+        if (code != null && code.matches("1\\d{10}")) {
+            return code;
+        }
+        if (code != null && !code.isBlank()) {
+            long hash = Math.abs((long) code.hashCode());
+            return String.format("139%08d", hash % 100000000L);
+        }
+        throw new BusinessException("WECHAT_PHONE_CODE_INVALID", "手机号授权凭证无效");
     }
 
     private String sha256(String value) {

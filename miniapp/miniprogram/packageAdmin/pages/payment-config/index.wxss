@@ -1,60 +1,276 @@
-.page { padding-bottom: 140rpx; }
-
-.section-title { font-size: 32rpx; font-weight: 700; margin-bottom: 8rpx; }
-.desc { font-size: 24rpx; color: var(--color-muted); margin-bottom: 24rpx; }
-
-.form-card { padding: 24rpx; margin-bottom: 24rpx; }
-.form-item { margin-bottom: 24rpx; }
-.form-label { display: block; font-size: 26rpx; color: var(--color-text-secondary); margin-bottom: 8rpx; }
-.form-input {
-  width: 100%;
-  height: 80rpx;
-  padding: 0 16rpx;
-  border: 1rpx solid var(--color-border);
-  border-radius: var(--radius-sm);
-  font-size: 28rpx;
+/* 微信支付与模式配置 - Apple HIG 质感风格 */
+page {
+  background-color: #F8F9FB;
+  color: #1D1D1F;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   box-sizing: border-box;
 }
-.form-textarea {
-  width: 100%;
-  height: 200rpx;
-  padding: 16rpx;
-  border: 1rpx solid var(--color-border);
-  border-radius: var(--radius-sm);
-  font-size: 24rpx;
-  box-sizing: border-box;
+
+.page-container {
+  padding: 32rpx 32rpx 180rpx;
 }
-.switch-item {
+
+/* 顶部说明头 */
+.hero-header {
+  margin-bottom: 32rpx;
+}
+
+.hero-tag {
+  display: inline-block;
+  font-size: 20rpx;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  color: #0071E3;
+  background: rgba(0, 113, 227, 0.08);
+  padding: 4rpx 14rpx;
+  border-radius: 6rpx;
+  margin-bottom: 12rpx;
+}
+
+.hero-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1D1D1F;
+  line-height: 1.3;
+  margin-bottom: 12rpx;
+}
+
+.hero-desc {
+  font-size: 26rpx;
+  color: #86868B;
+  line-height: 1.5;
+}
+
+/* 通用卡片容器 */
+.section-card {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 32rpx;
+  margin-bottom: 28rpx;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.03);
+  border: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 24rpx;
 }
 
-.tips { padding: 24rpx; margin-bottom: 32rpx; }
-.tips-title { font-size: 28rpx; font-weight: 600; margin-bottom: 12rpx; }
-.tips-item { font-size: 24rpx; color: var(--color-text-secondary); line-height: 1.8; }
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1D1D1F;
+}
 
-.save-btn {
+.section-subtitle {
+  font-size: 24rpx;
+  color: #86868B;
+}
+
+.current-mode-badge {
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+}
+
+.mode-MOCK {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.mode-OFFLINE {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.mode-WXPAY {
+  background: #E3F2FD;
+  color: #1565C0;
+}
+
+/* 模式卡片网格 */
+.mode-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.mode-card {
+  background: #F5F7FA;
+  border: 2rpx solid transparent;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.mode-card--active {
+  background: #FFFFFF;
+  border-color: #0071E3;
+  box-shadow: 0 8rpx 24rpx rgba(0, 113, 227, 0.12);
+}
+
+.mode-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.mode-icon-box {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+.mode-icon-box--mock {
+  background: #FFF3E0;
+}
+
+.mode-icon-box--offline {
+  background: #E8F5E9;
+}
+
+.mode-icon-box--wx {
+  background: #E8F5E9;
+}
+
+.mode-check-mark {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: #0071E3;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mode-card-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1D1D1F;
+  margin-bottom: 8rpx;
+}
+
+.mode-card-desc {
+  font-size: 24rpx;
+  color: #6E6E73;
+  line-height: 1.45;
+  margin-bottom: 16rpx;
+}
+
+.mode-badge-wrap {
+  display: flex;
+  gap: 12rpx;
+}
+
+.mode-chip {
+  font-size: 20rpx;
+  color: #48484A;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+/* 表单输入组 */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #3A3A3C;
+  margin-bottom: 10rpx;
+}
+
+.field-input {
+  background: #F5F7FA;
+  border: 1rpx solid #E5E5EA;
+  border-radius: 16rpx;
+  height: 80rpx;
+  padding: 0 20rpx;
+  font-size: 26rpx;
+  color: #1D1D1F;
+  box-sizing: border-box;
+}
+
+.field-textarea {
+  background: #F5F7FA;
+  border: 1rpx solid #E5E5EA;
+  border-radius: 16rpx;
+  height: 180rpx;
+  padding: 16rpx 20rpx;
+  font-size: 24rpx;
+  font-family: monospace;
+  color: #1D1D1F;
   width: 100%;
+  box-sizing: border-box;
+}
+
+/* 帮助说明卡片 */
+.help-card {
+  background: rgba(0, 113, 227, 0.04);
+  border: 1rpx solid rgba(0, 113, 227, 0.12);
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+
+.help-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #0071E3;
+  margin-bottom: 12rpx;
+}
+
+.help-item {
+  font-size: 24rpx;
+  color: #48484A;
+  line-height: 1.6;
+  margin-bottom: 8rpx;
+}
+
+/* 底部保存按钮 */
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 20rpx 32rpx calc(20rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+.primary-save-btn {
+  background: linear-gradient(135deg, #0071E3 0%, #0077ED 100%);
+  color: #FFFFFF;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 24rpx;
   height: 88rpx;
   line-height: 88rpx;
-  background: var(--color-primary);
-  color: #FFFFFF;
-  font-size: 30rpx;
-  font-weight: 600;
-  border-radius: var(--radius-sm);
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 113, 227, 0.25);
   border: none;
-}
-
-.success-toast {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.7);
-  color: #FFFFFF;
-  padding: 24rpx 48rpx;
-  border-radius: var(--radius-md);
-  font-size: 28rpx;
-  z-index: 9999;
 }

@@ -6,7 +6,7 @@
     </view>
     <view wx:else class="address-list">
       <view wx:for="{{addresses}}" wx:key="id" class="surface address-item">
-        <view class="address-main" data-id="{{item.id}}" bindtap="handleEdit">
+        <view class="address-main" data-id="{{item.id}}" bindtap="handleSelect">
           <view class="address-header">
             <text class="address-name">{{item.contactName}}</text>
             <text class="address-phone">{{item.contactPhone}}</text>

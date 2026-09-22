@@ -128,9 +128,10 @@ Page({
     const techName = encodeURIComponent(this.data.detail?.technician.serviceName || "");
     const projectName = encodeURIComponent(project?.projectName || "");
     const duration = project?.durationMinutes || 60;
+    const price = project?.overridePrice || project?.price || project?.basePrice || 0;
 
     wx.navigateTo({
-      url: `/packageUser/pages/booking/index?projectId=${project?.projectId || ""}&technicianId=${this.data.techId}&projectName=${projectName}&technicianName=${techName}&duration=${duration}&date=${this.data.selectedDate}&time=${startTime}`,
+      url: `/packageUser/pages/booking/index?projectId=${project?.projectId || ""}&technicianId=${this.data.techId}&projectName=${projectName}&technicianName=${techName}&duration=${duration}&date=${this.data.selectedDate}&time=${startTime}&price=${price}`,
     });
   },
 
@@ -139,9 +140,11 @@ Page({
     const techName = encodeURIComponent(this.data.detail?.technician.serviceName || "");
     const pName = encodeURIComponent(projectname || "");
     const avatar = encodeURIComponent(this.data.detail?.technician.avatarUrl || "");
+    const project = (this.data.detail?.projects || []).find((p: any) => String(p.projectId) === String(projectid));
+    const price = project?.overridePrice || project?.price || project?.basePrice || 0;
 
     wx.navigateTo({
-      url: `/packageUser/pages/booking/index?projectId=${projectid}&technicianId=${this.data.techId}&projectName=${pName}&technicianName=${techName}&technicianAvatar=${avatar}&duration=${duration || 60}`,
+      url: `/packageUser/pages/booking/index?projectId=${projectid}&technicianId=${this.data.techId}&projectName=${pName}&technicianName=${techName}&technicianAvatar=${avatar}&duration=${duration || 60}&price=${price}`,
     });
   },
 

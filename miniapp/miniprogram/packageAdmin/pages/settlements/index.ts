@@ -18,8 +18,12 @@ Page({
     if (reset) this.setData({ page: 0, hasMore: true });
     try {
       const settlements = await getAdminSettlements(this.data.page);
+      const mapped = settlements.map(s => ({
+        ...s,
+        statusText: STATUS_LABELS[s.status] || s.status,
+      }));
       this.setData({
-        settlements: reset ? settlements : [...this.data.settlements, ...settlements],
+        settlements: reset ? mapped : [...this.data.settlements, ...mapped],
         page: this.data.page + 1, hasMore: settlements.length >= 20, loading: false,
       });
     } catch { this.setData({ loading: false }); }

@@ -265,7 +265,7 @@ interface PaymentView {
   id: string;
   paymentNo: string;
   orderId: string;
-  channel: "MOCK" | "WXPAY";
+  channel: "MOCK" | "WXPAY" | "OFFLINE";
   amount: number;
   status: string;
   expireAt: string;

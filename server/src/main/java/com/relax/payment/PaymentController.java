@@ -33,6 +33,55 @@ public class PaymentController {
         this.configService = configService;
     }
 
+    @GetMapping("/payment/mode")
+    ApiResponse<PaymentModeView> getPaymentMode() {
+        String mode = configService.getPaymentMode();
+        String label = switch (mode) {
+            case "WXPAY" -> "微信官方支付";
+            case "OFFLINE" -> "仅预约（现场支付）";
+            default -> "模拟支付（体验模式）";
+        };
+        String desc = switch (mode) {
+            case "WXPAY" -> "线上微信安全担保交易，直接微信扣款";
+            case "OFFLINE" -> "无需线上预付款，技师上门后进行现场结算";
+            default -> "开发测试模式，无需扣款即可秒级体验全流程";
+        };
+        return ApiResponse.success(new PaymentModeView(mode, label, desc));
+    }
+
+    @GetMapping("/admin/payment-config")
+    ApiResponse<java.util.Map<String, String>> getAdminPaymentConfig() {
+        return ApiResponse.success(configService.getAllConfigs());
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/admin/payment-config")
+    ApiResponse<Void> updateAdminPaymentConfig(@RequestBody java.util.Map<String, Object> body) {
+        if (body.containsKey("paymentMode")) {
+            configService.setPaymentMode(String.valueOf(body.get("paymentMode")));
+        } else if (body.containsKey("payment.mode")) {
+            configService.setPaymentMode(String.valueOf(body.get("payment.mode")));
+        }
+        if (body.containsKey("appId")) configService.updateValue("wxpay.app-id", String.valueOf(body.get("appId")));
+        if (body.containsKey("mchId")) configService.updateValue("wxpay.mch-id", String.valueOf(body.get("mchId")));
+        if (body.containsKey("apiKey") && body.get("apiKey") != null && !String.valueOf(body.get("apiKey")).isBlank()) {
+            configService.updateValue("wxpay.api-key", String.valueOf(body.get("apiKey")));
+        }
+        if (body.containsKey("serialNo")) configService.updateValue("wxpay.serial-no", String.valueOf(body.get("serialNo")));
+        if (body.containsKey("privateKey") && body.get("privateKey") != null && !String.valueOf(body.get("privateKey")).isBlank()) {
+            configService.updateValue("wxpay.private-key", String.valueOf(body.get("privateKey")));
+        }
+        if (body.containsKey("notifyUrl")) configService.updateValue("wxpay.notify-url", String.valueOf(body.get("notifyUrl")));
+        if (body.containsKey("enabled")) {
+            boolean en = Boolean.parseBoolean(String.valueOf(body.get("enabled")));
+            if (en) {
+                configService.setPaymentMode("WXPAY");
+            } else if ("WXPAY".equalsIgnoreCase(configService.getPaymentMode())) {
+                configService.setPaymentMode("MOCK");
+            }
+        }
+        return ApiResponse.success(null);
+    }
+
     /**
      * Create a payment for an order.
      * When wxpay.enabled=false → Mock payment (no openid needed).
@@ -111,4 +160,6 @@ public class PaymentController {
     public record CreatePaymentRequest(String openid) {}
 
     public record SimulateRequest(String scenario) {}
+
+    public record PaymentModeView(String mode, String label, String description) {}
 }

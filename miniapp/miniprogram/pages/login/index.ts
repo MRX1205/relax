@@ -102,78 +102,14 @@ Page({
     }
   },
 
-  // 服务端登录（手机号或微信快捷接入）
-  async handleStaffLogin() {
+  goToTechRoleLogin() {
     if (!this.checkAgreement()) return;
-    if (this.data.loading) return;
-
-    this.setData({ loading: true, error: "" });
-    try {
-      let account: Account;
-      const phone = this.data.phone.trim();
-      if (phone && phone.length === 11) {
-        // 使用手机号登录
-        const res = await loginWithPhone(phone);
-        account = res.account;
-      } else {
-        // 快捷微信认证
-        const res = await loginWithWechat();
-        account = res.account;
-      }
-
-      // 自动切换为技师或管理员工作台
-      if (account.roles.includes("TECHNICIAN")) {
-        await switchRole("TECHNICIAN").catch(() => {});
-      } else if (account.roles.includes("ADMIN") || account.roles.includes("SUPER_ADMIN")) {
-        await switchRole("ADMIN").catch(() => {});
-      }
-      wx.showToast({ title: "服务端接入成功", icon: "success" });
-      setTimeout(() => {
-        this.navigateAfterLogin();
-      }, 600);
-    } catch (err) {
-      this.setData({ error: err instanceof Error ? err.message : "服务端登录失败" });
-    } finally {
-      this.setData({ loading: false });
-    }
+    wx.navigateTo({ url: "/pages/role-login/index?role=TECHNICIAN" });
   },
 
-  // 快速进入：技师接单工作台
-  async handleQuickTechLogin() {
+  goToAdminRoleLogin() {
     if (!this.checkAgreement()) return;
-    this.setData({ loading: true, error: "" });
-    try {
-      // 预置金牌技师手机号 13800003333
-      const res = await loginWithPhone("13800003333");
-      await switchRole("TECHNICIAN").catch(() => {});
-      wx.showToast({ title: "已接入技师工作台", icon: "success" });
-      setTimeout(() => {
-        this.navigateAfterLogin();
-      }, 600);
-    } catch (err) {
-      this.setData({ error: err instanceof Error ? err.message : "技师登录失败" });
-    } finally {
-      this.setData({ loading: false });
-    }
-  },
-
-  // 快速进入：BOSS 运营中心
-  async handleQuickAdminLogin() {
-    if (!this.checkAgreement()) return;
-    this.setData({ loading: true, error: "" });
-    try {
-      // 预置超级管理员手机号 13800000000
-      const res = await loginWithPhone("13800000000");
-      await switchRole("SUPER_ADMIN").catch(() => {});
-      wx.showToast({ title: "已接入BOSS管理中心", icon: "success" });
-      setTimeout(() => {
-        this.navigateAfterLogin();
-      }, 600);
-    } catch (err) {
-      this.setData({ error: err instanceof Error ? err.message : "管理员登录失败" });
-    } finally {
-      this.setData({ loading: false });
-    }
+    wx.navigateTo({ url: "/pages/role-login/index?role=ADMIN" });
   },
 
   // 检查协议勾选

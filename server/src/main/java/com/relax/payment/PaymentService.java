@@ -58,22 +58,37 @@ public class PaymentService {
             throw new BusinessException("ORDER_NOT_PAYABLE", "当前订单状态不可支付");
         }
 
+        String mode = configService.getPaymentMode();
+        boolean isOffline = "OFFLINE".equalsIgnoreCase(mode);
+        boolean useRealPay = "WXPAY".equalsIgnoreCase(mode);
+
         // Check if a pending payment already exists
         Optional<PaymentMapper.PaymentView> existing = paymentMapper.findPendingByOrderId(detail.order().id());
         if (existing.isPresent()) {
             PaymentMapper.PaymentView existingPay = existing.get();
-            if (configService.isEnabled()) {
+            if (isOffline) {
+                String txId = "OFFLINE_" + existingPay.paymentNo();
+                paymentMapper.markSuccess(existingPay.paymentNo(), txId);
+                orderService.markPaid(orderNo, txId, detail.amount().payableAmount());
+                PaymentMapper.PaymentView updated = paymentMapper.findByPaymentNo(existingPay.paymentNo()).orElse(existingPay);
+                return PaymentResultView.from(updated, null);
+            }
+            if (useRealPay) {
                 return enrichWithWxPayParams(existingPay, openid, detail.amount().payableAmount());
             }
             return PaymentResultView.from(existingPay, null);
         }
 
-        boolean useRealPay = configService.isEnabled();
-        String channel = useRealPay ? "WXPAY" : "MOCK";
-
+        String channel = isOffline ? "OFFLINE" : (useRealPay ? "WXPAY" : "MOCK");
         PaymentMapper.PaymentView payment = createNewPayment(detail.order().id(), detail.amount().payableAmount(), channel);
 
-        if (useRealPay) {
+        if (isOffline) {
+            String txId = "OFFLINE_" + payment.paymentNo();
+            paymentMapper.markSuccess(payment.paymentNo(), txId);
+            orderService.markPaid(orderNo, txId, detail.amount().payableAmount());
+            PaymentMapper.PaymentView updated = paymentMapper.findByPaymentNo(payment.paymentNo()).orElse(payment);
+            return PaymentResultView.from(updated, null);
+        } else if (useRealPay) {
             return enrichWithWxPayParams(payment, openid, detail.amount().payableAmount());
         } else {
             // Register with mock gateway

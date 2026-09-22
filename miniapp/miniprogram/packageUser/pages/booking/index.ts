@@ -20,6 +20,7 @@ Page({
     technicianName: "",
     technicianAvatarUrl: "",
     durationMinutes: 60,
+    estimatedBasePrice: 0,
     serviceDate: "",
     startTime: "",
     endTime: "",
@@ -42,6 +43,11 @@ Page({
     availableCoupons: [] as any[],
     privacyPhone: true,
     quantity: 1,
+
+    // 支付模式：MOCK (模拟支付) | WXPAY (微信支付) | OFFLINE (现场支付/免线上付)
+    paymentMode: "MOCK" as "MOCK" | "WXPAY" | "OFFLINE",
+    paymentModeLabel: "模拟支付",
+    paymentModeDesc: "",
   },
 
   togglePrivacyPhone() {
@@ -51,12 +57,16 @@ Page({
   handleQuantityChange(e: WechatMiniprogram.TouchEvent) {
     const delta = Number(e.currentTarget.dataset.delta);
     const newQty = Math.max(1, Math.min(5, this.data.quantity + delta));
-    this.setData({ quantity: newQty, preview: null });
+    this.setData({ quantity: newQty }, () => {
+      this.autoCalculatePreview();
+    });
   },
 
-  onLoad(query: Record<string, string>) {
+  async onLoad(query: Record<string, string>) {
     const dates = this.generateDateItems(7);
     const today = dates[0].dateStr;
+    const basePrice = Number(query.price) || 0;
+
     this.setData({
       projectId: query.projectId || "",
       technicianId: query.technicianId || "",
@@ -64,14 +74,40 @@ Page({
       technicianName: decodeURIComponent(query.technicianName || ""),
       technicianAvatarUrl: decodeURIComponent(query.technicianAvatar || ""),
       durationMinutes: Number(query.duration) || 60,
+      estimatedBasePrice: basePrice,
       serviceDate: today,
       today,
       dates,
       selectedDateIndex: 0,
     });
-    this.loadAddresses();
+
+    await this.loadPaymentMode();
+    await this.loadAddresses();
     this.loadTimeSlots(today);
     this.loadCoupons();
+  },
+
+  async onShow() {
+    // 从地址编辑页或其它页面返回时刷新地址与支付配置
+    await this.loadAddresses();
+    await this.loadPaymentMode();
+  },
+
+  async loadPaymentMode() {
+    try {
+      const modeInfo = await request<{ mode: "MOCK" | "WXPAY" | "OFFLINE"; label: string; description: string }>({
+        url: "/api/v1/payment/mode",
+      });
+      if (modeInfo?.mode) {
+        this.setData({
+          paymentMode: modeInfo.mode,
+          paymentModeLabel: modeInfo.label,
+          paymentModeDesc: modeInfo.description,
+        });
+      }
+    } catch {
+      // 默认 MOCK
+    }
   },
 
   generateDateItems(count: number): Array<{ dateStr: string; dayNum: string; monthDay: string; weekday: string; isToday: boolean }> {
@@ -111,14 +147,24 @@ Page({
     try {
       const addresses = await getAddresses();
       this.setData({ addresses });
-      const defaultAddr = addresses.find(a => a.isDefault) || addresses[0];
-      if (defaultAddr) {
+
+      const lastUsedId = wx.getStorageSync("last_used_address_id");
+      let targetAddr = addresses.find(a => String(a.id) === String(lastUsedId));
+      if (!targetAddr) {
+        targetAddr = addresses.find(a => a.isDefault) || addresses[0];
+      }
+
+      if (targetAddr) {
         this.setData({
-          addressId: defaultAddr.id,
-          addressSummary: `${defaultAddr.contactName} ${defaultAddr.contactPhone}\n${defaultAddr.regionName} ${defaultAddr.detail}`,
+          addressId: String(targetAddr.id),
+          addressSummary: `${targetAddr.contactName} ${targetAddr.contactPhone}\n${targetAddr.regionName} ${targetAddr.detail}`,
+        }, () => {
+          this.autoCalculatePreview();
         });
       }
-    } catch {}
+    } catch {
+      // ignore
+    }
   },
 
   async loadCoupons() {
@@ -126,7 +172,9 @@ Page({
       const coupons = await request<any[]>({ url: "/api/v1/coupons/mine" });
       const available = (coupons || []).filter((c: any) => c.status === "ACTIVE" && !c.usedAt);
       this.setData({ availableCoupons: available });
-    } catch {}
+    } catch {
+      // ignore
+    }
   },
 
   async loadTimeSlots(date: string) {
@@ -152,11 +200,10 @@ Page({
             }
           }
         } else {
-          available = true; // 技师无特殊排班时默认可预约
+          available = true;
         }
 
         let statusText = "可约";
-        // 过去的时间不可约
         if (date === this.data.today) {
           const nowHour = new Date().getHours();
           if (hour <= nowHour) {
@@ -173,10 +220,10 @@ Page({
 
       this.setData({ timeSlots: slots, loadingSlots: false });
 
-      // 如果今天全部已过，友好轻提示
-      const hasAvailable = slots.some(s => s.available);
-      if (!hasAvailable && date === this.data.today) {
-        wx.showToast({ title: "今日时段已过，建议预约明日", icon: "none", duration: 2500 });
+      // 如果有可预约时段且当前未选时段，默认选中第一个可用时段
+      const firstAvailable = slots.find(s => s.available);
+      if (firstAvailable && !this.data.startTime) {
+        this.selectSlot(firstAvailable.time);
       }
     } catch {
       const slots: TimeSlot[] = [];
@@ -188,6 +235,23 @@ Page({
     }
   },
 
+  selectSlot(time: string) {
+    const slots = this.data.timeSlots.map(s => ({
+      ...s,
+      selected: s.time === time,
+    }));
+
+    const [startHour, startMin] = time.split(":").map(Number);
+    const totalMins = startHour * 60 + startMin + this.data.durationMinutes;
+    const endHour = Math.floor(totalMins / 60);
+    const endMin = totalMins % 60;
+    const endTime = `${endHour.toString().padStart(2, "0")}:${endMin.toString().padStart(2, "0")}`;
+
+    this.setData({ timeSlots: slots, startTime: time, endTime }, () => {
+      this.autoCalculatePreview();
+    });
+  },
+
   handleTimeSelect(e: WechatMiniprogram.TouchEvent) {
     const time = e.currentTarget.dataset.time as string;
     const available = e.currentTarget.dataset.available === true || e.currentTarget.dataset.available === "true";
@@ -195,20 +259,7 @@ Page({
       wx.showToast({ title: "该时间段不可预约", icon: "none" });
       return;
     }
-
-    const slots = this.data.timeSlots.map(s => ({
-      ...s,
-      selected: s.time === time,
-    }));
-
-    // ✅ Fix S4: correct end time calculation using minutes
-    const [startHour, startMin] = time.split(":").map(Number);
-    const totalMins = startHour * 60 + startMin + this.data.durationMinutes;
-    const endHour = Math.floor(totalMins / 60);
-    const endMin = totalMins % 60;
-    const endTime = `${endHour.toString().padStart(2, "0")}:${endMin.toString().padStart(2, "0")}`;
-
-    this.setData({ timeSlots: slots, startTime: time, endTime, preview: null });
+    this.selectSlot(time);
   },
 
   handleNoteInput(e: WechatMiniprogram.Input) {
@@ -220,23 +271,14 @@ Page({
       wx.navigateTo({ url: "/packageUser/pages/address-edit/index" });
       return;
     }
-    const items = this.data.addresses.map(a => `${a.contactName}  ${a.regionName} ${a.detail}`);
-    wx.showActionSheet({
-      itemList: items,
-      success: res => {
-        const addr = this.data.addresses[res.tapIndex];
-        this.setData({
-          addressId: addr.id,
-          addressSummary: `${addr.contactName} ${addr.contactPhone}\n${addr.regionName} ${addr.detail}`,
-          preview: null,
-        });
-      },
-    });
+    wx.navigateTo({ url: "/packageUser/pages/address-list/index" });
   },
 
   handleTravelModeChange(e: WechatMiniprogram.TouchEvent) {
     const mode = e.currentTarget.dataset.mode as "transit" | "driving";
-    this.setData({ travelMode: mode, preview: null });
+    this.setData({ travelMode: mode }, () => {
+      this.autoCalculatePreview();
+    });
   },
 
   handleSelectCoupon() {
@@ -247,78 +289,128 @@ Page({
     }
     const items = ["不使用优惠券", ...coupons.map((c: any) => `${c.name} 减¥${c.discount}`)];
     wx.showActionSheet({
-      itemList: items,
+      itemList: items.slice(0, 6),
       success: res => {
         if (res.tapIndex === 0) {
-          this.setData({ couponId: null, couponDesc: "暂不使用优惠券", preview: null });
+          this.setData({ couponId: null, couponDesc: "暂不使用优惠券" }, () => {
+            this.autoCalculatePreview();
+          });
         } else {
           const coupon = coupons[res.tapIndex - 1];
           this.setData({
             couponId: coupon.id,
             couponDesc: `${coupon.name} 减¥${coupon.discount}`,
-            preview: null,
+          }, () => {
+            this.autoCalculatePreview();
           });
         }
       },
     });
   },
 
-  async handlePreview() {
+  // 自动在后台静默核算价格
+  async autoCalculatePreview() {
     const { projectId, technicianId, addressId, serviceDate, startTime } = this.data;
-    if (!projectId || !technicianId) return wx.showToast({ title: "缺少项目或技师信息", icon: "none" });
-    if (!serviceDate || !startTime) return wx.showToast({ title: "请选择服务时间", icon: "none" });
-    if (!addressId) return wx.showToast({ title: "请选择服务地址", icon: "none" });
+    if (!projectId || !technicianId || !addressId || !serviceDate || !startTime) {
+      return;
+    }
 
-    this.setData({ loading: true, error: "", preview: null });
+    this.setData({ loading: true, error: "" });
     try {
-      const preview = await previewOrder({ projectId, technicianId, addressId, serviceDate, startTime });
-      this.setData({ preview, loading: false });
-    } catch (err) {
-      this.setData({ error: err instanceof Error ? err.message : "预览失败", loading: false });
+      const preview = await previewOrder({
+        projectId,
+        technicianId,
+        addressId,
+        serviceDate,
+        startTime,
+      });
+      this.setData({
+        preview,
+        estimatedBasePrice: preview.payableAmount,
+        loading: false,
+      });
+    } catch (err: any) {
+      this.setData({
+        loading: false,
+        error: err?.message || "",
+      });
     }
   },
 
+  async handlePreview() {
+    await this.autoCalculatePreview();
+  },
+
   async handleSubmit() {
-    const { projectId, technicianId, addressId, serviceDate, startTime, note, preview, couponId } = this.data;
-    if (!preview) return wx.showToast({ title: "请先计算价格", icon: "none" });
-    if (!addressId) return wx.showToast({ title: "请选择服务地址", icon: "none" });
+    const { projectId, technicianId, addressId, serviceDate, startTime, note, couponId, paymentMode } = this.data;
+    if (!addressId) {
+      wx.showToast({ title: "请选择服务地址", icon: "none" });
+      return;
+    }
+    if (!serviceDate || !startTime) {
+      wx.showToast({ title: "请选择服务时间", icon: "none" });
+      return;
+    }
 
     this.setData({ submitting: true });
     try {
       const orderDetail = await createOrder({
-        projectId, technicianId, addressId, serviceDate, startTime,
+        projectId,
+        technicianId,
+        addressId,
+        serviceDate,
+        startTime,
         note: note.trim() || undefined,
         couponId: couponId || undefined,
       });
 
-      const payment = await createPayment(orderDetail.order.orderNo);
+      const orderNo = orderDetail.order.orderNo;
+      const payment = await createPayment(orderNo);
 
-      // ✅ Fix C3: branch on payment channel - Mock vs Real WeChat Pay
-      if (payment.channel === "MOCK") {
-        await simulatePayment(payment.paymentNo, "SUCCESS");
-      } else {
-        // Real WeChat Pay
-        const params = payment.payParams!;
-        await new Promise<void>((resolve, reject) => {
-          wx.requestPayment({
-            timeStamp: params.timeStamp,
-            nonceStr: params.nonceStr,
-            package: params.package,
-            signType: "RSA",
-            paySign: params.paySign,
-            success: () => resolve(),
-            fail: (err) => reject(new Error(err.errMsg || "支付取消或失败")),
-          });
-        });
+      // 分支处理三种支付模式：
+      // 1. OFFLINE (现场支付 / 仅预约无需支付)
+      if (payment.channel === "OFFLINE" || paymentMode === "OFFLINE") {
+        wx.showToast({ title: "预约成功！现场结算", icon: "success" });
+        setTimeout(() => {
+          wx.redirectTo({ url: `/packageUser/pages/order-detail/index?orderNo=${orderNo}` });
+        }, 1200);
+        return;
       }
 
-      wx.showToast({ title: "下单成功！", icon: "success" });
+      // 2. MOCK (模拟支付)
+      if (payment.channel === "MOCK") {
+        await simulatePayment(payment.paymentNo, "SUCCESS");
+        wx.showToast({ title: "预约支付成功！", icon: "success" });
+        setTimeout(() => {
+          wx.redirectTo({ url: `/packageUser/pages/order-detail/index?orderNo=${orderNo}` });
+        }, 1200);
+        return;
+      }
+
+      // 3. WXPAY (真实微信支付)
+      const params = payment.payParams;
+      if (!params) {
+        throw new Error("缺少微信支付参数");
+      }
+
+      await new Promise<void>((resolve, reject) => {
+        wx.requestPayment({
+          timeStamp: params.timeStamp,
+          nonceStr: params.nonceStr,
+          package: params.package,
+          signType: "RSA",
+          paySign: params.paySign,
+          success: () => resolve(),
+          fail: (err) => reject(new Error(err.errMsg || "支付取消或失败")),
+        });
+      });
+
+      wx.showToast({ title: "微信支付成功！", icon: "success" });
       setTimeout(() => {
-        wx.redirectTo({ url: `/packageUser/pages/order-detail/index?orderNo=${orderDetail.order.orderNo}` });
-      }, 1500);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "下单失败";
-      // 用户主动取消支付不弹错误
+        wx.redirectTo({ url: `/packageUser/pages/order-detail/index?orderNo=${orderNo}` });
+      }, 1200);
+    } catch (err: any) {
+      const msg = err?.message || err?.errMsg || "下单失败";
       if (!msg.includes("cancel")) {
         wx.showToast({ title: msg, icon: "none" });
       }

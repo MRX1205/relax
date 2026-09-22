@@ -6,7 +6,7 @@
       <view wx:for="{{settlements}}" wx:key="id" class="surface card">
         <view class="card-header">
           <text class="card-no">{{item.settlementNo}}</text>
-          <text class="card-status card-status--{{item.status}}">{{statusLabel(item.status)}}</text>
+          <text class="card-status card-status--{{item.status}}">{{item.statusText}}</text>
         </view>
         <view class="card-amount">¥{{item.totalAmount}}</view>
         <view wx:if="{{item.referenceNo}}" class="card-meta">凭证：{{item.referenceNo}}</view>

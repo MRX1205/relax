@@ -813,3 +813,77 @@
   width: 24rpx;
   height: 24rpx;
 }
+
+.calc-status-tag {
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
+.tag--calc {
+  color: #007AFF;
+}
+
+.mode-tag-offline {
+  font-size: 20rpx;
+  background: rgba(52, 199, 89, 0.15);
+  color: #248A3D;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  margin-left: 8rpx;
+  font-weight: 600;
+}
+
+.preview-empty-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10rpx;
+  margin-bottom: 8rpx;
+}
+
+.preview-base-hint {
+  font-size: 26rpx;
+  color: #636366;
+}
+
+.preview-base-val {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #FF382E;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.pay-mode-emoji {
+  font-size: 40rpx;
+}
+
+.pay-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.pay-pill-tag {
+  font-size: 20rpx;
+  font-weight: 600;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+}
+
+.tag-offline {
+  background: rgba(52, 199, 89, 0.15);
+  color: #248A3D;
+}
+
+.tag-mock {
+  background: rgba(0, 122, 255, 0.12);
+  color: #007AFF;
+}
+
+.footer-offline-pill {
+  font-size: 20rpx;
+  color: #248A3D;
+  background: rgba(52, 199, 89, 0.15);
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  font-weight: 600;
+}

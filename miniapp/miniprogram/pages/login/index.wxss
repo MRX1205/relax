@@ -186,50 +186,95 @@
   color: #999999;
 }
 
-.input-group {
+.staff-gateway-grid {
   display: flex;
   flex-direction: column;
   gap: 20rpx;
-  margin-bottom: 32rpx;
+  margin-bottom: 28rpx;
 }
 
-.input-item {
+.staff-gateway-card {
   display: flex;
   align-items: center;
-  background: #F8F9FA;
-  border-radius: 16rpx;
-  padding: 20rpx 24rpx;
-  gap: 16rpx;
+  padding: 24rpx;
+  background: #FBFBFD;
+  border: 1.5rpx solid rgba(0, 0, 0, 0.06);
+  border-radius: 20rpx;
+  gap: 20rpx;
 }
 
-.input-icon {
-  font-size: 32rpx;
-}
-
-.field-input {
-  flex: 1;
-  font-size: 28rpx;
-  color: #333333;
-}
-
-.staff-login-btn {
-  width: 100%;
-  height: 96rpx;
-  background: linear-gradient(135deg, #E54D42, #FF7043);
-  border-radius: 48rpx;
-  color: #FFFFFF;
-  font-size: 32rpx;
-  font-weight: 700;
+.staff-gw-icon-box {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 18rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  box-shadow: 0 8rpx 24rpx rgba(229, 77, 66, 0.35);
-  margin-bottom: 30rpx;
+  flex-shrink: 0;
 }
 
-.btn--loading {
-  opacity: 0.7;
+.tech-icon-bg { background: rgba(52, 199, 89, 0.12); }
+.admin-icon-bg { background: rgba(255, 149, 0, 0.12); }
+
+.staff-gw-icon {
+  font-size: 38rpx;
+}
+
+.staff-gw-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.staff-gw-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 4rpx;
+}
+
+.staff-gw-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.staff-gw-badge {
+  font-size: 20rpx;
+  font-weight: 600;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+}
+
+.tech-badge-bg {
+  background: rgba(52, 199, 89, 0.15);
+  color: #248A3D;
+}
+
+.admin-badge-bg {
+  background: rgba(255, 149, 0, 0.15);
+  color: #D97706;
+}
+
+.staff-gw-sub {
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
+.staff-gw-arrow {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #007AFF;
+  flex-shrink: 0;
+}
+
+.staff-security-tip {
+  padding: 16rpx 20rpx;
+  background: rgba(142, 142, 147, 0.08);
+  border-radius: 12rpx;
+  font-size: 22rpx;
+  color: #8E8E93;
+  line-height: 1.4;
+  margin-bottom: 30rpx;
 }
 
 /* 协议行 */

@@ -107,8 +107,12 @@ class OrderFlowTests {
     }
 
     @Test
-    void bannersEndpointReturnsList() throws Exception {
-        mockMvc.perform(get("/api/v1/banners"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.code").value("OK"));
+    void paymentModeEndpointReturnsCurrentMode() throws Exception {
+        mockMvc.perform(get("/api/v1/payment/mode"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("OK"))
+                .andExpect(jsonPath("$.data.mode").exists())
+                .andExpect(jsonPath("$.data.label").exists());
     }
 }
+

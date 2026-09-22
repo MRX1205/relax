@@ -2,54 +2,277 @@
    Admin Workbench — Apple HIG Modern Luxury Aesthetics
    ========================================================================== */
 
-.page {
-  padding: calc(env(safe-area-inset-top) + 24rpx) 28rpx 60rpx;
+.admin-workbench-page {
+  padding: calc(env(safe-area-inset-top) + 20rpx) 28rpx 60rpx;
   min-height: 100vh;
-  background: #F5F5F7;
+  background-color: var(--ios-bg);
   box-sizing: border-box;
 }
 
-.header-section {
-  margin-bottom: 30rpx;
-  padding: 0 4rpx;
+/* ════ 1. 管理员头部卡片 ════ */
+.profile-hero-card {
+  padding: 32rpx 28rpx;
+  margin-bottom: 24rpx;
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.04);
 }
 
-.page-title {
+.profile-main-row {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.admin-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 28rpx;
+  background: linear-gradient(135deg, #1C1C1E 0%, #3A3A3C 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.avatar-letter {
   font-size: 44rpx;
   font-weight: 800;
+}
+
+.avatar-badge-icon {
+  position: absolute;
+  bottom: -4rpx;
+  right: -4rpx;
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: #FF9500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3rpx solid #FFFFFF;
+}
+
+.profile-text-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.name-display-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.user-nickname {
+  font-size: 34rpx;
+  font-weight: 800;
   color: #1C1C1E;
-  letter-spacing: -0.8rpx;
-  margin-bottom: 8rpx;
+  letter-spacing: -0.5rpx;
+}
+
+.role-pill {
+  font-size: 20rpx;
+  font-weight: 700;
+  padding: 2rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+.pill-super {
+  background: rgba(255, 149, 0, 0.15);
+  color: #D97706;
+}
+
+.phone-chip-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.phone-number {
+  font-size: 24rpx;
+  color: #636366;
+}
+
+.auth-tag {
+  font-size: 20rpx;
+  color: #34C759;
+  background: rgba(52, 199, 89, 0.12);
+  padding: 2rpx 8rpx;
+  border-radius: 6rpx;
+}
+
+.return-home-pill {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  background: #F2F2F7;
+  padding: 10rpx 18rpx;
+  border-radius: 30rpx;
+  flex-shrink: 0;
+}
+
+.pill-home-icon {
+  font-size: 24rpx;
+}
+
+.pill-home-txt {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #636366;
+}
+
+/* ════ 2. 统计卡片 (4-Col Stat Bar) ════ */
+.stats-bar-card {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 12rpx;
+  margin-bottom: 24rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
+}
+
+.stat-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.stat-figure {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #1C1C1E;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
 }
 
-.page-desc {
-  font-size: 26rpx;
+.figure-red { color: #FF382E; }
+.figure-green { color: #34C759; }
+.figure-orange { color: #FF9500; }
+
+.stat-caption {
+  font-size: 20rpx;
   color: #8E8E93;
 }
 
-/* ── 微信绑定卡片 ── */
+.stat-vert-line {
+  width: 1rpx;
+  height: 48rpx;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* ════ 3. 支付模式横幅 ════ */
+.pay-mode-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 28rpx;
+  margin-bottom: 24rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
+}
+
+.mode-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  flex: 1;
+}
+
+.mode-icon-circle {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 18rpx;
+  background: rgba(0, 122, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  flex-shrink: 0;
+}
+
+.mode-text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.mode-title-line {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.mode-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.mode-status-tag {
+  font-size: 18rpx;
+  font-weight: 700;
+  padding: 2rpx 8rpx;
+  border-radius: 6rpx;
+}
+
+.tag-offline { background: rgba(52, 199, 89, 0.15); color: #248A3D; }
+.tag-wx { background: rgba(7, 193, 96, 0.15); color: #07C160; }
+.tag-mock { background: rgba(0, 122, 255, 0.15); color: #007AFF; }
+
+.mode-desc {
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
+.mode-action-btn {
+  font-size: 22rpx;
+  color: #007AFF;
+  font-weight: 600;
+  flex-shrink: 0;
+  padding-left: 12rpx;
+}
+
+/* ════ 4. 微信绑定卡片 ════ */
 .wechat-binding-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 24rpx 28rpx;
-  margin-bottom: 20rpx;
+  margin-bottom: 28rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
 }
 
 .wb-left {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: 18rpx;
   flex: 1;
 }
 
 .wb-icon-box {
-  width: 44rpx;
-  height: 44rpx;
+  width: 56rpx;
+  height: 56rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.wb-icon-img {
+  width: 48rpx;
+  height: 48rpx;
 }
 
 .wb-info {
@@ -77,15 +300,8 @@
   font-weight: 600;
 }
 
-.wb-tag--bound {
-  background: rgba(7, 193, 96, 0.1);
-  color: #07C160;
-}
-
-.wb-tag--unbound {
-  background: rgba(255, 149, 0, 0.12);
-  color: #FF9500;
-}
+.wb-tag--bound { background: rgba(7, 193, 96, 0.12); color: #07C160; }
+.wb-tag--unbound { background: rgba(255, 149, 0, 0.12); color: #FF9500; }
 
 .wb-desc {
   font-size: 22rpx;
@@ -93,12 +309,11 @@
 }
 
 .wb-btn {
-  padding: 10rpx 22rpx;
+  padding: 10rpx 24rpx;
   border-radius: 30rpx;
   font-size: 22rpx;
   font-weight: 700;
   flex-shrink: 0;
-  margin-left: 14rpx;
 }
 
 .wb-btn--action {
@@ -113,12 +328,107 @@
   border: 1rpx solid rgba(0, 0, 0, 0.06);
 }
 
-/* ── 管理菜单列表 (Apple Inset Grouped TableView) ── */
-.menu-group {
-  padding: 8rpx 0;
+/* ════ 5. 核心业务调度 (2x2 Grid) ════ */
+.section-container {
+  margin-bottom: 32rpx;
 }
 
-.menu-item {
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+  padding: 0 6rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #1C1C1E;
+  letter-spacing: -0.5rpx;
+}
+
+.section-sub {
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
+.ops-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18rpx;
+}
+
+.ops-card {
+  padding: 28rpx 24rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.ops-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.ops-icon-box {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ops-icon {
+  width: 38rpx;
+  height: 38rpx;
+}
+
+.icon-bg--orders { background: rgba(0, 122, 255, 0.1); }
+.icon-bg--refunds { background: rgba(255, 56, 46, 0.1); }
+.icon-bg--settlements { background: rgba(88, 86, 214, 0.1); }
+.icon-bg--stats { background: rgba(255, 149, 0, 0.12); }
+.icon-bg--technicians { background: rgba(52, 199, 89, 0.12); }
+.icon-bg--projects { background: rgba(0, 122, 255, 0.1); }
+.icon-bg--categories { background: rgba(255, 90, 54, 0.1); }
+.icon-bg--banners { background: rgba(175, 82, 222, 0.1); }
+.icon-bg--payment { background: rgba(255, 149, 0, 0.15); }
+
+.ops-badge {
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #FF382E;
+  background: #FFF1EE;
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx;
+}
+
+.ops-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.ops-desc {
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
+/* ════ 6. 供给与系统配置 (Table View) ════ */
+.config-group {
+  padding: 6rpx 0;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
+}
+
+.config-cell {
   display: flex;
   align-items: center;
   padding: 24rpx 28rpx;
@@ -126,80 +436,92 @@
   border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
 }
 
-.menu-item:last-child {
+.config-cell:last-child {
   border-bottom: none;
 }
 
-.menu-icon-box {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 18rpx;
+.config-icon-box {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.menu-icon-img {
-  width: 38rpx;
-  height: 38rpx;
-  display: block;
+.config-icon {
+  width: 34rpx;
+  height: 34rpx;
 }
 
-.wb-icon-img {
-  width: 44rpx;
-  height: 44rpx;
-  display: block;
-}
-
-.menu-icon--categories { background: rgba(255, 90, 54, 0.1); }
-.menu-icon--projects { background: rgba(0, 122, 255, 0.1); }
-.menu-icon--technicians { background: rgba(52, 199, 89, 0.12); }
-.menu-icon--orders { background: rgba(255, 149, 0, 0.12); }
-.menu-icon--refunds { background: rgba(255, 56, 46, 0.1); }
-.menu-icon--settlements { background: rgba(88, 86, 214, 0.1); }
-.menu-icon--banners { background: rgba(100, 116, 139, 0.1); }
-
-.menu-content {
+.config-text-col {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
 }
 
-.menu-name {
+.config-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.config-name {
   font-size: 28rpx;
   font-weight: 700;
   color: #1C1C1E;
 }
 
-.menu-desc {
-  margin-top: 4rpx;
+.config-badge {
+  font-size: 18rpx;
+  font-weight: 700;
+  color: #FF382E;
+  background: #FFF1EE;
+  padding: 2rpx 10rpx;
+  border-radius: 12rpx;
+}
+
+.config-desc {
   font-size: 22rpx;
   color: #8E8E93;
 }
 
-.menu-arrow {
+.config-chevron {
   color: #C7C7CC;
   font-size: 32rpx;
-  line-height: 1;
+  font-weight: 300;
 }
 
-/* ── 底部返回 ── */
-.return-wrap {
-  margin-top: 36rpx;
+/* ════ 7. 退出操作区 ════ */
+.footer-actions-wrap {
+  margin-top: 40rpx;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
 }
 
-.return-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8rpx;
-  padding: 16rpx 36rpx;
-  border-radius: 40rpx;
+.logout-btn {
+  width: 100%;
+  height: 88rpx;
+  border-radius: 20rpx;
   background: #FFFFFF;
-  border: 1rpx solid rgba(0, 0, 0, 0.06);
+  border: 1rpx solid rgba(255, 56, 46, 0.3);
+  color: #FF382E;
+  font-size: 28rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.03);
+}
+
+.back-home-link {
   font-size: 26rpx;
   font-weight: 600;
   color: #636366;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  padding: 12rpx 24rpx;
 }

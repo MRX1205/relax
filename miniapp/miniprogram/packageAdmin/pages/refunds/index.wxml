@@ -8,7 +8,7 @@
       <view wx:for="{{refunds}}" wx:key="refundNo" class="surface refund-card">
         <view class="refund-header">
           <text class="refund-no">{{item.refundNo}}</text>
-          <text class="refund-status refund-status--{{item.status}}">{{statusLabel(item.status)}}</text>
+          <text class="refund-status refund-status--{{item.status}}">{{item.statusText}}</text>
         </view>
         <view class="refund-amount">¥{{item.amount}}</view>
         <view class="refund-reason">{{item.reason}}</view>

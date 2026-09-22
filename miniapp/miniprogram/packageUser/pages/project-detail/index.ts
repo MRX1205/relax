@@ -52,8 +52,9 @@ Page({
     const techName = e.currentTarget.dataset.name;
     const projectName = this.data.detail?.project.name || "";
     const duration = this.data.detail?.project.durationMinutes || 60;
+    const price = this.data.detail?.project.basePrice || 0;
     wx.navigateTo({
-      url: `/packageUser/pages/booking/index?projectId=${this.data.projectId}&technicianId=${techId}&projectName=${encodeURIComponent(projectName)}&technicianName=${encodeURIComponent(techName)}&duration=${duration}`,
+      url: `/packageUser/pages/booking/index?projectId=${this.data.projectId}&technicianId=${techId}&projectName=${encodeURIComponent(projectName)}&technicianName=${encodeURIComponent(techName)}&duration=${duration}&price=${price}`,
     });
   },
 });

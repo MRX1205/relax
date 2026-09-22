@@ -155,6 +155,12 @@
           <text class="meta-label">下单时间</text>
           <text class="meta-val">{{detail.order.createdAt}}</text>
         </view>
+        <view class="meta-row" wx:if="{{detail.payment}}">
+          <text class="meta-label">支付方式</text>
+          <text class="meta-val" wx:if="{{detail.payment.channel === 'OFFLINE'}}">现场结算（上门后付款）</text>
+          <text class="meta-val" wx:elif="{{detail.payment.channel === 'MOCK'}}">模拟支付（测试）</text>
+          <text class="meta-val" wx:else>微信支付</text>
+        </view>
         <view wx:if="{{detail.order.note}}" class="meta-row">
           <text class="meta-label">特殊备注</text>
           <text class="meta-val meta-note">{{detail.order.note}}</text>

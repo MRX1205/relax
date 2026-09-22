@@ -19,6 +19,15 @@ Page({
     }
   },
 
+  handleSelect(e: WechatMiniprogram.TouchEvent) {
+    const id = e.currentTarget.dataset.id;
+    wx.setStorageSync("last_used_address_id", String(id));
+    const pages = getCurrentPages();
+    if (pages.length > 1) {
+      wx.navigateBack();
+    }
+  },
+
   handleAdd() {
     wx.navigateTo({ url: "/packageUser/pages/address-edit/index" });
   },

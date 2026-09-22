@@ -1,49 +1,167 @@
-<view class="page">
-  <view class="section-title">微信支付配置</view>
-  <view class="desc">配置微信支付商户信息后，用户可使用真实微信支付下单。</view>
+<view class="page-container">
+  <!-- 顶部说明头 -->
+  <view class="hero-header">
+    <view class="hero-tag">PAYMENT MODE</view>
+    <view class="hero-title">支付与结算模式配置</view>
+    <view class="hero-desc">灵活切换客户下单时的支付方式，支持开发测试、现场收款及线上真实交易。</view>
+  </view>
 
-  <view class="form-card surface">
-    <view class="form-item">
-      <text class="form-label">小程序 AppID</text>
-      <input class="form-input" value="{{config['wxpay.appId']}}" placeholder="wx..." bindinput="handleInput('wxpay.appId')" />
+  <!-- 1. 核心模式选择 -->
+  <view class="section-card">
+    <view class="section-header">
+      <text class="section-title">选择当前运行模式</text>
+      <text class="current-mode-badge mode-{{selectedMode}}">
+        {{selectedMode === 'OFFLINE' ? '现场支付中' : (selectedMode === 'WXPAY' ? '微信支付中' : '模拟测试中')}}
+      </text>
     </view>
-    <view class="form-item">
-      <text class="form-label">商户号</text>
-      <input class="form-input" value="{{config['wxpay.mchId']}}" placeholder="1234567890" bindinput="handleInput('wxpay.mchId')" />
-    </view>
-    <view class="form-item">
-      <text class="form-label">API 密钥 (V3)</text>
-      <input class="form-input" password="{{true}}" value="{{apiKey}}" placeholder="输入新密钥（留空不修改）" bindinput="handleApiKeyInput" />
-    </view>
-    <view class="form-item">
-      <text class="form-label">证书序列号</text>
-      <input class="form-input" value="{{config['wxpay.serialNo']}}" placeholder="证书序列号" bindinput="handleInput('wxpay.serialNo')" />
-    </view>
-    <view class="form-item">
-      <text class="form-label">商户私钥</text>
-      <textarea class="form-textarea" value="{{privateKey}}" placeholder="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----" bindinput="handlePrivateKeyInput" />
-    </view>
-    <view class="form-item">
-      <text class="form-label">支付回调地址</text>
-      <input class="form-input" value="{{config['wxpay.notifyUrl']}}" placeholder="https://your-domain.com/api/v1/payments/wechat/notify" bindinput="handleInput('wxpay.notifyUrl')" />
-    </view>
-    <view class="form-item switch-item">
-      <text class="form-label">启用真实支付</text>
-      <switch checked="{{enabled}}" bindchange="handleEnabledChange" />
+
+    <view class="mode-grid">
+      <!-- 模式 1: 模拟支付 -->
+      <view
+        class="mode-card {{selectedMode === 'MOCK' ? 'mode-card--active' : ''}}"
+        data-mode="MOCK"
+        bindtap="handleSelectMode"
+      >
+        <view class="mode-card-header">
+          <view class="mode-icon-box mode-icon-box--mock">🧪</view>
+          <view class="mode-check-mark" wx:if="{{selectedMode === 'MOCK'}}">✓</view>
+        </view>
+        <view class="mode-card-title">模拟支付 (测试推荐)</view>
+        <view class="mode-card-desc">全流程线上模拟扣款，一秒完成支付与技师接单派单，适合展示与功能测试。</view>
+        <view class="mode-badge-wrap">
+          <text class="mode-chip">秒级到账</text>
+          <text class="mode-chip">免填密钥</text>
+        </view>
+      </view>
+
+      <!-- 模式 2: 仅预约 / 现场支付 -->
+      <view
+        class="mode-card {{selectedMode === 'OFFLINE' ? 'mode-card--active' : ''}}"
+        data-mode="OFFLINE"
+        bindtap="handleSelectMode"
+      >
+        <view class="mode-card-header">
+          <view class="mode-icon-box mode-icon-box--offline">🤝</view>
+          <view class="mode-check-mark" wx:if="{{selectedMode === 'OFFLINE'}}">✓</view>
+        </view>
+        <view class="mode-card-title">仅预约 · 现场支付</view>
+        <view class="mode-card-desc">用户下单直接成功，展示费用明细并标明“现场支付”，技师上门服务后再行结账收款。</view>
+        <view class="mode-badge-wrap">
+          <text class="mode-chip">零手续费</text>
+          <text class="mode-chip">现场结算</text>
+        </view>
+      </view>
+
+      <!-- 模式 3: 微信官方支付 -->
+      <view
+        class="mode-card {{selectedMode === 'WXPAY' ? 'mode-card--active' : ''}}"
+        data-mode="WXPAY"
+        bindtap="handleSelectMode"
+      >
+        <view class="mode-card-header">
+          <view class="mode-icon-box mode-icon-box--wx">🟢</view>
+          <view class="mode-check-mark" wx:if="{{selectedMode === 'WXPAY'}}">✓</view>
+        </view>
+        <view class="mode-card-title">微信真实支付 (需商户资质)</view>
+        <view class="mode-card-desc">接入微信官方商户号收银台，扣款直达微信商户账户，需配置下方完整 API 证书与密钥。</view>
+        <view class="mode-badge-wrap">
+          <text class="mode-chip">官方商户</text>
+          <text class="mode-chip">需API密钥</text>
+        </view>
+      </view>
     </view>
   </view>
 
-  <view class="tips surface">
-    <view class="tips-title">配置说明</view>
-    <view class="tips-item">1. 在微信支付商户平台获取商户号和 API 密钥</view>
-    <view class="tips-item">2. 下载商户 API 证书，获取证书序列号和私钥</view>
-    <view class="tips-item">3. 回调地址需配置为已备案的 HTTPS 域名</view>
-    <view class="tips-item">4. 未启用时使用模拟支付，方便开发测试</view>
+  <!-- 2. 微信支付参数配置卡片 -->
+  <view class="section-card">
+    <view class="section-header">
+      <text class="section-title">微信支付商户参数</text>
+      <text class="section-subtitle">{{selectedMode === 'WXPAY' ? '真实支付必填' : '选填备用'}}</text>
+    </view>
+
+    <view class="form-group">
+      <view class="form-item">
+        <text class="field-label">小程序 AppID</text>
+        <input
+          class="field-input"
+          data-field="appId"
+          value="{{formData.appId}}"
+          placeholder="例如: wxee1086d1aae0e823"
+          bindinput="handleFieldInput"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="field-label">微信支付商户号 (MchID)</text>
+        <input
+          class="field-input"
+          type="number"
+          data-field="mchId"
+          value="{{formData.mchId}}"
+          placeholder="10位商户号"
+          bindinput="handleFieldInput"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="field-label">API v3 密钥 (Key)</text>
+        <input
+          class="field-input"
+          password="{{true}}"
+          data-field="apiKey"
+          value="{{formData.apiKey}}"
+          placeholder="32位 v3 密钥（留空则不修改）"
+          bindinput="handleFieldInput"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="field-label">证书序列号 (Serial No)</text>
+        <input
+          class="field-input"
+          data-field="serialNo"
+          value="{{formData.serialNo}}"
+          placeholder="微信商户证书序列号"
+          bindinput="handleFieldInput"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="field-label">支付结果回调通知地址 (Notify URL)</text>
+        <input
+          class="field-input"
+          data-field="notifyUrl"
+          value="{{formData.notifyUrl}}"
+          placeholder="https://realxback.lyhlz.cn/api/v1/payments/wechat/notify"
+          bindinput="handleFieldInput"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="field-label">商户私钥 (apiclient_key.pem)</text>
+        <textarea
+          class="field-textarea"
+          data-field="privateKey"
+          value="{{formData.privateKey}}"
+          placeholder="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+          bindinput="handleFieldInput"
+        />
+      </view>
+    </view>
   </view>
 
-  <button class="save-btn" loading="{{saving}}" bindtap="handleSave">保存配置</button>
+  <!-- 3. 操作帮助卡片 -->
+  <view class="help-card">
+    <view class="help-title">💡 管理员模式建议</view>
+    <view class="help-item">• <strong>开发与体验</strong>：选择「模拟支付」，前端可以无阻碍走完接单、排班、订单全流程。</view>
+    <view class="help-item">• <strong>线下到家业务</strong>：选择「仅预约 · 现场支付」，客户直接提交预约，技师上门后进行现金或直接扫码结账。</view>
+    <view class="help-item">• <strong>真实线上收银</strong>：选择「微信真实支付」，并务必填妥已通过微信认证的商户号及 V3 证书信息。</view>
+  </view>
 
-  <view wx:if="{{showSuccess}}" class="success-toast">保存成功</view>
+  <!-- 底部固定保存栏 -->
+  <view class="bottom-bar">
+    <button class="primary-save-btn" loading="{{saving}}" bindtap="handleSave">
+      {{saving ? '保存中...' : '保存并应用配置'}}
+    </button>
+  </view>
 </view>
-
-<custom-tabbar />

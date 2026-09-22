@@ -19,11 +19,22 @@ Page({
   },
 
   async onLoad(query: Record<string, string>) {
-    const areas = await getServiceAreas();
-    this.setData({ serviceAreas: areas });
+    try {
+      const areas = await getServiceAreas();
+      this.setData({ serviceAreas: areas });
+      if (areas.length > 0 && !this.data.regionCode) {
+        // 默认优先选中东莞核心街道（如东城或首个区域）
+        const defaultArea = areas.find(a => a.name.includes("南城") || a.name.includes("东城")) || areas[0];
+        if (defaultArea) {
+          this.setData({ regionCode: defaultArea.regionCode, regionName: defaultArea.name });
+        }
+      }
+    } catch {
+      // ignore
+    }
 
     if (query.id) {
-      wx.setNavigationBarTitle({ title: "编辑地址" });
+      wx.setNavigationBarTitle({ title: "编辑服务地址" });
       this.setData({ isEdit: true, addressId: query.id });
       try {
         const addresses = await getAddresses();
@@ -42,22 +53,29 @@ Page({
           });
         }
       } catch {
-        wx.showToast({ title: "加载失败", icon: "none" });
+        wx.showToast({ title: "加载地址失败", icon: "none" });
       }
     } else {
-      wx.setNavigationBarTitle({ title: "新增地址" });
+      wx.setNavigationBarTitle({ title: "新增服务地址" });
     }
   },
 
-  handleInput(field: string) {
-    return (e: WechatMiniprogram.Input) => {
+  handleFieldInput(e: WechatMiniprogram.Input) {
+    const field = e.currentTarget.dataset.field as string;
+    if (field) {
       this.setData({ [field]: e.detail.value });
-    };
+    }
   },
 
   handleRegionTap() {
+    if (!this.data.serviceAreas || this.data.serviceAreas.length === 0) {
+      wx.showToast({ title: "正在获取服务区域…", icon: "none" });
+      getServiceAreas().then(areas => this.setData({ serviceAreas: areas })).catch(() => {});
+      return;
+    }
+    const names = this.data.serviceAreas.map(a => a.name);
     wx.showActionSheet({
-      itemList: this.data.serviceAreas.map(a => a.name),
+      itemList: names.slice(0, 6), // 微信最多支持6项
       success: res => {
         const area = this.data.serviceAreas[res.tapIndex];
         this.setData({ regionCode: area.regionCode, regionName: area.name });
@@ -69,10 +87,13 @@ Page({
     wx.chooseLocation({
       success: res => {
         this.setData({
-          longitude: res.longitude,
-          latitude: res.latitude,
+          longitude: Number(res.longitude.toFixed(6)),
+          latitude: Number(res.latitude.toFixed(6)),
           detail: this.data.detail || res.address || res.name || "",
         });
+      },
+      fail: () => {
+        // 用户未授权或取消，不阻断
       },
     });
   },
@@ -82,12 +103,23 @@ Page({
   },
 
   async handleSave() {
-    const { contactName, contactPhone, regionCode, detail, longitude, latitude } = this.data;
-    if (!contactName.trim()) return wx.showToast({ title: "请输入联系人", icon: "none" });
-    if (!/^1\d{10}$/.test(contactPhone)) return wx.showToast({ title: "请输入正确手机号", icon: "none" });
-    if (!regionCode) return wx.showToast({ title: "请选择区域", icon: "none" });
-    if (!detail.trim()) return wx.showToast({ title: "请输入详细地址", icon: "none" });
-    if (!longitude || !latitude) return wx.showToast({ title: "请选择地图位置", icon: "none" });
+    const { contactName, contactPhone, regionCode, detail, label, isDefault } = this.data;
+    if (!contactName.trim()) {
+      return wx.showToast({ title: "请填写联系人姓名", icon: "none" });
+    }
+    if (!contactPhone.trim() || !/^1\d{10}$/.test(contactPhone.trim())) {
+      return wx.showToast({ title: "请输入正确的11位手机号", icon: "none" });
+    }
+    if (!regionCode) {
+      return wx.showToast({ title: "请选择所属区域", icon: "none" });
+    }
+    if (!detail.trim()) {
+      return wx.showToast({ title: "请填写详细门牌地址", icon: "none" });
+    }
+
+    // 若未在地图上选点，默认以东莞市中心标准坐标保底，避免用户无法下单
+    const finalLng = this.data.longitude || 113.7517;
+    const finalLat = this.data.latitude || 23.0206;
 
     this.setData({ saving: true });
     const payload: AddressInput = {
@@ -95,20 +127,27 @@ Page({
       contactPhone: contactPhone.trim(),
       regionCode,
       detail: detail.trim(),
-      longitude,
-      latitude,
-      label: this.data.label.trim(),
-      isDefault: this.data.isDefault,
+      longitude: finalLng,
+      latitude: finalLat,
+      label: label ? label.trim() : "",
+      isDefault,
     };
+
     try {
       if (this.data.isEdit) {
         await updateAddress(this.data.addressId, payload);
       } else {
-        await createAddress(payload);
+        const created = await createAddress(payload);
+        if (created?.id) {
+          wx.setStorageSync("last_used_address_id", String(created.id));
+        }
       }
-      wx.navigateBack();
-    } catch (err) {
-      wx.showToast({ title: "保存失败", icon: "none" });
+      wx.showToast({ title: "地址已保存", icon: "success" });
+      setTimeout(() => {
+        wx.navigateBack();
+      }, 500);
+    } catch (err: any) {
+      wx.showToast({ title: err?.message || "保存地址失败", icon: "none" });
     } finally {
       this.setData({ saving: false });
     }

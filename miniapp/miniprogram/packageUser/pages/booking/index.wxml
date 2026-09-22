@@ -208,20 +208,16 @@
         <view class="icon-bubble icon-bubble--blue">
           <image class="bubble-icon-img" src="/assets/icons/order.png" mode="aspectFit" />
         </view>
-        <text class="card-title">费用明细</text>
+        <text class="card-title">费用明细 {{paymentMode === 'OFFLINE' ? '(现场结算)' : ''}}</text>
       </view>
-      <button
-        class="calc-btn {{loading ? 'calc-btn--loading' : ''}} ios-touch-active"
-        bindtap="handlePreview"
-        disabled="{{loading || !startTime || !addressId}}"
-      >
-        {{loading ? '计算中…' : '🔄 重新核算'}}
-      </button>
+      <text class="calc-status-tag {{loading ? 'tag--calc' : ''}}">
+        {{loading ? '正在核算…' : (preview ? '已核算' : '等待时段')}}
+      </text>
     </view>
 
     <view wx:if="{{preview}}" class="preview-breakdown">
       <view class="price-line">
-        <text class="price-label">服务套餐费用</text>
+        <text class="price-label">服务套餐费用 ({{quantity}}份)</text>
         <text class="price-val">¥{{preview.projectAmount}}</text>
       </view>
       <view class="price-line">
@@ -234,15 +230,20 @@
       </view>
       <view class="hairline-divider" />
       <view class="price-line total-line">
-        <text class="total-label">预计实付金额</text>
+        <text class="total-label">{{paymentMode === 'OFFLINE' ? '预计现场支付金额' : '预计实付金额'}}</text>
         <view class="total-val-box">
           <text class="total-sym">¥</text>
           <text class="total-val">{{preview.payableAmount}}</text>
+          <text wx:if="{{paymentMode === 'OFFLINE'}}" class="mode-tag-offline">现场付</text>
         </view>
       </view>
     </view>
     <view wx:else class="preview-empty">
-      <text class="preview-empty-hint">选择服务地址与时间后，点击右上角核算最终费用</text>
+      <view class="preview-empty-row">
+        <text class="preview-base-hint">服务基础价格约</text>
+        <text class="preview-base-val">¥{{estimatedBasePrice || '—'}}</text>
+      </view>
+      <text class="preview-empty-hint">请选择上门地址与服务时段，系统将自动核算精确总价</text>
     </view>
   </view>
 
@@ -252,15 +253,21 @@
     <text class="error-txt">{{error}}</text>
   </view>
 
-  <!-- 7. 支付方式卡片 (Apple Inset Grouped) -->
+  <!-- 7. 支付与结算方式卡片 (Apple Inset Grouped) -->
   <view class="ios-card payment-method-card">
     <view class="pay-method-left">
       <view class="pay-icon-wrap">
-        <image class="pay-icon-img" src="/assets/icons/wechat.png" mode="aspectFit" />
+        <text wx:if="{{paymentMode === 'OFFLINE'}}" class="pay-mode-emoji">💵</text>
+        <text wx:elif="{{paymentMode === 'MOCK'}}" class="pay-mode-emoji">🧪</text>
+        <image wx:else class="pay-icon-img" src="/assets/icons/wechat.png" mode="aspectFit" />
       </view>
       <view class="pay-text-col">
-        <text class="pay-name">微信支付</text>
-        <text class="pay-sub">官方安全担保交易 · 支持微信零钱/储蓄卡/信用卡</text>
+        <view class="pay-name-row">
+          <text class="pay-name">{{paymentMode === 'OFFLINE' ? '现场支付（上门后结算）' : (paymentMode === 'MOCK' ? '模拟支付（体验模式）' : '微信官方担保支付')}}</text>
+          <text wx:if="{{paymentMode === 'OFFLINE'}}" class="pay-pill-tag tag-offline">免线上付</text>
+          <text wx:elif="{{paymentMode === 'MOCK'}}" class="pay-pill-tag tag-mock">开发测试</text>
+        </view>
+        <text class="pay-sub">{{paymentMode === 'OFFLINE' ? '无需线上预付款 · 技师上门完成服务后现场结算给技师' : (paymentMode === 'MOCK' ? '无需扣真实款项 · 下单后自动模拟支付成功' : '官方安全担保交易 · 支持微信零钱/储蓄卡/信用卡')}}</text>
       </view>
     </view>
     <view class="pay-check-circle">
@@ -274,17 +281,18 @@
   <!-- 8. 吸底磨砂毛玻璃结算栏 -->
   <view class="fixed-footer-bar">
     <view class="footer-left">
-      <text class="footer-total-label">合计实付：</text>
+      <text class="footer-total-label">{{paymentMode === 'OFFLINE' ? '现场结算：' : '合计应付：'}}</text>
       <text class="footer-total-sym">¥</text>
-      <text class="footer-total-num">{{preview ? preview.payableAmount : '—'}}</text>
+      <text class="footer-total-num">{{preview ? preview.payableAmount : (estimatedBasePrice || '—')}}</text>
       <text wx:if="{{preview && preview.discountAmount > 0}}" class="footer-saved-pill">已省 ¥{{preview.discountAmount}}</text>
+      <text wx:elif="{{paymentMode === 'OFFLINE'}}" class="footer-offline-pill">现场付款</text>
     </view>
     <button
-      class="footer-submit-btn {{submitting ? 'btn--disabled' : ''}} ios-touch-active"
+      class="footer-submit-btn {{submitting || (!preview && !estimatedBasePrice) ? 'btn--disabled' : ''}} ios-touch-active"
       bindtap="handleSubmit"
-      disabled="{{submitting || !preview}}"
+      disabled="{{submitting}}"
     >
-      {{submitting ? '处理中…' : '立即下单'}}
+      {{submitting ? '提交中…' : (paymentMode === 'OFFLINE' ? '确认预约 (现场支付)' : (paymentMode === 'MOCK' ? '确认预约 (模拟支付)' : '微信支付下单'))}}
     </button>
   </view>
 

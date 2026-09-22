@@ -85,50 +85,44 @@
     <!-- ══ 服务端登录模式 (技师/BOSS) ══ -->
     <block wx:else>
       <view class="staff-header-hint">
-        <text class="staff-hint-title">你好，欢迎使用服务端</text>
-        <text class="staff-hint-sub">支持实名入驻技师及各级管理员快速接单与运营监控</text>
+        <text class="staff-hint-title">服务端专属通道</text>
+        <text class="staff-hint-sub">实名认证技师及平台管理员请点击对应通道完成登录验证</text>
       </view>
 
-      <!-- 快捷角色直通车 -->
-      <view class="staff-quick-grid">
-        <view class="staff-quick-card staff-quick-card--tech" bindtap="handleQuickTechLogin">
-          <text class="staff-quick-icon">💆</text>
-          <view class="staff-quick-texts">
-            <text class="staff-quick-name">技师接单台</text>
-            <text class="staff-quick-sub">接单 · 出发 · 履约服务</text>
+      <!-- 服务端入口导航卡片 -->
+      <view class="staff-gateway-grid">
+        <view class="staff-gateway-card staff-gateway-card--tech ios-touch-active" bindtap="goToTechRoleLogin">
+          <view class="staff-gw-icon-box tech-icon-bg">
+            <text class="staff-gw-icon">💆</text>
           </view>
-        </view>
-        <view class="staff-quick-card staff-quick-card--boss" bindtap="handleQuickAdminLogin">
-          <text class="staff-quick-icon">👑</text>
-          <view class="staff-quick-texts">
-            <text class="staff-quick-name">BOSS运营中心</text>
-            <text class="staff-quick-sub">单量看板 · 退款审批</text>
+          <view class="staff-gw-info">
+            <view class="staff-gw-title-row">
+              <text class="staff-gw-name">技师接单工作台</text>
+              <text class="staff-gw-badge tech-badge-bg">技师端</text>
+            </view>
+            <text class="staff-gw-sub">接单履约 · 自建项目 · 收入排班</text>
           </view>
+          <text class="staff-gw-arrow">验证登入 ›</text>
+        </view>
+
+        <view class="staff-gateway-card staff-gateway-card--admin ios-touch-active" bindtap="goToAdminRoleLogin">
+          <view class="staff-gw-icon-box admin-icon-bg">
+            <text class="staff-gw-icon">🛡️</text>
+          </view>
+          <view class="staff-gw-info">
+            <view class="staff-gw-title-row">
+              <text class="staff-gw-name">平台管理控制台</text>
+              <text class="staff-gw-badge admin-badge-bg">管理端</text>
+            </view>
+            <text class="staff-gw-sub">技师审核 · 订单调度 · 结算与系统配置</text>
+          </view>
+          <text class="staff-gw-arrow">安全登入 ›</text>
         </view>
       </view>
 
-      <!-- 手机号登录输入 -->
-      <view class="input-group">
-        <view class="input-item">
-          <text class="input-icon">📱</text>
-          <input
-            class="field-input"
-            type="number"
-            placeholder="输入手机号 (技师:13800003333 / BOSS:13800000000)"
-            value="{{phone}}"
-            bindinput="handlePhoneInput"
-            maxlength="11"
-          />
-        </view>
+      <view class="staff-security-tip">
+        <text>🛡️ 服务端为敏感业务专区，需凭已授权账号及密码或已绑定微信登入。</text>
       </view>
-
-      <button
-        class="staff-login-btn {{loading ? 'btn--loading' : ''}}"
-        bindtap="handleStaffLogin"
-        disabled="{{loading}}"
-      >
-        <text>{{loading ? '核身验证中…' : '手机号快捷登入'}}</text>
-      </button>
     </block>
 
     <!-- 协议勾选行 -->

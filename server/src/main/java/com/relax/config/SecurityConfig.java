@@ -58,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/technicians/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/technicians/*/schedules").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/banners").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/payment/mode").permitAll()
                         // File upload requires auth but uses special token
                         .requestMatchers(HttpMethod.PUT, "/api/v1/files/*/content").permitAll()
                         // WeChat payment callback (verified by signature)

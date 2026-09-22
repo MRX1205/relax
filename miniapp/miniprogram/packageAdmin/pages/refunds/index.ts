@@ -18,8 +18,12 @@ Page({
     if (reset) this.setData({ page: 0, hasMore: true });
     try {
       const refunds = await getAdminRefunds(this.data.page);
+      const mapped = refunds.map(r => ({
+        ...r,
+        statusText: STATUS_LABELS[r.status] || r.status,
+      }));
       this.setData({
-        refunds: reset ? refunds : [...this.data.refunds, ...refunds],
+        refunds: reset ? mapped : [...this.data.refunds, ...mapped],
         page: this.data.page + 1,
         hasMore: refunds.length >= 20,
         loading: false,

@@ -41,15 +41,6 @@ Page({
     this.setData({ showPassword: !this.data.showPassword });
   },
 
-  quickFill(e: WechatMiniprogram.TouchEvent) {
-    const phone = e.currentTarget.dataset.phone as string;
-    this.setData({
-      phone,
-      password: "123456",
-      errorMsg: "",
-    });
-  },
-
   async handlePasswordSubmit() {
     const { phone, password, targetRole } = this.data;
     if (!phone || !/^1\d{10}$/.test(phone)) {

@@ -68,7 +68,7 @@
             class="input-field"
             password="{{!showPassword}}"
             maxlength="32"
-            placeholder="请输入登录密码 (初始密码: 123456)"
+            placeholder="请输入登录密码"
             placeholder-style="color: #C7C7CC;"
             value="{{password}}"
             bindinput="handlePasswordInput"
@@ -76,20 +76,6 @@
           <view class="eye-icon ios-touch-active" bindtap="togglePasswordVisibility">
             <image wx:if="{{showPassword}}" src="/assets/icons/eye.png" style="width: 36rpx; height: 36rpx;" mode="aspectFit" />
             <image wx:else src="/assets/icons/eye-off.png" style="width: 36rpx; height: 36rpx;" mode="aspectFit" />
-          </view>
-        </view>
-
-        <!-- 快速测试账号填充 -->
-        <view class="quick-fill-row">
-          <text class="quick-label">便捷填充：</text>
-          <view class="quick-chips">
-            <block wx:if="{{targetRole === 'ADMIN'}}">
-              <view class="chip ios-touch-active" data-phone="13800000000" bindtap="quickFill">超管 13800000000</view>
-            </block>
-            <block wx:else>
-              <view class="chip ios-touch-active" data-phone="13800003333" bindtap="quickFill">王师傅 13800003333</view>
-              <view class="chip ios-touch-active" data-phone="13800004444" bindtap="quickFill">陈技师 13800004444</view>
-            </block>
           </view>
         </view>
 

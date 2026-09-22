@@ -142,6 +142,8 @@
       >
         <view class="config-icon-box icon-bg--{{item.code}}">
           <image wx:if="{{item.code === 'technicians'}}" src="/assets/icons/tech.png" class="config-icon" mode="aspectFit" />
+          <image wx:elif="{{item.code === 'admins'}}" src="/assets/icons/lock.png" class="config-icon" mode="aspectFit" />
+          <image wx:elif="{{item.code === 'audit'}}" src="/assets/icons/notice.png" class="config-icon" mode="aspectFit" />
           <image wx:elif="{{item.code === 'users'}}" src="/assets/icons/role.png" class="config-icon" mode="aspectFit" />
           <image wx:elif="{{item.code === 'projects'}}" src="/assets/tabbar/projects-active.png" class="config-icon" mode="aspectFit" />
           <image wx:elif="{{item.code === 'categories'}}" src="/assets/tabbar/projects.png" class="config-icon" mode="aspectFit" />

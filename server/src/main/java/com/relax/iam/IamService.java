@@ -1,13 +1,19 @@
 package com.relax.iam;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.relax.audit.AuditService;
+import com.relax.auth.AuthMapper;
+import com.relax.auth.UserAccount;
 import com.relax.common.api.BusinessException;
 
 @Service
@@ -15,10 +21,18 @@ public class IamService {
 
     private final IamMapper iamMapper;
     private final AuditService auditService;
+    private final AuthMapper authMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    IamService(IamMapper iamMapper, AuditService auditService) {
+    IamService(IamMapper iamMapper, AuditService auditService, AuthMapper authMapper, PasswordEncoder passwordEncoder) {
         this.iamMapper = iamMapper;
         this.auditService = auditService;
+        this.authMapper = authMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public List<AccessUserView> findAdmins() {
+        return iamMapper.listAdmins().stream().map(this::toView).toList();
     }
 
     public List<AccessUserView> findUsers(String keyword) {
@@ -33,6 +47,82 @@ public class IamService {
                 .map(group -> new GroupView(group.id(), group.code(), group.name(),
                         iamMapper.findGroupPermissions(group.id()).stream().map(IamMapper.PermissionSummary::code).toList()))
                 .toList();
+    }
+
+    @Transactional
+    public AccessUserView createAdmin(long operatorId, String phone, String password, String nickname,
+            Set<String> groupCodes, String ipAddress) {
+        if (phone == null || !phone.matches("1\\d{10}")) {
+            throw new BusinessException("PHONE_INVALID", "手机号格式不正确，请输入11位手机号");
+        }
+        if (password == null || password.strip().length() < 6) {
+            throw new BusinessException("PASSWORD_INVALID", "密码不能少于6位");
+        }
+        String cleanPhone = phone.strip();
+        String passwordHash = passwordEncoder.encode(password.strip());
+        long adminRoleId = iamMapper.findRoleId("ADMIN")
+                .orElseThrow(() -> new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "ROLE_NOT_FOUND", "ADMIN角色未定义"));
+
+        Optional<UserAccount> userOpt = authMapper.findUserByPhone(cleanPhone);
+        long userId;
+        if (userOpt.isPresent()) {
+            userId = userOpt.get().id();
+            authMapper.updatePassword(userId, passwordHash);
+            if (nickname != null && !nickname.isBlank()) {
+                authMapper.updateProfile(userId, nickname.strip(), userOpt.get().avatarUrl());
+            }
+            if (iamMapper.countRoleAssignment(userId, "ADMIN") == 0) {
+                iamMapper.insertRole(userId, adminRoleId, operatorId);
+            } else {
+                iamMapper.updateRoleStatus(userId, adminRoleId, "ENABLED");
+            }
+        } else {
+            userId = IdWorker.getId();
+            String name = (nickname != null && !nickname.isBlank()) ? nickname.strip() : "管理员" + cleanPhone.substring(7);
+            authMapper.insertUser(userId, "admin:phone:" + cleanPhone, null);
+            authMapper.updatePhone(userId, cleanPhone);
+            authMapper.updateProfile(userId, name, null);
+            authMapper.updatePassword(userId, passwordHash);
+            authMapper.insertRole(userId, "USER", operatorId);
+            iamMapper.insertRole(userId, adminRoleId, operatorId);
+        }
+
+        Set<String> normalizedGroups = groupCodes == null ? Set.of() : groupCodes.stream()
+                .map(String::strip).filter(value -> !value.isBlank()).collect(Collectors.toSet());
+        iamMapper.deleteUserGroups(userId);
+        for (String groupCode : normalizedGroups) {
+            iamMapper.findGroupId(groupCode).ifPresent(groupId -> {
+                iamMapper.insertUserGroup(userId, groupId, operatorId);
+            });
+        }
+
+        auditService.record(operatorId, "ADMIN_CREATED", "USER", Long.toString(userId),
+                "phone=" + cleanPhone + ",groups=" + String.join(",", normalizedGroups), ipAddress);
+        return findUser(userId);
+    }
+
+    @Transactional
+    public void deleteAdmin(long operatorId, long targetUserId, String ipAddress) {
+        if (operatorId == targetUserId || iamMapper.findRoles(targetUserId).contains("SUPER_ADMIN")) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "SUPER_ADMIN_PROTECTED", "不能删除超级管理员或当前操作人");
+        }
+        long adminRoleId = iamMapper.findRoleId("ADMIN")
+                .orElseThrow(() -> new BusinessException(HttpStatus.INTERNAL_SERVER_ERROR, "ROLE_NOT_FOUND", "ADMIN角色未定义"));
+        iamMapper.updateRoleStatus(targetUserId, adminRoleId, "DISABLED");
+        iamMapper.deleteUserGroups(targetUserId);
+        auditService.record(operatorId, "ADMIN_REVOKED", "USER", Long.toString(targetUserId), "revoked", ipAddress);
+    }
+
+    @Transactional
+    public void resetAdminPassword(long operatorId, long targetUserId, String newPassword, String ipAddress) {
+        if (newPassword == null || newPassword.strip().length() < 6) {
+            throw new BusinessException("PASSWORD_INVALID", "密码不能少于6位");
+        }
+        if (operatorId != targetUserId && iamMapper.findRoles(targetUserId).contains("SUPER_ADMIN")) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "SUPER_ADMIN_PROTECTED", "不能重置超级管理员密码");
+        }
+        authMapper.updatePassword(targetUserId, passwordEncoder.encode(newPassword.strip()));
+        auditService.record(operatorId, "ADMIN_PASSWORD_RESET", "USER", Long.toString(targetUserId), "reset", ipAddress);
     }
 
     @Transactional

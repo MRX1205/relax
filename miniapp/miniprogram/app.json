@@ -67,6 +67,8 @@
         "pages/banners/index",
         "pages/payment-config/index",
         "pages/users/index",
+        "pages/admins/index",
+        "pages/audit-logs/index",
         "pages/system-settings/index"
       ]
     }

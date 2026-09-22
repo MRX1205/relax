@@ -7,8 +7,10 @@ import jakarta.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,40 @@ public class IamController {
 
     IamController(IamService iamService) {
         this.iamService = iamService;
+    }
+
+    @GetMapping("/admins")
+    ApiResponse<List<IamService.AccessUserView>> admins() {
+        return ApiResponse.success(iamService.findAdmins());
+    }
+
+    @PostMapping("/admins")
+    ApiResponse<IamService.AccessUserView> createAdmin(
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @Valid @RequestBody CreateAdminRequest request,
+            HttpServletRequest servletRequest) {
+        return ApiResponse.success(iamService.createAdmin(
+                currentUser.id(), request.phone(), request.password(), request.nickname(),
+                request.groupCodes(), servletRequest.getRemoteAddr()));
+    }
+
+    @DeleteMapping("/admins/{userId}")
+    ApiResponse<Void> deleteAdmin(
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @PathVariable long userId,
+            HttpServletRequest servletRequest) {
+        iamService.deleteAdmin(currentUser.id(), userId, servletRequest.getRemoteAddr());
+        return ApiResponse.success(null);
+    }
+
+    @PostMapping("/admins/{userId}/reset-password")
+    ApiResponse<Void> resetPassword(
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @PathVariable long userId,
+            @Valid @RequestBody ResetPasswordRequest request,
+            HttpServletRequest servletRequest) {
+        iamService.resetAdminPassword(currentUser.id(), userId, request.password(), servletRequest.getRemoteAddr());
+        return ApiResponse.success(null);
     }
 
     @GetMapping("/users")
@@ -53,5 +89,16 @@ public class IamController {
             HttpServletRequest servletRequest) {
         return ApiResponse.success(iamService.updateStatus(currentUser.id(), userId, request.status(),
                 servletRequest.getRemoteAddr()));
+    }
+
+    public record CreateAdminRequest(
+            @jakarta.validation.constraints.NotBlank @jakarta.validation.constraints.Pattern(regexp = "1\\d{10}") String phone,
+            @jakarta.validation.constraints.NotBlank @jakarta.validation.constraints.Size(min = 6, max = 32) String password,
+            String nickname,
+            java.util.Set<String> groupCodes) {
+    }
+
+    public record ResetPasswordRequest(
+            @jakarta.validation.constraints.NotBlank @jakarta.validation.constraints.Size(min = 6, max = 32) String password) {
     }
 }

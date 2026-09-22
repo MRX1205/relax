@@ -1,58 +1,306 @@
-<view class="page">
-  <view class="tabs">
-    <view class="tab {{tab === 'technicians' ? 'tab--active' : ''}}" data-tab="technicians" bindtap="switchTab">技师列表</view>
-    <view class="tab {{tab === 'applications' ? 'tab--active' : ''}}" data-tab="applications" bindtap="switchTab">
-      待审核
-      <view wx:if="{{applications.length > 0}}" class="tab-badge">{{applications.length}}</view>
+<view class="ios-admin-tech-page">
+
+  <!-- ════ 1. 顶部操作头 ════ -->
+  <view class="header-card ios-card">
+    <view class="header-main-row">
+      <view class="header-left">
+        <text class="header-title">技师管理中心</text>
+        <text class="header-desc">认证资质核验 · 账号与密码分发 · 项目定价</text>
+      </view>
+      <view class="add-btn ios-touch-active" bindtap="openAddModal">
+        <text class="add-plus">+</text>
+        <text>新增技师</text>
+      </view>
+    </view>
+
+    <!-- 选项卡切换 -->
+    <view class="segmented-tabs">
+      <view
+        class="tab-item {{tab === 'technicians' ? 'tab-item--active' : ''}} ios-touch-active"
+        data-tab="technicians"
+        bindtap="switchTab"
+      >
+        <text>认证技师 ({{technicians.length}})</text>
+      </view>
+      <view
+        class="tab-item {{tab === 'applications' ? 'tab-item--active' : ''}} ios-touch-active"
+        data-tab="applications"
+        bindtap="switchTab"
+      >
+        <text>入驻申请</text>
+        <view wx:if="{{applications.length > 0}}" class="tab-badge">{{applications.length}}</view>
+      </view>
     </view>
   </view>
 
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <!-- ════ 2. 加载中 ════ -->
+  <view wx:if="{{loading}}" class="loading-grid">
+    <view class="ios-skeleton skeleton-card" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+  </view>
 
+  <!-- ════ 3. TAB 1: 技师列表 ════ -->
   <block wx:elif="{{tab === 'technicians'}}">
-    <view wx:for="{{technicians}}" wx:key="id" class="surface tech-item">
-      <view class="tech-info" data-item="{{item}}" bindtap="goToPricing">
-        <view class="tech-name">{{item.serviceName}}</view>
-        <view class="tech-meta">{{item.realName}} · {{item.phone}}</view>
-        <view class="tech-badges">
-          <view class="badge badge--{{item.status}}">{{item.status === 'ACTIVE' ? '正常' : item.status === 'DISABLED' ? '已停用' : '暂停'}}</view>
-          <view class="badge badge--{{item.onlineStatus}}">{{item.onlineStatus === 'ONLINE' ? '在线' : '离线'}}</view>
+    <view wx:if="{{technicians.length === 0}}" class="ios-empty-view">
+      <text class="empty-icon">👥</text>
+      <text class="empty-title">暂无技师记录</text>
+      <text class="empty-desc">点击右上角「新增技师」添加或等待技师端入驻申请</text>
+    </view>
+
+    <view wx:else class="tech-list-feed">
+      <view wx:for="{{technicians}}" wx:key="id" class="ios-card tech-card">
+        <!-- 卡片头部信息 -->
+        <view class="card-head-row">
+          <view class="tech-avatar-circle">
+            <text>{{item.serviceName ? item.serviceName[0] : '技'}}</text>
+          </view>
+          <view class="tech-head-info">
+            <view class="name-line">
+              <text class="service-name">{{item.serviceName}}</text>
+              <view class="pill-badge pill-status--{{item.status}}">
+                {{item.status === 'ACTIVE' ? '正常合作' : '已停用'}}
+              </view>
+              <view class="pill-badge pill-online--{{item.onlineStatus}}">
+                {{item.onlineStatus === 'ONLINE' ? '接单中' : '离线'}}
+              </view>
+            </view>
+            <view class="meta-line">
+              <text class="real-name">实名: {{item.realName || item.serviceName}}</text>
+              <text class="sep">·</text>
+              <text class="phone-link ios-touch-active" data-phone="{{item.phone}}" bindtap="makePhoneCall">
+                📱 {{item.phone}}
+              </text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 操作按钮网格 -->
+        <view class="card-action-bar">
+          <view
+            class="action-pill pill--toggle ios-touch-active"
+            data-item="{{item}}"
+            bindtap="handleToggleStatus"
+          >
+            <text>{{item.status === 'ACTIVE' ? '停用' : '启用'}}</text>
+          </view>
+          <view
+            class="action-pill pill--pwd ios-touch-active"
+            data-item="{{item}}"
+            bindtap="openResetModal"
+          >
+            <text>重置密码</text>
+          </view>
+          <view
+            class="action-pill pill--pricing ios-touch-active"
+            data-item="{{item}}"
+            bindtap="goToPricing"
+          >
+            <text>项目定价</text>
+          </view>
+          <view
+            class="action-pill pill--del ios-touch-active"
+            data-item="{{item}}"
+            bindtap="handleDeleteTech"
+          >
+            <text>删除</text>
+          </view>
         </view>
       </view>
-      <view class="tech-actions">
-        <text class="action-link" data-item="{{item}}" bindtap="handleToggleStatus">
-          {{item.status === 'ACTIVE' ? '停用' : '启用'}}
-        </text>
-        <text class="action-link" data-item="{{item}}" bindtap="goToPricing">定价</text>
-      </view>
     </view>
-    <view wx:if="{{technicians.length === 0}}" class="empty-tip">暂无技师</view>
   </block>
 
+  <!-- ════ 4. TAB 2: 入驻待审 ════ -->
   <block wx:elif="{{tab === 'applications'}}">
-    <view wx:for="{{applications}}" wx:key="id" class="surface app-item">
-      <view class="app-info">
-        <view class="app-name">{{item.serviceName}}</view>
-        <view class="app-meta">{{item.realName}} · {{item.phone}} · {{item.experienceYears}}年经验</view>
-        <view wx:if="{{item.intro}}" class="app-intro">{{item.intro}}</view>
-      </view>
-      <view class="app-actions">
-        <view class="action-btn action-btn--reject" data-id="{{item.id}}" bindtap="showRejectDialog">拒绝</view>
-        <view class="action-btn action-btn--approve" data-id="{{item.id}}" bindtap="handleApprove">通过</view>
+    <view wx:if="{{applications.length === 0}}" class="ios-empty-view">
+      <text class="empty-icon">✅</text>
+      <text class="empty-title">无待处理申请</text>
+      <text class="empty-desc">所有技师入驻申请均已完成核验与审批</text>
+    </view>
+
+    <view wx:else class="app-list-feed">
+      <view wx:for="{{applications}}" wx:key="id" class="ios-card app-card">
+        <!-- 申请人主信息 -->
+        <view class="app-head-row">
+          <view class="app-title-col">
+            <view class="app-name-line">
+              <text class="app-service-name">{{item.serviceName}}</text>
+              <text class="app-exp-pill">{{item.experienceYears || 1}}年经验</text>
+            </view>
+            <text class="app-phone-link ios-touch-active" data-phone="{{item.phone}}" bindtap="makePhoneCall">
+              真实姓名: {{item.realName}} · 手机号: {{item.phone}} 📞
+            </text>
+          </view>
+          <text class="app-time">{{item.createdAt}}</text>
+        </view>
+
+        <!-- 技师简介 -->
+        <view wx:if="{{item.intro}}" class="app-intro-box">
+          <text class="intro-label">特长擅长：</text>
+          <text class="intro-content">{{item.intro}}</text>
+        </view>
+
+        <!-- 意向服务镇街 -->
+        <view wx:if="{{item.serviceAreaCodes}}" class="area-tag-box">
+          <text class="area-label">意向服务镇街代码：</text>
+          <text class="area-val">{{item.serviceAreaCodes}}</text>
+        </view>
+
+        <!-- 审核操作按钮 -->
+        <view class="app-actions-row">
+          <button class="reject-cta ios-touch-active" data-id="{{item.id}}" bindtap="showRejectDialog">
+            驳回申请
+          </button>
+          <button class="approve-cta ios-touch-active" data-id="{{item.id}}" bindtap="handleApprove">
+            通过入驻并开通
+          </button>
+        </view>
       </view>
     </view>
-    <view wx:if="{{applications.length === 0}}" class="empty-tip">暂无待审核申请</view>
   </block>
 
-  <!-- Reject dialog -->
-  <view wx:if="{{showReject}}" class="dialog-mask" bindtap="hideReject">
-    <view class="dialog" catchtap="">
-      <view class="dialog-title">拒绝原因</view>
-      <textarea class="reject-input" placeholder="请输入拒绝原因（选填）" value="{{rejectReason}}" bindinput="handleRejectReasonInput" />
-      <view class="dialog-actions">
-        <ui-button label="取消" variant="secondary" bind:action="hideReject" />
-        <ui-button label="确认拒绝" bind:action="confirmReject" />
+  <!-- ════ 5. 新增技师弹窗 ════ -->
+  <view wx:if="{{showAddModal}}" class="modal-mask" bindtap="closeAddModal">
+    <view class="modal-body ios-card" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">新增技师账号</text>
+        <text class="modal-close ios-touch-active" bindtap="closeAddModal">✕</text>
+      </view>
+      <text class="modal-sub">录入后将自动生成技师档案，技师可直接使用该手机号与密码登录服务端接单。</text>
+
+      <view class="modal-form">
+        <view class="m-field">
+          <text class="m-label">登录手机号 <text class="req">*</text></text>
+          <input
+            class="m-input"
+            type="number"
+            maxlength="11"
+            placeholder="11位手机号码（登录账号）"
+            value="{{addForm.phone}}"
+            data-field="phone"
+            bindinput="handleAddInput"
+          />
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">登录密码 <text class="req">*</text></text>
+          <input
+            class="m-input"
+            password
+            placeholder="不少于6位登录密码"
+            value="{{addForm.password}}"
+            data-field="password"
+            bindinput="handleAddInput"
+          />
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">服务艺名 <text class="req">*</text></text>
+          <input
+            class="m-input"
+            placeholder="顾客端展示名，如: 欣欣技师"
+            value="{{addForm.serviceName}}"
+            data-field="serviceName"
+            bindinput="handleAddInput"
+          />
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">真实姓名</text>
+          <input
+            class="m-input"
+            placeholder="用于实名档案核验"
+            value="{{addForm.realName}}"
+            data-field="realName"
+            bindinput="handleAddInput"
+          />
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">从业年限</text>
+          <input
+            class="m-input"
+            type="number"
+            placeholder="从业年限（默认 3 年）"
+            value="{{addForm.experienceYears}}"
+            data-field="experienceYears"
+            bindinput="handleAddInput"
+          />
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">擅长简介</text>
+          <input
+            class="m-input"
+            placeholder="擅长项目及手法介绍"
+            value="{{addForm.intro}}"
+            data-field="intro"
+            bindinput="handleAddInput"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="m-btn-cancel ios-touch-active" bindtap="closeAddModal">取消</button>
+        <button class="m-btn-confirm ios-touch-active" loading="{{submittingAdd}}" bindtap="handleConfirmAdd">
+          确认新增
+        </button>
       </view>
     </view>
   </view>
+
+  <!-- ════ 6. 重置密码弹窗 ════ -->
+  <view wx:if="{{showResetModal}}" class="modal-mask" bindtap="closeResetModal">
+    <view class="modal-body ios-card" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">重置技师密码</text>
+        <text class="modal-close ios-touch-active" bindtap="closeResetModal">✕</text>
+      </view>
+      <text class="modal-sub">技师：{{resetTarget.serviceName}} ({{resetTarget.phone}})</text>
+
+      <view class="modal-form">
+        <view class="m-field">
+          <text class="m-label">新登录密码</text>
+          <input
+            class="m-input"
+            password
+            placeholder="请输入不少于6位的新密码"
+            value="{{resetPassword}}"
+            bindinput="handleResetPasswordInput"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="m-btn-cancel ios-touch-active" bindtap="closeResetModal">取消</button>
+        <button class="m-btn-confirm ios-touch-active" loading="{{submittingReset}}" bindtap="handleConfirmReset">
+          确认重置
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- ════ 7. 驳回弹窗 ════ -->
+  <view wx:if="{{showReject}}" class="modal-mask" bindtap="hideReject">
+    <view class="modal-body ios-card" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">驳回入驻申请</text>
+        <text class="modal-close ios-touch-active" bindtap="hideReject">✕</text>
+      </view>
+      <view class="modal-form">
+        <view class="m-field">
+          <text class="m-label">驳回原因</text>
+          <textarea
+            class="m-textarea"
+            placeholder="请输入驳回原因，方便技师修改后重提（如：资质信息模糊、电话有误等）"
+            value="{{rejectReason}}"
+            bindinput="handleRejectReasonInput"
+          ></textarea>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="m-btn-cancel ios-touch-active" bindtap="hideReject">取消</button>
+        <button class="m-btn-reject ios-touch-active" bindtap="confirmReject">确认驳回</button>
+      </view>
+    </view>
+  </view>
+
 </view>

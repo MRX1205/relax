@@ -44,6 +44,8 @@ Page({
     // 供给与系统配置模块
     configMenus: [
       { code: "technicians", name: "技师审核与管理", desc: "入驻资质 · 提成与状态", icon: "tech", url: "/packageAdmin/pages/technicians/index", badge: "" },
+      { code: "admins", name: "管理员权限配置", desc: "新增管理账号 · 业务模块赋权", icon: "role", url: "/packageAdmin/pages/admins/index", badge: "新" },
+      { code: "audit", name: "系统安全审计日志", desc: "敏感操作留痕 · IP溯源", icon: "shield", url: "/packageAdmin/pages/audit-logs/index", badge: "" },
       { code: "users", name: "用户会员管理", desc: "注册顾客 · 状态冻结/解冻", icon: "user", url: "/packageAdmin/pages/users/index", badge: "" },
       { code: "projects", name: "服务项目配置", desc: "平台项目 · 定价上下架", icon: "project", url: "/packageAdmin/pages/projects/index", badge: "" },
       { code: "categories", name: "服务分类目录", desc: "分类管理与展示排序", icon: "category", url: "/packageAdmin/pages/categories/index", badge: "" },

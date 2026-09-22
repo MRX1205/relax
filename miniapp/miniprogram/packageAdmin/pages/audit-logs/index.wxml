@@ -1,0 +1,41 @@
+<view class="ios-audit-page">
+
+  <view class="hero-header ios-card">
+    <text class="hero-title">平台操作审计日志</text>
+    <text class="hero-desc">记录权限变更、改派调度、退款审批等全域敏感操作</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-grid">
+    <view class="ios-skeleton skeleton-card" wx:for="{{[1,2,3,4]}}" wx:key="*this"></view>
+  </view>
+
+  <view wx:elif="{{logs.length === 0}}" class="ios-empty-view">
+    <text class="empty-icon">📝</text>
+    <text class="empty-title">暂无审计记录</text>
+    <text class="empty-desc">平台所有关键治理动作将在此留痕归档</text>
+  </view>
+
+  <view wx:else class="log-timeline-feed">
+    <view wx:for="{{logs}}" wx:key="id" class="ios-card log-card">
+      <view class="log-top-row">
+        <view class="action-tag">{{item.action}}</view>
+        <text class="log-time">{{item.createdAt}}</text>
+      </view>
+
+      <view class="log-target-line">
+        <text class="target-lbl">目标主体：</text>
+        <text class="target-val">{{item.targetType}} #{{item.targetId}}</text>
+      </view>
+
+      <view wx:if="{{item.detail}}" class="log-detail-box">
+        <text class="detail-text">{{item.detail}}</text>
+      </view>
+
+      <view class="log-footer-row">
+        <text class="log-operator">操作人ID: {{item.operatorId}}</text>
+        <text class="log-ip" wx:if="{{item.ipAddress}}">来源IP: {{item.ipAddress}}</text>
+      </view>
+    </view>
+  </view>
+
+</view>

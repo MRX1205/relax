@@ -1,62 +1,215 @@
-<view class="page">
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+<view class="ios-tech-access-page">
 
+  <!-- ════ 1. 骨架屏 ════ -->
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <view class="ios-skeleton skeleton-banner"></view>
+    <view class="ios-skeleton skeleton-card" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+  </view>
+
+  <!-- ════ 2. 已有申请展示状态 ════ -->
   <block wx:elif="{{application}}">
-    <view class="page-title">入驻申请</view>
-    <view class="surface status-card">
-      <view class="status-row">
-        <text class="status-label">状态</text>
-        <text class="status-value status-value--{{application.status}}">{{application.status}}</text>
+    <view class="status-hero ios-card">
+      <view class="status-icon-bubble bubble--{{application.status}}">
+        <text wx:if="{{application.status === 'APPROVED'}}">🎉</text>
+        <text wx:elif="{{application.status === 'REJECTED'}}">⚠️</text>
+        <text wx:else>⏳</text>
       </view>
-      <view wx:if="{{application.rejectReason}}" class="reject-reason">
-        拒绝原因：{{application.rejectReason}}
+      <text class="status-hero-title">
+        {{application.status === 'APPROVED' ? '入驻申请已通过' : application.status === 'REJECTED' ? '入驻申请未通过' : '入驻申请审核中'}}
+      </text>
+      <text class="status-hero-desc">
+        {{application.status === 'APPROVED' ? '恭喜您成为平台认证技师！请切换至技师工作台开始接单与设置排班。' : application.status === 'REJECTED' ? '审核未通过原因如下，可修改资料后重新提交：' : '您的申请资料已进入平台资质风控审核，预计1个工作日内完成核实。'}}
+      </text>
+
+      <view wx:if="{{application.status === 'REJECTED' && application.rejectReason}}" class="reject-box">
+        <text class="reject-title">驳回原因：</text>
+        <text class="reject-content">{{application.rejectReason}}</text>
+      </view>
+
+      <view class="status-action-row">
+        <button wx:if="{{application.status === 'REJECTED'}}" class="reapply-btn ios-touch-active" bindtap="reApply">
+          重新填写提交
+        </button>
+        <button class="home-btn ios-touch-active" bindtap="reApply" wx:elif="{{application.status === 'PENDING'}}">
+          修改申请资料
+        </button>
       </view>
     </view>
   </block>
 
+  <!-- ════ 3. 申请表单 ════ -->
   <block wx:else>
-    <view class="page-title">技师入驻申请</view>
-    <view class="page-subtitle">提交资料后由管理员审核，通过后即可开始接单。</view>
+    <!-- 顶部宣传横幅 -->
+    <view class="banner-hero">
+      <view class="banner-tag">OFFICIAL RECRUITMENT</view>
+      <text class="banner-title">专业技师 · 招募入驻</text>
+      <text class="banner-desc">正规绿色理疗平台 · 自由安排接单 · 佣金透明周结 · 专属客服保障</text>
+    </view>
 
-    <view class="form">
-      <view class="surface form-card">
-        <ui-field label="服务名" value="{{serviceName}}" placeholder="技师对外显示名称" bindinput="handleInput('serviceName')" />
-        <ui-field label="真实姓名" value="{{realName}}" placeholder="用于实名核验" bindinput="handleInput('realName')" />
-        <ui-field label="手机号" value="{{phone}}" type="number" placeholder="联系手机号" bindinput="handleInput('phone')" />
-        <ui-field label="从业年限" value="{{experienceYears}}" type="number" placeholder="如 3" bindinput="handleInput('experienceYears')" />
-        <ui-field label="自我介绍" value="{{intro}}" placeholder="擅长手法、服务经验等" bindinput="handleInput('intro')" />
+    <!-- 卡片 1: 实名与基本信息 -->
+    <view class="ios-card form-group">
+      <view class="group-header">
+        <text class="group-title">基本实名信息</text>
+        <text class="group-sub">平台严格保护隐私，真实姓名仅供实名核验</text>
       </view>
 
-      <view class="surface form-card">
-        <view class="section-label">服务区域（可多选）</view>
-        <view class="area-grid">
-          <view
-            wx:for="{{serviceAreas}}"
-            wx:key="id"
-            class="area-chip {{selectedAreas.indexOf(item.regionCode) >= 0 ? 'area-chip--selected' : ''}}"
-            data-code="{{item.regionCode}}"
-            bindtap="toggleArea"
-          >
-            {{item.name}}
+      <view class="form-row">
+        <text class="row-label">服务艺名 <text class="req">*</text></text>
+        <input
+          class="row-input"
+          placeholder="顾客端对外展示名，如: 欣欣技师"
+          placeholder-class="ph-style"
+          value="{{serviceName}}"
+          data-field="serviceName"
+          bindinput="handleInput"
+        />
+      </view>
+
+      <view class="row-divider"></view>
+
+      <view class="form-row">
+        <text class="row-label">真实姓名 <text class="req">*</text></text>
+        <input
+          class="row-input"
+          placeholder="与身份证保持一致"
+          placeholder-class="ph-style"
+          value="{{realName}}"
+          data-field="realName"
+          bindinput="handleInput"
+        />
+      </view>
+
+      <view class="row-divider"></view>
+
+      <view class="form-row">
+        <text class="row-label">手机号码 <text class="req">*</text></text>
+        <input
+          class="row-input"
+          type="number"
+          maxlength="11"
+          placeholder="用于接单通知及登录账号"
+          placeholder-class="ph-style"
+          value="{{phone}}"
+          data-field="phone"
+          bindinput="handleInput"
+        />
+      </view>
+
+      <view class="row-divider"></view>
+
+      <view class="form-row">
+        <text class="row-label">从业经验</text>
+        <input
+          class="row-input"
+          type="number"
+          placeholder="如 3 (年)"
+          placeholder-class="ph-style"
+          value="{{experienceYears}}"
+          data-field="experienceYears"
+          bindinput="handleInput"
+        />
+      </view>
+    </view>
+
+    <!-- 卡片 2: 技师个人简介与擅长 -->
+    <view class="ios-card form-group">
+      <view class="group-header">
+        <text class="group-title">专业特长与简介</text>
+        <text class="group-sub">向顾客展示您的擅长手法、推拿理疗经验</text>
+      </view>
+
+      <textarea
+        class="intro-textarea"
+        placeholder="例如：从事中医推拿、肩颈舒缓调理5年，手法精湛温和，擅长经络疏通、全身精油SPA及运动放松调理..."
+        placeholder-class="ph-style"
+        maxlength="300"
+        value="{{intro}}"
+        data-field="intro"
+        bindinput="handleInput"
+      ></textarea>
+      <view class="char-count">{{intro.length || 0}}/300</view>
+    </view>
+
+    <!-- 卡片 3: 接单服务意向区域 -->
+    <view class="ios-card form-group">
+      <view class="group-header">
+        <view class="group-title-row">
+          <text class="group-title">意向接单区域</text>
+          <view class="area-action-links">
+            <text class="link-btn ios-touch-active" bindtap="selectAllAreas">全选</text>
+            <text class="link-sep">|</text>
+            <text class="link-btn ios-touch-active" bindtap="clearAreas">清空</text>
           </view>
         </view>
+        <text class="group-sub">勾选您方便上门服务的东莞片区（已选 {{selectedAreas.length}} 个镇街）</text>
       </view>
 
-      <view class="surface form-card">
-        <view class="section-label">工作照（必填）</view>
-        <view class="upload-area" bindtap="choosePhoto">
-          <image wx:if="{{photoPath}}" src="{{photoPath}}" mode="aspectFill" class="preview-img" />
-          <view wx:else class="upload-placeholder">点击上传</view>
-        </view>
-
-        <view class="section-label">技能证书（选填）</view>
-        <view class="upload-area" bindtap="chooseCertificate">
-          <image wx:if="{{certificatePath}}" src="{{certificatePath}}" mode="aspectFill" class="preview-img" />
-          <view wx:else class="upload-placeholder">点击上传</view>
+      <view class="area-chip-grid">
+        <view
+          wx:for="{{serviceAreas}}"
+          wx:key="id"
+          class="area-chip {{selectedAreas.indexOf(item.regionCode) >= 0 ? 'area-chip--active' : ''}} ios-touch-active"
+          data-code="{{item.regionCode}}"
+          bindtap="toggleArea"
+        >
+          <text>{{item.name}}</text>
         </view>
       </view>
+    </view>
 
-      <ui-button label="提交申请" loading="{{submitting}}" bind:action="handleSubmit" />
+    <!-- 卡片 4: 形象照与资质证书 -->
+    <view class="ios-card form-group">
+      <view class="group-header">
+        <text class="group-title">形象照与资质凭证</text>
+        <text class="group-sub">清晰正规的形象照将大幅提升顾客预约意愿</text>
+      </view>
+
+      <view class="upload-grid">
+        <!-- 工作形象照 -->
+        <view class="upload-slot">
+          <view class="slot-title">工作形象照</view>
+          <view class="upload-box ios-touch-active" bindtap="choosePhoto">
+            <image wx:if="{{photoPath}}" src="{{photoPath}}" mode="aspectFill" class="uploaded-img" />
+            <view wx:else class="upload-empty">
+              <text class="upload-icon">📷</text>
+              <text class="upload-hint">上传形象照</text>
+            </view>
+          </view>
+          <text wx:if="{{photoPath}}" class="remove-link" catchtap="removePhoto">更换 / 删除</text>
+        </view>
+
+        <!-- 职业资格证书 -->
+        <view class="upload-slot">
+          <view class="slot-title">资格证书 (选填)</view>
+          <view class="upload-box ios-touch-active" bindtap="chooseCertificate">
+            <image wx:if="{{certificatePath}}" src="{{certificatePath}}" mode="aspectFill" class="uploaded-img" />
+            <view wx:else class="upload-empty">
+              <text class="upload-icon">📜</text>
+              <text class="upload-hint">技师证/健康证</text>
+            </view>
+          </view>
+          <text wx:if="{{certificatePath}}" class="remove-link" catchtap="removeCertificate">更换 / 删除</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 协议勾选 -->
+    <view class="agreement-bar ios-touch-active" bindtap="toggleAgreement">
+      <view class="checkbox {{agreed ? 'checkbox--checked' : ''}}">
+        <text wx:if="{{agreed}}">✓</text>
+      </view>
+      <view class="agreement-text">
+        我已阅读并同意 <text class="agreement-link">《平台技师入驻合作协议》</text> 与 <text class="agreement-link">《绿色正规服务承诺书》</text>
+      </view>
+    </view>
+
+    <!-- 底部固定提交栏 -->
+    <view class="bottom-submit-placeholder"></view>
+    <view class="bottom-submit-bar ios-blur">
+      <button class="submit-action-btn ios-touch-active" loading="{{submitting}}" bindtap="handleSubmit">
+        {{submitting ? '提交中...' : '提交入驻申请'}}
+      </button>
     </view>
   </block>
+
 </view>

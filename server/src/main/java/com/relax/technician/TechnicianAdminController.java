@@ -42,6 +42,29 @@ public class TechnicianAdminController {
         return ApiResponse.success(adminService.listTechnicians(status));
     }
 
+    @PostMapping
+    ApiResponse<TechnicianAuditMapper.TechnicianBrief> create(
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @Valid @RequestBody CreateTechnicianRequest request) {
+        return ApiResponse.success(adminService.createTechnician(
+                new TechnicianAdminService.CreateTechnicianCommand(
+                        request.phone(), request.password(), request.serviceName(),
+                        request.realName(), request.intro(), request.experienceYears()),
+                currentUser.id()));
+    }
+
+    @DeleteMapping("/{id}")
+    ApiResponse<Void> delete(@PathVariable long id) {
+        adminService.deleteTechnician(id);
+        return ApiResponse.success(null);
+    }
+
+    @PostMapping("/{id}/reset-password")
+    ApiResponse<Void> resetPassword(@PathVariable long id, @Valid @RequestBody ResetPasswordRequest request) {
+        adminService.resetTechnicianPassword(id, request.password());
+        return ApiResponse.success(null);
+    }
+
     @GetMapping("/applications/pending")
     ApiResponse<List<TechnicianAuditMapper.TechnicianApplicationView>> pendingApplications() {
         return ApiResponse.success(adminService.pendingApplications());
@@ -85,6 +108,19 @@ public class TechnicianAdminController {
     ApiResponse<Void> removePricing(@PathVariable long technicianId, @PathVariable long pricingId) {
         adminService.removePricing(pricingId);
         return ApiResponse.success(null);
+    }
+
+    public record CreateTechnicianRequest(
+            @NotBlank @Pattern(regexp = "1\\d{10}") String phone,
+            @NotBlank @Size(min = 6, max = 32) String password,
+            @NotBlank @Size(max = 64) String serviceName,
+            String realName,
+            String intro,
+            Integer experienceYears) {
+    }
+
+    public record ResetPasswordRequest(
+            @NotBlank @Size(min = 6, max = 32) String password) {
     }
 
     public record RejectRequest(@Size(max = 500) String reason) {

@@ -42,7 +42,12 @@ export function request<T>({ url, method = "GET", data }: RequestOptions): Promi
       method,
       data,
       timeout: 10000,
-      header: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+      header: {
+        ...(method === "POST" || method === "PUT" || data !== undefined
+          ? { "content-type": "application/json" }
+          : {}),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
       success(response) {
         const rawData = response.data;
         const envelope: ApiEnvelope<T> =

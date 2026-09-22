@@ -1,4 +1,4 @@
-.ios-admin-tech-page {
+.ios-admins-page {
   min-height: 100vh;
   background-color: #F2F2F7;
   padding: 24rpx;
@@ -10,7 +10,7 @@
 .header-card {
   background: #FFFFFF;
   border-radius: 28rpx;
-  padding: 28rpx 28rpx 20rpx;
+  padding: 28rpx;
   margin-bottom: 24rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.03);
 }
@@ -19,7 +19,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24rpx;
 }
 
 .header-title {
@@ -54,55 +53,14 @@
   line-height: 1;
 }
 
-/* 分段选项卡 */
-.segmented-tabs {
-  display: flex;
-  background: #E5E5EA;
-  padding: 6rpx;
-  border-radius: 20rpx;
-}
-
-.tab-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14rpx 0;
-  border-radius: 16rpx;
-  font-size: 26rpx;
-  font-weight: 500;
-  color: #8E8E93;
-  position: relative;
-  transition: all 0.2s ease;
-}
-
-.tab-item--active {
-  background: #FFFFFF;
-  color: #1D1D1F;
-  font-weight: 600;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
-}
-
-.tab-badge {
-  position: absolute;
-  right: 28rpx;
-  top: 10rpx;
-  background: #FF382E;
-  color: #FFFFFF;
-  font-size: 18rpx;
-  font-weight: 700;
-  padding: 2rpx 10rpx;
-  border-radius: 14rpx;
-}
-
-/* 技师卡片列表 */
-.tech-list-feed, .app-list-feed {
+/* 列表展示 */
+.admin-list-wrap {
   display: flex;
   flex-direction: column;
   gap: 20rpx;
 }
 
-.tech-card, .app-card {
+.admin-card {
   background: #FFFFFF;
   border-radius: 24rpx;
   padding: 28rpx;
@@ -113,13 +71,13 @@
   display: flex;
   align-items: center;
   gap: 20rpx;
-  margin-bottom: 24rpx;
+  margin-bottom: 20rpx;
 }
 
-.tech-avatar-circle {
+.admin-avatar-circle {
   width: 92rpx;
   height: 92rpx;
-  background: linear-gradient(135deg, #FF9500 0%, #C84B31 100%);
+  background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
   border-radius: 46rpx;
   display: flex;
   align-items: center;
@@ -130,7 +88,11 @@
   flex-shrink: 0;
 }
 
-.tech-head-info {
+.circle--super {
+  background: linear-gradient(135deg, #FF9500 0%, #C84B31 100%);
+}
+
+.admin-head-info {
   flex: 1;
 }
 
@@ -142,34 +104,84 @@
   margin-bottom: 8rpx;
 }
 
-.service-name {
+.admin-name {
   font-size: 32rpx;
   font-weight: 700;
   color: #1D1D1F;
 }
 
-.pill-badge {
+.role-pill {
   font-size: 20rpx;
   font-weight: 600;
   padding: 4rpx 12rpx;
-  border-radius: 12rpx;
+  border-radius: 10rpx;
 }
 
-.pill-status--ACTIVE { background: #E8F5E9; color: #2E7D32; }
-.pill-status--DISABLED { background: #FFEBEE; color: #C62828; }
-.pill-online--ONLINE { background: #E3F2FD; color: #1565C0; }
-.pill-online--OFFLINE { background: #F5F5F5; color: #757575; }
+.pill--super {
+  background: #FFF3E0;
+  color: #E65100;
+}
 
-.meta-line {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
+.pill--admin {
+  background: #E3F2FD;
+  color: #1565C0;
+}
+
+.status-tag {
+  font-size: 20rpx;
+  font-weight: 500;
+  padding: 4rpx 10rpx;
+  border-radius: 8rpx;
+}
+
+.tag--active { background: #E8F5E9; color: #2E7D32; }
+.tag--disabled { background: #FFEBEE; color: #C62828; }
+
+.admin-phone {
   font-size: 24rpx;
   color: #8E8E93;
 }
 
-.phone-link {
-  color: #007AFF;
+/* 权限组展示 */
+.groups-section {
+  background: #F8F8FA;
+  border-radius: 16rpx;
+  padding: 16rpx 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-label {
+  display: block;
+  font-size: 22rpx;
+  color: #8E8E93;
+  margin-bottom: 12rpx;
+}
+
+.groups-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.group-chip {
+  background: #FFFFFF;
+  border: 1rpx solid #E5E5EA;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+  color: #3A3A3C;
+  padding: 6rpx 16rpx;
+}
+
+.chip--super {
+  background: #FFF8E1;
+  border-color: #FFE082;
+  color: #F57F17;
+  font-weight: 600;
+}
+
+.chip--none {
+  color: #AEAEB2;
+  border-style: dashed;
 }
 
 /* 操作药丸按钮 */
@@ -189,106 +201,57 @@
   font-weight: 500;
 }
 
-.pill--toggle { background: #F2F2F7; color: #3A3A3C; }
-.pill--pwd { background: #EBF3FB; color: #007AFF; }
-.pill--pricing { background: #FFF4E5; color: #E65100; }
+.pill--edit { background: #EBF3FB; color: #007AFF; }
+.pill--pwd { background: #F2F2F7; color: #3A3A3C; }
 .pill--del { background: #FFF0F0; color: #FF382E; }
 
-/* 待审核卡片 */
-.app-head-row {
+/* 权限组选择项卡片 */
+.group-select-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+  margin-top: 10rpx;
+}
+
+.group-select-item {
+  background: #F2F2F7;
+  border: 2rpx solid transparent;
+  border-radius: 16rpx;
+  padding: 18rpx 20rpx;
+  transition: all 0.2s ease;
+}
+
+.group-select-item--active {
+  background: #F0F7FF;
+  border-color: #007AFF;
+}
+
+.item-head {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16rpx;
-}
-
-.app-name-line {
-  display: flex;
   align-items: center;
-  gap: 12rpx;
-  margin-bottom: 6rpx;
+  margin-bottom: 4rpx;
 }
 
-.app-service-name {
-  font-size: 32rpx;
-  font-weight: 700;
+.item-name {
+  font-size: 26rpx;
+  font-weight: 600;
   color: #1D1D1F;
 }
 
-.app-exp-pill {
-  background: #E8F5E9;
-  color: #2E7D32;
-  font-size: 20rpx;
-  font-weight: 600;
-  padding: 4rpx 10rpx;
-  border-radius: 10rpx;
-}
-
-.app-phone-link {
-  font-size: 24rpx;
+.item-check {
+  font-size: 28rpx;
+  font-weight: 700;
   color: #007AFF;
 }
 
-.app-time {
-  font-size: 22rpx;
-  color: #C7C7CC;
-}
-
-.app-intro-box {
-  background: #F8F8FA;
-  border-radius: 14rpx;
-  padding: 16rpx;
-  font-size: 24rpx;
-  line-height: 1.5;
-  margin-bottom: 16rpx;
-}
-
-.intro-label {
-  color: #8E8E93;
-}
-
-.intro-content {
-  color: #3A3A3C;
-}
-
-.area-tag-box {
+.item-desc {
   font-size: 22rpx;
   color: #8E8E93;
-  margin-bottom: 20rpx;
+  line-height: 1.4;
 }
 
-.area-val {
-  color: #3A3A3C;
-}
-
-.app-actions-row {
-  display: flex;
-  gap: 20rpx;
-}
-
-.reject-cta {
-  flex: 1;
-  height: 72rpx;
-  line-height: 72rpx;
-  background: #FFEBEE;
-  color: #FF382E;
-  font-size: 26rpx;
-  font-weight: 600;
-  border-radius: 36rpx;
-}
-
-.approve-cta {
-  flex: 2;
-  height: 72rpx;
-  line-height: 72rpx;
-  background: #C84B31;
-  color: #FFFFFF;
-  font-size: 26rpx;
-  font-weight: 600;
-  border-radius: 36rpx;
-}
-
-/* 弹窗通用样式 */
+/* 弹窗通用 */
 .modal-mask {
   position: fixed;
   top: 0;
@@ -371,17 +334,6 @@
   color: #1D1D1F;
 }
 
-.m-textarea {
-  width: 100%;
-  height: 160rpx;
-  background: #F2F2F7;
-  border-radius: 16rpx;
-  padding: 16rpx 20rpx;
-  box-sizing: border-box;
-  font-size: 26rpx;
-  color: #1D1D1F;
-}
-
 .modal-footer {
   display: flex;
   gap: 20rpx;
@@ -410,18 +362,6 @@
   border-radius: 42rpx;
 }
 
-.m-btn-reject {
-  flex: 2;
-  height: 84rpx;
-  line-height: 84rpx;
-  background: #FF382E;
-  color: #FFFFFF;
-  font-size: 28rpx;
-  font-weight: 600;
-  border-radius: 42rpx;
-}
-
-/* 空状态 */
 .ios-empty-view {
   display: flex;
   flex-direction: column;

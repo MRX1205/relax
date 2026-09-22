@@ -34,6 +34,12 @@ public interface IamMapper {
             + "ORDER BY id DESC LIMIT 20")
     List<AccessUser> listAccessUsers();
 
+    @Select("SELECT u.id, u.wechat_open_id AS wechatOpenId, u.nickname, u.phone, u.status "
+            + "FROM platform_user u JOIN iam_user_role ur ON ur.user_id = u.id JOIN iam_role r ON r.id = ur.role_id "
+            + "WHERE r.code IN ('ADMIN', 'SUPER_ADMIN') AND ur.status = 'ENABLED' "
+            + "GROUP BY u.id, u.wechat_open_id, u.nickname, u.phone, u.status ORDER BY u.id DESC")
+    List<AccessUser> listAdmins();
+
     @Select("SELECT code FROM iam_role r JOIN iam_user_role ur ON ur.role_id = r.id "
             + "WHERE ur.user_id = #{userId} AND ur.status = 'ENABLED' ORDER BY r.id")
     List<String> findRoles(@Param("userId") long userId);

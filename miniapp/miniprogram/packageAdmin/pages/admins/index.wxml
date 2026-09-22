@@ -1,0 +1,246 @@
+<view class="ios-admins-page">
+
+  <!-- ════ 1. 顶部操作头 ════ -->
+  <view class="header-card ios-card">
+    <view class="header-main-row">
+      <view class="header-left">
+        <text class="header-title">管理员与权限治理</text>
+        <text class="header-desc">设置管理账号 · 授予业务调度/财务审核权限</text>
+      </view>
+      <view class="add-btn ios-touch-active" bindtap="openAddModal">
+        <text class="add-plus">+</text>
+        <text>新增管理员</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ════ 2. 加载中 ════ -->
+  <view wx:if="{{loading}}" class="loading-grid">
+    <view class="ios-skeleton skeleton-card" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+  </view>
+
+  <!-- ════ 3. 管理员列表 ════ -->
+  <view wx:else class="admin-feed">
+    <view wx:if="{{admins.length === 0}}" class="ios-empty-view">
+      <text class="empty-icon">🛡️</text>
+      <text class="empty-title">暂无管理员</text>
+      <text class="empty-desc">点击右上角「新增管理员」创建平台运营人员</text>
+    </view>
+
+    <view wx:else class="admin-list-wrap">
+      <view wx:for="{{admins}}" wx:key="id" class="ios-card admin-card">
+        <view class="card-head-row">
+          <view class="admin-avatar-circle {{item.roles.indexOf('SUPER_ADMIN') >= 0 ? 'circle--super' : ''}}">
+            <text>{{item.nickname ? item.nickname[0] : '管'}}</text>
+          </view>
+          <view class="admin-head-info">
+            <view class="name-line">
+              <text class="admin-name">{{item.nickname || '管理员'}}</text>
+              <view wx:if="{{item.roles.indexOf('SUPER_ADMIN') >= 0}}" class="role-pill pill--super">超级管理员</view>
+              <view wx:else class="role-pill pill--admin">运营管理员</view>
+              <view class="status-tag {{item.status === 'ACTIVE' ? 'tag--active' : 'tag--disabled'}}">
+                {{item.status === 'ACTIVE' ? '已启用' : '已冻结'}}
+              </view>
+            </view>
+            <text class="admin-phone">📱 登录手机号：{{item.phone}}</text>
+          </view>
+        </view>
+
+        <!-- 权限组标签 -->
+        <view class="groups-section">
+          <text class="section-label">授权管理范围：</text>
+          <view class="groups-chips">
+            <block wx:if="{{item.roles.indexOf('SUPER_ADMIN') >= 0}}">
+              <view class="group-chip chip--super">全平台最高控制权 (Super Admin)</view>
+            </block>
+            <block wx:elif="{{item.permissionGroups.length > 0}}">
+              <view wx:for="{{item.permissionGroups}}" wx:key="*this" wx:for-item="g" class="group-chip">
+                {{g === 'SUPPLY' ? '📦 供给管理' : (g === 'ORDERS' ? '📋 订单调度' : (g === 'FINANCE' ? '💰 财务审核' : (g === 'OPERATIONS' ? '🚀 运营管理' : g)))}}
+              </view>
+            </block>
+            <block wx:else>
+              <view class="group-chip chip--none">暂未分配业务权限组</view>
+            </block>
+          </view>
+        </view>
+
+        <!-- 操作按钮行 -->
+        <view class="card-action-bar">
+          <view
+            class="action-pill pill--edit ios-touch-active"
+            data-item="{{item}}"
+            bindtap="openEditModal"
+          >
+            <text>分配权限</text>
+          </view>
+          <view
+            class="action-pill pill--pwd ios-touch-active"
+            data-item="{{item}}"
+            bindtap="openResetModal"
+          >
+            <text>重置密码</text>
+          </view>
+          <view
+            wx:if="{{item.roles.indexOf('SUPER_ADMIN') < 0 && item.id != currentUserId}}"
+            class="action-pill pill--del ios-touch-active"
+            data-item="{{item}}"
+            bindtap="handleDeleteAdmin"
+          >
+            <text>移除</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ════ 4. 新增管理员弹窗 ════ -->
+  <view wx:if="{{showAddModal}}" class="modal-mask" bindtap="closeAddModal">
+    <view class="modal-body ios-card" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">新增运营管理员</text>
+        <text class="modal-close ios-touch-active" bindtap="closeAddModal">✕</text>
+      </view>
+      <text class="modal-sub">创建后管理员可使用该账号密码直接登录服务端工作台进行调度。</text>
+
+      <view class="modal-form">
+        <view class="m-field">
+          <text class="m-label">登录手机号 <text class="req">*</text></text>
+          <input
+            class="m-input"
+            type="number"
+            maxlength="11"
+            placeholder="11位手机号码（登录账号）"
+            value="{{addForm.phone}}"
+            data-field="phone"
+            bindinput="handleAddInput"
+          />
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">初始密码 <text class="req">*</text></text>
+          <input
+            class="m-input"
+            password
+            placeholder="不少于6位登录密码"
+            value="{{addForm.password}}"
+            data-field="password"
+            bindinput="handleAddInput"
+          />
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">姓名 / 备注</text>
+          <input
+            class="m-input"
+            placeholder="如: 张经理（订单运营）"
+            value="{{addForm.nickname}}"
+            data-field="nickname"
+            bindinput="handleAddInput"
+          />
+        </view>
+
+        <!-- 权限组选择 -->
+        <view class="m-field">
+          <text class="m-label">授权业务模块（可多选）</text>
+          <view class="group-select-grid">
+            <view
+              wx:for="{{groups}}"
+              wx:key="code"
+              class="group-select-item {{addForm.selectedGroups.indexOf(item.code) >= 0 ? 'group-select-item--active' : ''}} ios-touch-active"
+              data-code="{{item.code}}"
+              bindtap="toggleAddGroup"
+            >
+              <view class="item-head">
+                <text class="item-name">{{item.name}}</text>
+                <text class="item-check">{{addForm.selectedGroups.indexOf(item.code) >= 0 ? '✓' : '+'}}</text>
+              </view>
+              <text class="item-desc">
+                {{item.code === 'SUPPLY' ? '技师入驻/资质核验/项目定价' : (item.code === 'ORDERS' ? '全域订单调度/技师改派' : (item.code === 'FINANCE' ? '退款审批/技师结算出款' : '轮播图/分类/系统基本配置'))}}
+              </text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="m-btn-cancel ios-touch-active" bindtap="closeAddModal">取消</button>
+        <button class="m-btn-confirm ios-touch-active" loading="{{submittingAdd}}" bindtap="handleConfirmAdd">
+          确认创建
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- ════ 5. 修改权限组弹窗 ════ -->
+  <view wx:if="{{showEditModal}}" class="modal-mask" bindtap="closeEditModal">
+    <view class="modal-body ios-card" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">调整权限范围</text>
+        <text class="modal-close ios-touch-active" bindtap="closeEditModal">✕</text>
+      </view>
+      <text class="modal-sub">管理员：{{editTarget.nickname}} ({{editTarget.phone}})</text>
+
+      <view class="modal-form">
+        <view class="m-field">
+          <text class="m-label">授权业务模块</text>
+          <view class="group-select-grid">
+            <view
+              wx:for="{{groups}}"
+              wx:key="code"
+              class="group-select-item {{editSelectedGroups.indexOf(item.code) >= 0 ? 'group-select-item--active' : ''}} ios-touch-active"
+              data-code="{{item.code}}"
+              bindtap="toggleEditGroup"
+            >
+              <view class="item-head">
+                <text class="item-name">{{item.name}}</text>
+                <text class="item-check">{{editSelectedGroups.indexOf(item.code) >= 0 ? '✓' : '+'}}</text>
+              </view>
+              <text class="item-desc">
+                {{item.code === 'SUPPLY' ? '技师入驻/资质核验/项目定价' : (item.code === 'ORDERS' ? '全域订单调度/技师改派' : (item.code === 'FINANCE' ? '退款审批/技师结算出款' : '轮播图/分类/系统基本配置'))}}
+              </text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="m-btn-cancel ios-touch-active" bindtap="closeEditModal">取消</button>
+        <button class="m-btn-confirm ios-touch-active" loading="{{submittingEdit}}" bindtap="handleConfirmEdit">
+          保存权限
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- ════ 6. 重置密码弹窗 ════ -->
+  <view wx:if="{{showResetModal}}" class="modal-mask" bindtap="closeResetModal">
+    <view class="modal-body ios-card" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">重置管理员密码</text>
+        <text class="modal-close ios-touch-active" bindtap="closeResetModal">✕</text>
+      </view>
+      <text class="modal-sub">账号：{{resetTarget.nickname}} ({{resetTarget.phone}})</text>
+
+      <view class="modal-form">
+        <view class="m-field">
+          <text class="m-label">新登录密码</text>
+          <input
+            class="m-input"
+            password
+            placeholder="不少于6位新密码"
+            value="{{resetPassword}}"
+            bindinput="handleResetPasswordInput"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="m-btn-cancel ios-touch-active" bindtap="closeResetModal">取消</button>
+        <button class="m-btn-confirm ios-touch-active" loading="{{submittingReset}}" bindtap="handleConfirmReset">
+          确认重置
+        </button>
+      </view>
+    </view>
+  </view>
+
+</view>

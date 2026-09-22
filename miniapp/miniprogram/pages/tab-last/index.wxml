@@ -26,7 +26,8 @@
         wx:for="{{orders}}"
         wx:key="id"
         class="order-ticket-card ios-card ios-touch-active"
-        data-id="{{item.id || item.orderNo}}"
+        data-id="{{item.id}}"
+        data-no="{{item.orderNo || item.id}}"
         bindtap="goToOrderDetail"
       >
         <!-- 头部：单号与状态标签 -->

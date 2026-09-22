@@ -216,4 +216,13 @@
       <view style="height: 60rpx;"></view>
     </view>
   </block>
+
+  <block wx:else>
+    <view class="ios-empty-view" style="padding-top: 180rpx; text-align: center;">
+      <view style="font-size: 80rpx; margin-bottom: 24rpx;">📋</view>
+      <text style="font-size: 32rpx; font-weight: 600; color: #1D1D1F; display: block; margin-bottom: 12rpx;">未找到该订单信息</text>
+      <text style="font-size: 26rpx; color: #86868B; display: block; margin-bottom: 40rpx;">订单单号有误或已过期归档</text>
+      <button style="width: 280rpx; height: 80rpx; line-height: 80rpx; background: #C84B31; color: #fff; border-radius: 40rpx; font-size: 28rpx;" bindtap="returnToOrders">返回订单列表</button>
+    </view>
+  </block>
 </view>

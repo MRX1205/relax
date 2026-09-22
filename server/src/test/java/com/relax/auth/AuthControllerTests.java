@@ -1,5 +1,6 @@
 package com.relax.auth;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -199,6 +200,95 @@ class AuthControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.data.account.phone").value("13800004444"));
+    }
+
+    @Test
+    void createTechnicianAndLoginWithPassword() throws Exception {
+        Login superAdmin = login("phase2-super");
+
+        // SuperAdmin creates new technician
+        String createTechBody = mockMvc.perform(post("/api/v1/admin/technicians")
+                        .header("Authorization", bearer(superAdmin.token()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "phone": "13812345678",
+                                  "password": "techpassword888",
+                                  "serviceName": "小美技师",
+                                  "realName": "王小美",
+                                  "experienceYears": 3,
+                                  "intro": "专注芳香理疗与经络舒缓"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("OK"))
+                .andExpect(jsonPath("$.data.serviceName").value("小美技师"))
+                .andExpect(jsonPath("$.data.phone").value("13812345678"))
+                .andReturn().getResponse().getContentAsString();
+
+        long techId = objectMapper.readTree(createTechBody).path("data").path("id").asLong();
+
+        // Technician logs in via password
+        mockMvc.perform(post("/api/v1/auth/password-login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "phone": "13812345678",
+                                  "password": "techpassword888",
+                                  "targetRole": "TECHNICIAN"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("OK"))
+                .andExpect(jsonPath("$.data.account.lastRole").value("TECHNICIAN"));
+
+        // SuperAdmin deletes/disables technician
+        mockMvc.perform(delete("/api/v1/admin/technicians/{id}", techId)
+                        .header("Authorization", bearer(superAdmin.token())))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void createAdminAndLoginWithPassword() throws Exception {
+        Login superAdmin = login("phase2-super");
+
+        // SuperAdmin creates new admin
+        mockMvc.perform(post("/api/v1/admin/access/admins")
+                        .header("Authorization", bearer(superAdmin.token()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "phone": "13887654321",
+                                  "password": "adminpassword999",
+                                  "nickname": "张主管",
+                                  "groupCodes": ["SUPPLY", "ORDERS"]
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("OK"))
+                .andExpect(jsonPath("$.data.phone").value("13887654321"))
+                .andExpect(jsonPath("$.data.nickname").value("张主管"))
+                .andExpect(jsonPath("$.data.roles").isArray());
+
+        // Admin logs in via password
+        mockMvc.perform(post("/api/v1/auth/password-login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "phone": "13887654321",
+                                  "password": "adminpassword999",
+                                  "targetRole": "ADMIN"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("OK"))
+                .andExpect(jsonPath("$.data.account.lastRole").value("ADMIN"));
+
+        // SuperAdmin lists admins
+        mockMvc.perform(get("/api/v1/admin/access/admins")
+                        .header("Authorization", bearer(superAdmin.token())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray());
     }
 
     private void updateAdminAccess(String token, long userId, String group) throws Exception {

@@ -24,6 +24,7 @@ public class RateLimitConfig {
     private final Map<String, RateWindow> windows = new ConcurrentHashMap<>();
 
     @Bean
+    @org.springframework.context.annotation.Profile("!test")
     Filter rateLimitFilter() {
         return new Filter() {
             @Override

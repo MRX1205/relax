@@ -28,7 +28,7 @@ public interface OrderMapper {
             + "project_id AS projectId, status, service_date AS serviceDate, start_time AS startTime, "
             + "end_time AS endTime, version, note, cancel_reason AS cancelReason, "
             + "created_at AS createdAt, updated_at AS updatedAt "
-            + "FROM service_order WHERE order_no = #{orderNo}")
+            + "FROM service_order WHERE order_no = #{orderNo} OR CAST(id AS CHAR) = #{orderNo}")
     Optional<OrderView> findByOrderNo(@Param("orderNo") String orderNo);
 
     @Select("SELECT id, order_no AS orderNo, user_id AS userId, technician_id AS technicianId, "

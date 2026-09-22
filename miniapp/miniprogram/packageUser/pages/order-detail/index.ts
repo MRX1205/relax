@@ -14,8 +14,16 @@ Page({
   },
 
   onLoad(query: Record<string, string>) {
-    const orderNo = query.orderNo || "";
+    const orderNo = query.orderNo || query.id || "";
+    if (!orderNo) {
+      this.setData({ loading: false });
+      return;
+    }
     this.loadDetail(orderNo);
+  },
+
+  returnToOrders() {
+    wx.switchTab({ url: "/pages/tab-last/index" });
   },
 
   async loadDetail(orderNo: string) {

@@ -62,8 +62,8 @@ Page({
   },
 
   goToOrderDetail(e: WechatMiniprogram.TouchEvent) {
-    const id = e.currentTarget.dataset.id;
-    wx.navigateTo({ url: `/packageUser/pages/order-detail/index?id=${id}` });
+    const no = e.currentTarget.dataset.no || e.currentTarget.dataset.id;
+    wx.navigateTo({ url: `/packageUser/pages/order-detail/index?orderNo=${no}` });
   },
 
   goToFinancePage(e: WechatMiniprogram.TouchEvent) {

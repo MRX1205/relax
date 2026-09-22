@@ -17,12 +17,15 @@ public class TechnicianAdminService {
     private final TechnicianAuditMapper auditMapper;
     private final TechnicianPricingMapper pricingMapper;
     private final com.relax.auth.AuthMapper authMapper;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     TechnicianAdminService(TechnicianAuditMapper auditMapper, TechnicianPricingMapper pricingMapper,
-            com.relax.auth.AuthMapper authMapper) {
+            com.relax.auth.AuthMapper authMapper,
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.auditMapper = auditMapper;
         this.pricingMapper = pricingMapper;
         this.authMapper = authMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // === 技师列表 ===
@@ -71,6 +74,82 @@ public class TechnicianAdminService {
         if (auditMapper.updateTechnicianStatus(technicianId, status) == 0) {
             throw new BusinessException(HttpStatus.NOT_FOUND, "TECHNICIAN_NOT_FOUND", "技师不存在");
         }
+    }
+
+    @Transactional
+    public TechnicianAuditMapper.TechnicianBrief createTechnician(CreateTechnicianCommand cmd, long operatorId) {
+        String phone = cmd.phone().strip();
+        if (!phone.matches("1\\d{10}")) {
+            throw new BusinessException("PHONE_INVALID", "手机号格式不正确，请输入11位手机号");
+        }
+        if (cmd.password() == null || cmd.password().strip().length() < 6) {
+            throw new BusinessException("PASSWORD_INVALID", "登录密码不能少于6位");
+        }
+        String passwordHash = passwordEncoder.encode(cmd.password().strip());
+
+        Optional<com.relax.auth.UserAccount> userOpt = authMapper.findUserByPhone(phone);
+        long userId;
+        if (userOpt.isPresent()) {
+            userId = userOpt.get().id();
+            authMapper.updatePassword(userId, passwordHash);
+            if (authMapper.countRole(userId, "TECHNICIAN") == 0) {
+                authMapper.insertRole(userId, "TECHNICIAN", operatorId);
+            }
+        } else {
+            userId = IdWorker.getId();
+            authMapper.insertUser(userId, "tech:phone:" + phone, null);
+            authMapper.updatePhone(userId, phone);
+            authMapper.updateProfile(userId, cmd.serviceName().strip(), null);
+            authMapper.updatePassword(userId, passwordHash);
+            authMapper.insertRole(userId, "USER", operatorId);
+            authMapper.insertRole(userId, "TECHNICIAN", operatorId);
+        }
+
+        int exp = cmd.experienceYears() != null ? cmd.experienceYears() : 1;
+        String realName = (cmd.realName() != null && !cmd.realName().isBlank()) ? cmd.realName().strip() : cmd.serviceName().strip();
+        String intro = (cmd.intro() != null && !cmd.intro().isBlank()) ? cmd.intro().strip() : "平台认证专业技师";
+
+        Optional<Long> existingTechId = auditMapper.findTechnicianIdByUserId(userId);
+        long techId;
+        if (existingTechId.isPresent()) {
+            techId = existingTechId.get();
+            auditMapper.updateTechnicianStatus(techId, "ACTIVE");
+            auditMapper.updateBasicInfo(techId, cmd.serviceName().strip(), realName, phone, intro, exp);
+        } else {
+            techId = IdWorker.getId();
+            auditMapper.insertTechnician(techId, userId, cmd.serviceName().strip(), realName, phone, intro, exp);
+        }
+
+        return auditMapper.findAllTechnicians().stream()
+                .filter(t -> t.id() == techId)
+                .findFirst()
+                .orElseThrow();
+    }
+
+    @Transactional
+    public void deleteTechnician(long technicianId) {
+        TechnicianAuditMapper.TechnicianBrief tech = auditMapper.findAllTechnicians().stream()
+                .filter(t -> t.id() == technicianId)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "TECHNICIAN_NOT_FOUND", "技师不存在"));
+        auditMapper.updateTechnicianStatus(technicianId, "DISABLED");
+        auditMapper.updateOnlineStatus(technicianId, "OFFLINE");
+    }
+
+    @Transactional
+    public void resetTechnicianPassword(long technicianId, String newPassword) {
+        if (newPassword == null || newPassword.strip().length() < 6) {
+            throw new BusinessException("PASSWORD_INVALID", "登录密码不能少于6位");
+        }
+        TechnicianAuditMapper.TechnicianBrief tech = auditMapper.findAllTechnicians().stream()
+                .filter(t -> t.id() == technicianId)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "TECHNICIAN_NOT_FOUND", "技师不存在"));
+        authMapper.updatePassword(tech.userId(), passwordEncoder.encode(newPassword.strip()));
+    }
+
+    public record CreateTechnicianCommand(String phone, String password, String serviceName,
+            String realName, String intro, Integer experienceYears) {
     }
 
     // === 项目定价 ===

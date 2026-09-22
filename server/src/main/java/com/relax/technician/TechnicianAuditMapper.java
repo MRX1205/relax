@@ -40,13 +40,18 @@ public interface TechnicianAuditMapper {
             + "FROM technician t JOIN platform_user u ON u.id = t.user_id WHERE t.id = #{id}")
     Optional<TechnicianFullProfile> findFullProfileById(@Param("id") long id);
 
+    @Select("SELECT id FROM technician WHERE user_id = #{userId}")
+    Optional<Long> findTechnicianIdByUserId(@Param("userId") long userId);
+
     @Select("SELECT id, user_id AS userId, service_name AS serviceName, real_name AS realName, "
             + "phone, intro, experience_years AS experienceYears, status, created_at AS createdAt "
             + "FROM technician_application WHERE id = #{id}")
     Optional<TechnicianApplicationView> findApplicationById(@Param("id") long id);
 
     @Select("SELECT id, user_id AS userId, service_name AS serviceName, real_name AS realName, "
-            + "phone, intro, experience_years AS experienceYears, status, reject_reason AS rejectReason, created_at AS createdAt "
+            + "phone, intro, experience_years AS experienceYears, service_area_codes AS serviceAreaCodes, "
+            + "photo_file_id AS photoFileId, certificate_file_id AS certificateFileId, "
+            + "status, reject_reason AS rejectReason, created_at AS createdAt "
             + "FROM technician_application WHERE status = 'PENDING' ORDER BY id DESC")
     List<TechnicianApplicationView> findPendingApplications();
 
@@ -60,6 +65,13 @@ public interface TechnicianAuditMapper {
     void insertTechnician(@Param("id") long id, @Param("userId") long userId,
             @Param("serviceName") String serviceName, @Param("realName") String realName,
             @Param("phone") String phone, @Param("intro") String intro, @Param("experienceYears") int experienceYears);
+
+    @Update("UPDATE technician SET service_name = #{serviceName}, real_name = #{realName}, phone = #{phone}, "
+            + "intro = #{intro}, experience_years = #{experienceYears}, status = 'ACTIVE', updated_at = CURRENT_TIMESTAMP "
+            + "WHERE id = #{id}")
+    int updateBasicInfo(@Param("id") long id, @Param("serviceName") String serviceName,
+            @Param("realName") String realName, @Param("phone") String phone,
+            @Param("intro") String intro, @Param("experienceYears") int experienceYears);
 
     @Update("UPDATE technician SET status = #{status}, updated_at = CURRENT_TIMESTAMP WHERE id = #{id}")
     int updateTechnicianStatus(@Param("id") long id, @Param("status") String status);
@@ -92,6 +104,7 @@ public interface TechnicianAuditMapper {
     }
 
     record TechnicianApplicationView(long id, long userId, String serviceName, String realName,
-            String phone, String intro, int experienceYears, String status, String rejectReason, LocalDateTime createdAt) {
+            String phone, String intro, int experienceYears, String serviceAreaCodes,
+            Long photoFileId, Long certificateFileId, String status, String rejectReason, LocalDateTime createdAt) {
     }
 }

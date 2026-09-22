@@ -126,7 +126,15 @@ class FullFlowE2ETest {
                 .andExpect(status().isOk()).andReturn();
         JsonNode body = objectMapper.readTree(r.getResponse().getContentAsString());
         if (body.at("/data").isArray() && body.at("/data").size() > 0) {
-            technicianId = body.at("/data/0/id").asLong();
+            for (JsonNode t : body.at("/data")) {
+                if (t.path("serviceName").asText().contains("管理员") || "13800000000".equals(t.path("phone").asText())) {
+                    technicianId = t.path("id").asLong();
+                    break;
+                }
+            }
+            if (technicianId == 0) {
+                technicianId = body.at("/data/0/id").asLong();
+            }
         }
         // 为技师设置项目定价
         mockMvc.perform(put("/api/v1/admin/technicians/" + technicianId + "/pricing/" + projectId)

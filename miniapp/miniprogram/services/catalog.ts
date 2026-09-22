@@ -5,10 +5,11 @@ export function getHomeData(): Promise<HomeData> {
 }
 
 export function getProjects(categoryId: string | number = 0, page = 0): Promise<ProjectBrief[]> {
-  const params = new URLSearchParams();
-  if (categoryId && categoryId !== "0") params.set("categoryId", String(categoryId));
-  params.set("page", String(page));
-  return request<ProjectBrief[]>({ url: `/api/v1/projects?${params}` });
+  const parts: string[] = [`page=${encodeURIComponent(page)}`];
+  if (categoryId && String(categoryId) !== "0") {
+    parts.push(`categoryId=${encodeURIComponent(categoryId)}`);
+  }
+  return request<ProjectBrief[]>({ url: `/api/v1/projects?${parts.join("&")}` });
 }
 
 export function getProjectDetail(id: string): Promise<ProjectDetail> {

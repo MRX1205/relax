@@ -37,7 +37,7 @@ class FileAndAgreementControllerTests {
     void readsVersionedAgreementAndRecordsConsent() throws Exception {
         String body = mockMvc.perform(get("/api/v1/agreements/PRIVACY_POLICY"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.version").value("1.0"))
+                .andExpect(jsonPath("$.data.version").value("2.0"))
                 .andReturn().getResponse().getContentAsString();
         String agreementId = objectMapper.readTree(body).path("data").path("id").asText();
         String token = login("agreement-user");

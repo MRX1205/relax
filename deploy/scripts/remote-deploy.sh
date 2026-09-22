@@ -22,14 +22,14 @@ fi
 echo "=== [3/5] 构建并启动 Docker Compose 服务 ==="
 cd "${DEPLOY_DIR}/deploy"
 
-# 检查是否有预编译的 JAR 包加速构建，避免在 2GB 内存服务器上触发 OOM
-if [ -f "../server/target/relax-server-0.1.0-SNAPSHOT.jar" ]; then
-    echo "检测到预编译 JAR 包，使用轻量镜像构建..."
+# 如果 relax-server:latest 镜像不存在，则使用 Dockerfile.slim 构建基础运行镜像
+if ! docker image inspect relax-server:latest >/dev/null 2>&1; then
+    echo "本地未发现 relax-server:latest 镜像，开始初始化镜像..."
     docker build -f ../server/Dockerfile.slim -t relax-server:latest ../server
 fi
 
 docker compose up -d --remove-orphans mysql redis
-docker compose up -d --remove-orphans server
+docker compose up -d --remove-orphans --force-recreate server
 docker compose up -d --remove-orphans nginx
 
 echo "=== [4/5] 等待服务健康检查 ==="

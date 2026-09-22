@@ -47,8 +47,12 @@ Page({
       const url = kw
         ? `/api/v1/admin/access/users?keyword=${encodeURIComponent(kw)}`
         : "/api/v1/admin/access/users";
-      const list = await request<AccessUserItem[]>({ url });
-      this.setData({ users: list || [], loading: false });
+      const list = await request<any[]>({ url });
+      const mapped = (list || []).map((u: any) => ({
+        ...u,
+        userId: u.userId || u.id,
+      }));
+      this.setData({ users: mapped, loading: false });
     } catch {
       this.setData({ loading: false });
       wx.showToast({ title: "加载用户列表失败", icon: "none" });

@@ -59,7 +59,7 @@ services:
     volumes:
       - ../server/target/relax-server-0.1.0-SNAPSHOT.jar:/app/app.jar:ro
     environment:
-      JAVA_TOOL_OPTIONS: "-Xms48m -Xmx180m -XX:+UseSerialGC -Xss256k -XX:MaxMetaspaceSize=80m -XX:+ExitOnOutOfMemoryError"
+      JAVA_TOOL_OPTIONS: "-Xms48m -Xmx180m -XX:+UseSerialGC -Xss256k -XX:MaxMetaspaceSize=160m -XX:+ExitOnOutOfMemoryError"
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
       DB_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-relax}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
       DB_USERNAME: ${MYSQL_USER:-relax}

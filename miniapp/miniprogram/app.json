@@ -71,7 +71,8 @@
         "pages/admins/index",
         "pages/audit-logs/index",
         "pages/system-settings/index",
-        "pages/coupons/index"
+        "pages/coupons/index",
+        "pages/stats/index"
       ]
     }
   ],

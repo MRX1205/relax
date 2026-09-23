@@ -213,6 +213,10 @@
   background: linear-gradient(135deg, #FFF4E5 0%, #FFE6B8 100%);
 }
 
+.tile-message {
+  background: linear-gradient(135deg, #F0EBFF 0%, #DFD4FF 100%);
+}
+
 .tile-sub-badge {
   position: absolute;
   top: -8rpx;

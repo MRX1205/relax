@@ -145,8 +145,6 @@ page {
   width: 100vw !important;
   height: 100vh !important;
   background: rgba(0, 0, 0, 0.65) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  backdrop-filter: blur(14px) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -168,6 +166,10 @@ page {
   box-shadow: 0 24rpx 64rpx rgba(0, 0, 0, 0.35) !important;
   position: relative !important;
   z-index: 100000 !important;
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+  isolation: isolate !important;
+  -webkit-overflow-scrolling: touch !important;
 }
 
 /* iOS Inset Grouped TableView 分组容器 */

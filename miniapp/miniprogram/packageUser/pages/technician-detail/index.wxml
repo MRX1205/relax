@@ -217,7 +217,10 @@
         </scroll-view>
 
         <!-- 时段网格 -->
-        <view class="schedule-slots-grid">
+        <view wx:if="{{timeSlots.length === 0}}" class="schedule-empty-tip">
+          <text>技师所选日期暂无可约排班（休息中）</text>
+        </view>
+        <view class="schedule-slots-grid" wx:else>
           <view
             wx:for="{{timeSlots}}"
             wx:key="startTime"

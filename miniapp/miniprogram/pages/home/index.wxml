@@ -85,12 +85,12 @@
         <text class="tile-label">邀请有礼</text>
       </view>
 
-      <view class="quick-tile ios-touch-active" bindtap="goToCoupons">
-        <view class="tile-icon-box tile-coupon">
-          <image class="tile-svg" src="/assets/icons/coupon.png" mode="aspectFit" />
-          <view class="tile-sub-badge">立减券</view>
+      <view class="quick-tile ios-touch-active" bindtap="goToNotifications">
+        <view class="tile-icon-box tile-message">
+          <image class="tile-svg" src="/assets/icons/bell.png" mode="aspectFit" />
+          <view wx:if="{{unreadNoticeCount > 0}}" class="tile-sub-badge">{{unreadNoticeCount > 99 ? '99+' : unreadNoticeCount}}</view>
         </view>
-        <text class="tile-label">领券中心</text>
+        <text class="tile-label">消息中心</text>
       </view>
     </view>
 

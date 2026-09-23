@@ -491,6 +491,15 @@
   color: #FFFFFF;
 }
 
+.schedule-empty-tip {
+  padding: 36rpx 24rpx;
+  background: #F9F9FB;
+  border-radius: 16rpx;
+  text-align: center;
+  color: #8E8E93;
+  font-size: 26rpx;
+}
+
 .schedule-slots-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

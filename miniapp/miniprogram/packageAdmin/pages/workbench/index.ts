@@ -2,6 +2,8 @@ import { bindCurrentWechat, getCachedAccount, loadCurrentAccount, logout } from 
 import { requireRole } from "../../../utils/auth-guard";
 import { request } from "../../../services/http";
 import { getPublicPaymentMode, PaymentModeInfo } from "../../services/payment";
+import { uploadPrivateFile } from "../../../services/file";
+import { environment } from "../../../config/environment";
 
 interface StatsOverview {
   totalOrders: number;
@@ -70,6 +72,8 @@ Page({
     broadcastContent: "",
     broadcastTarget: "ALL",
     broadcastUserId: "",
+    broadcastImageUrl: "",
+    uploadingBroadcastImage: false,
     submittingBroadcast: false,
   },
 
@@ -178,6 +182,8 @@ Page({
       broadcastContent: "",
       broadcastTarget: "ALL",
       broadcastUserId: "",
+      broadcastImageUrl: "",
+      uploadingBroadcastImage: false,
     });
   },
 
@@ -200,6 +206,43 @@ Page({
 
   handleBroadcastUserIdInput(e: WechatMiniprogram.Input) {
     this.setData({ broadcastUserId: e.detail.value });
+  },
+
+  async chooseBroadcastImage() {
+    try {
+      const res = await wx.chooseMedia({
+        count: 1,
+        mediaType: ["image"],
+        sizeType: ["compressed"],
+      });
+      const filePath = res.tempFiles[0].tempFilePath;
+      this.setData({ uploadingBroadcastImage: true });
+      wx.showLoading({ title: "上传配图中…" });
+      const fileAsset = await uploadPrivateFile(filePath, "BANNER_IMAGE");
+      const url = `${environment.apiBaseUrl}/api/v1/public/files/${fileAsset.id}`;
+      this.setData({ broadcastImageUrl: url });
+      wx.showToast({ title: "配图上传成功", icon: "success" });
+    } catch (err: any) {
+      if (err?.errMsg?.indexOf("cancel") === -1) {
+        wx.showToast({ title: "配图上传失败", icon: "none" });
+      }
+    } finally {
+      this.setData({ uploadingBroadcastImage: false });
+      wx.hideLoading();
+    }
+  },
+
+  clearBroadcastImage() {
+    this.setData({ broadcastImageUrl: "" });
+  },
+
+  previewBroadcastImage() {
+    if (this.data.broadcastImageUrl) {
+      wx.previewImage({
+        current: this.data.broadcastImageUrl,
+        urls: [this.data.broadcastImageUrl],
+      });
+    }
   },
 
   async handleConfirmBroadcast() {
@@ -239,13 +282,14 @@ Page({
           content,
           type: "SYSTEM_ANNOUNCEMENT",
           targetUserId,
+          imageUrl: this.data.broadcastImageUrl || null,
         },
       });
       wx.showToast({
         title: `成功推送至 ${res || 1} 位用户！`,
         icon: "success",
       });
-      this.setData({ showBroadcastModal: false, submittingBroadcast: false });
+      this.setData({ showBroadcastModal: false, submittingBroadcast: false, broadcastImageUrl: "" });
     } catch (err: any) {
       this.setData({ submittingBroadcast: false });
       wx.showToast({ title: err?.message || "广播发送失败", icon: "none" });

@@ -43,7 +43,7 @@ public class CatalogController {
     }
 
     @PostMapping("/admin/categories")
-    @PreAuthorize("hasAuthority('project:write')")
+    @PreAuthorize("hasAuthority('project:write') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<CategoryMapper.CategoryView> createCategory(@AuthenticationPrincipal CurrentUser currentUser,
             @Valid @RequestBody CategoryRequest request) {
         return ApiResponse.success(catalogService.createCategory(
@@ -51,7 +51,7 @@ public class CatalogController {
     }
 
     @PutMapping("/admin/categories/{id}")
-    @PreAuthorize("hasAuthority('project:write')")
+    @PreAuthorize("hasAuthority('project:write') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<CategoryMapper.CategoryView> updateCategory(@AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable long id, @Valid @RequestBody CategoryRequest request) {
         return ApiResponse.success(catalogService.updateCategory(id,
@@ -59,7 +59,7 @@ public class CatalogController {
     }
 
     @PutMapping("/admin/categories/{id}/status")
-    @PreAuthorize("hasAuthority('project:write')")
+    @PreAuthorize("hasAuthority('project:write') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<CategoryMapper.CategoryView> updateCategoryStatus(@AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable long id, @Valid @RequestBody StatusRequest request) {
         return ApiResponse.success(catalogService.updateCategoryStatus(id, request.status()));
@@ -68,13 +68,13 @@ public class CatalogController {
     // === 项目管理（仅管理端） ===
 
     @GetMapping("/admin/projects")
-    @PreAuthorize("hasAuthority('project:read')")
+    @PreAuthorize("hasAuthority('project:read') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<List<ProjectMapper.ProjectView>> listAllProjects() {
         return ApiResponse.success(catalogService.listProjects());
     }
 
     @PostMapping("/admin/projects")
-    @PreAuthorize("hasAuthority('project:write')")
+    @PreAuthorize("hasAuthority('project:write') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<ProjectMapper.ProjectView> createProject(@AuthenticationPrincipal CurrentUser currentUser,
             @Valid @RequestBody ProjectRequest request) {
         return ApiResponse.success(catalogService.createProject(new CatalogService.ProjectRequest(
@@ -83,7 +83,7 @@ public class CatalogController {
     }
 
     @PutMapping("/admin/projects/{id}")
-    @PreAuthorize("hasAuthority('project:write')")
+    @PreAuthorize("hasAuthority('project:write') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<ProjectMapper.ProjectView> updateProject(@AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable long id, @Valid @RequestBody ProjectRequest request) {
         return ApiResponse.success(catalogService.updateProject(id, new CatalogService.ProjectRequest(
@@ -92,14 +92,14 @@ public class CatalogController {
     }
 
     @PutMapping("/admin/projects/{id}/status")
-    @PreAuthorize("hasAuthority('project:write')")
+    @PreAuthorize("hasAuthority('project:write') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<ProjectMapper.ProjectView> updateProjectStatus(@AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable long id, @Valid @RequestBody StatusRequest request) {
         return ApiResponse.success(catalogService.updateProjectStatus(id, request.status()));
     }
 
     @DeleteMapping("/admin/projects/{id}")
-    @PreAuthorize("hasAuthority('project:write')")
+    @PreAuthorize("hasAuthority('project:write') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<Void> deleteProject(@AuthenticationPrincipal CurrentUser currentUser, @PathVariable long id) {
         catalogService.deleteProject(id);
         return ApiResponse.success(null);

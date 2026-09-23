@@ -28,12 +28,29 @@ Page({
 
   async loadData() {
     try {
+      let techId = this.data.technicianId;
+      let techName = this.data.technicianName;
+      if (!techId) {
+        const techs = await request<any[]>({ url: "/api/v1/admin/technicians" }).catch(() => []);
+        if (techs && techs.length > 0) {
+          techId = String(techs[0].id);
+          techName = techs[0].serviceName;
+          this.setData({ technicianId: techId, technicianName: techName });
+          wx.setNavigationBarTitle({ title: `${techName} - 专属定价` });
+        }
+      }
+      if (!techId) {
+        this.setData({ loading: false });
+        return;
+      }
       const [pricing, projects] = await Promise.all([
-        request<Pricing[]>({ url: `/api/v1/admin/technicians/${this.data.technicianId}/pricing` }),
-        request<Project[]>({ url: "/api/v1/admin/projects" }),
+        request<Pricing[]>({ url: `/api/v1/admin/technicians/${techId}/pricing` }).catch(() => []),
+        request<Project[]>({ url: "/api/v1/admin/projects" }).catch(() => []),
       ]);
-      this.setData({ pricing, projects, loading: false });
-    } catch { this.setData({ loading: false }); }
+      this.setData({ pricing: pricing || [], projects: projects || [], loading: false });
+    } catch {
+      this.setData({ loading: false });
+    }
   },
 
   handleShowAdd() {

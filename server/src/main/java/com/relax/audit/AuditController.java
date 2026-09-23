@@ -11,7 +11,7 @@ import com.relax.common.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/v1/admin/audit-logs")
-@PreAuthorize("hasAuthority('audit:read')")
+@PreAuthorize("hasAuthority('audit:read') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
 public class AuditController {
 
     private final AuditService auditService;

@@ -17,7 +17,7 @@ import com.relax.common.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/v1/admin/orders/{orderNo}")
-@PreAuthorize("hasAuthority('order:manage')")
+@PreAuthorize("hasAuthority('order:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
 public class ReassignmentController {
 
     private final ReassignmentService reassignmentService;

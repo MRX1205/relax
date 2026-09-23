@@ -21,7 +21,7 @@ import com.relax.common.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/v1/admin/settlements")
-@PreAuthorize("hasAuthority('settlement:manage')")
+@PreAuthorize("hasAuthority('settlement:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
 public class AdminSettlementController {
 
     private final SettlementService settlementService;

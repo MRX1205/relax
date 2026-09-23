@@ -259,8 +259,6 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.65) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -282,6 +280,10 @@
   box-shadow: 0 24rpx 64rpx rgba(0, 0, 0, 0.35) !important;
   position: relative;
   z-index: 100000 !important;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  isolation: isolate;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {

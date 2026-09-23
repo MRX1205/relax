@@ -34,27 +34,27 @@ public class BannerController {
     }
 
     @GetMapping("/admin/banners")
-    @PreAuthorize("hasAuthority('content:manage')")
+    @PreAuthorize("hasAuthority('content:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<List<BannerMapper.BannerView>> listAll() {
         return ApiResponse.success(bannerService.listAll());
     }
 
     @PostMapping("/admin/banners")
-    @PreAuthorize("hasAuthority('content:manage')")
+    @PreAuthorize("hasAuthority('content:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<BannerMapper.BannerView> create(@Valid @RequestBody BannerRequest request) {
         return ApiResponse.success(bannerService.create(new BannerService.BannerRequest(
                 request.title(), request.imageFileId(), request.linkType(), request.linkValue(), request.sort())));
     }
 
     @PutMapping("/admin/banners/{id}")
-    @PreAuthorize("hasAuthority('content:manage')")
+    @PreAuthorize("hasAuthority('content:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<BannerMapper.BannerView> update(@PathVariable long id, @Valid @RequestBody BannerRequest request) {
         return ApiResponse.success(bannerService.update(id, new BannerService.BannerRequest(
                 request.title(), request.imageFileId(), request.linkType(), request.linkValue(), request.sort())));
     }
 
     @PutMapping("/admin/banners/{id}/status")
-    @PreAuthorize("hasAuthority('content:manage')")
+    @PreAuthorize("hasAuthority('content:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<Void> updateStatus(@PathVariable long id, @Valid @RequestBody StatusRequest request) {
         bannerService.updateStatus(id, request.status());
         return ApiResponse.success(null);

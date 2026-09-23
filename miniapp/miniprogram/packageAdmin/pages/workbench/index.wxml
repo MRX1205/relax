@@ -267,6 +267,18 @@
         </view>
 
         <view class="m-field">
+          <text class="m-label">通知宣传配图（可选）</text>
+          <view wx:if="{{broadcastImageUrl}}" class="broadcast-img-preview-box">
+            <image class="preview-img" src="{{broadcastImageUrl}}" mode="aspectFill" bindtap="previewBroadcastImage" />
+            <view class="del-img-btn ios-touch-active" bindtap="clearBroadcastImage">✕ 移除配图</view>
+          </view>
+          <view wx:else class="upload-img-box ios-touch-active" bindtap="chooseBroadcastImage">
+            <text class="upload-plus">+</text>
+            <text class="upload-txt">点击上传公告封面或横幅海报</text>
+          </view>
+        </view>
+
+        <view class="m-field">
           <text class="m-label">推送目标范围</text>
           <view class="target-radio-row">
             <view

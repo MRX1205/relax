@@ -20,7 +20,7 @@ import com.relax.common.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/v1/admin/refunds")
-@PreAuthorize("hasAuthority('order:refund')")
+@PreAuthorize("hasAuthority('order:refund') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
 public class AdminRefundController {
 
     private final RefundService refundService;

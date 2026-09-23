@@ -22,7 +22,7 @@ import com.relax.common.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/v1/admin/access")
-@PreAuthorize("hasAuthority('admin:manage')")
+@PreAuthorize("hasAuthority('admin:manage') or hasRole('SUPER_ADMIN')")
 public class IamController {
 
     private final IamService iamService;

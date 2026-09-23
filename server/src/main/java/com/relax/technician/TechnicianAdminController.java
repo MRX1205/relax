@@ -27,7 +27,7 @@ import com.relax.common.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/v1/admin/technicians")
-@PreAuthorize("hasAuthority('technician:audit')")
+@PreAuthorize("hasAuthority('technician:audit') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
 public class TechnicianAdminController {
 
     private final TechnicianAdminService adminService;

@@ -20,19 +20,27 @@ public class NotificationService {
     }
 
     public void send(long userId, String type, String title, String content, String orderNo) {
+        send(userId, type, title, content, orderNo, null);
+    }
+
+    public void send(long userId, String type, String title, String content, String orderNo, String imageUrl) {
         long id = IdWorker.getId();
-        mapper.insert(id, userId, type, title, content, orderNo);
+        mapper.insert(id, userId, type, title, content, orderNo, imageUrl);
     }
 
     public int broadcast(String type, String title, String content, Long targetUserId) {
+        return broadcast(type, title, content, targetUserId, null);
+    }
+
+    public int broadcast(String type, String title, String content, Long targetUserId, String imageUrl) {
         String msgType = (type != null && !type.isBlank()) ? type.trim() : "ANNOUNCEMENT";
         if (targetUserId != null && targetUserId > 0) {
-            send(targetUserId, msgType, title, content, null);
+            send(targetUserId, msgType, title, content, null, imageUrl);
             return 1;
         }
         List<Long> userIds = iamMapper.findAllActiveUserIds();
         for (Long uid : userIds) {
-            send(uid, msgType, title, content, null);
+            send(uid, msgType, title, content, null, imageUrl);
         }
         return userIds.size();
     }

@@ -15,6 +15,7 @@ Page({
     techHasApplication: false,
     techApplicationStatus: "",
     techStats: { pending: 0, today: 0 },
+    unreadNoticeCount: 0,
     adminStats: { todayOrders: 0, totalOrders: 0, totalUsers: 0, totalTechnicians: 0 },
     adminMenus: [
       { icon: "📂", name: "分类管理", url: "/packageAdmin/pages/categories/index" },
@@ -39,6 +40,11 @@ Page({
     const hasToken = !!getAccessToken();
     
     if (hasToken) {
+      try {
+        const count = await request<number>({ url: "/api/v1/notifications/unread-count" });
+        this.setData({ unreadNoticeCount: count || 0 });
+      } catch {}
+
       try {
         const account = await loadCurrentAccount();
         if (account) {
@@ -180,6 +186,10 @@ Page({
 
   goToInvite() {
     wx.navigateTo({ url: "/packageUser/pages/invite/index" });
+  },
+
+  goToNotifications() {
+    wx.navigateTo({ url: "/packageUser/pages/notifications/index" });
   },
 
   goToCoupons() {

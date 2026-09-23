@@ -87,18 +87,10 @@ Page({
   },
 
   selectDate(date: string) {
-    let slots = this.data.detail?.availability
+    const slots = (this.data.detail?.availability || [])
       .filter((a: any) => a.scheduleDate === date)
-      .map((a: any) => ({ startTime: a.startTime, endTime: a.endTime })) || [];
+      .map((a: any) => ({ startTime: a.startTime, endTime: a.endTime }));
 
-    if (slots.length === 0) {
-      slots = [
-        { startTime: "10:00", endTime: "12:00" },
-        { startTime: "14:00", endTime: "16:00" },
-        { startTime: "16:30", endTime: "18:30" },
-        { startTime: "19:00", endTime: "21:00" },
-      ];
-    }
     this.setData({ selectedDate: date, timeSlots: slots });
   },
 

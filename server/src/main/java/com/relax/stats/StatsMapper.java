@@ -39,12 +39,12 @@ public interface StatsMapper {
     List<StatusCount> orderStatusCounts();
 
     // === 技师排行 ===
-    @Select("SELECT t.id AS technicianId, t.name, COUNT(o.id) AS orderCount, "
+    @Select("SELECT t.id AS technicianId, t.service_name AS name, COUNT(o.id) AS orderCount, "
             + "COALESCE(SUM(oa.payable_amount), 0) AS revenue "
             + "FROM technician t LEFT JOIN service_order o ON o.technician_id = t.id AND o.status = 'COMPLETED' "
             + "LEFT JOIN order_amount oa ON oa.order_id = o.id "
             + "WHERE t.status = 'ACTIVE' "
-            + "GROUP BY t.id, t.name ORDER BY orderCount DESC LIMIT #{limit}")
+            + "GROUP BY t.id, t.service_name ORDER BY orderCount DESC LIMIT #{limit}")
     List<TechRanking> techRanking(@Param("limit") int limit);
 
     // === 每日趋势 ===

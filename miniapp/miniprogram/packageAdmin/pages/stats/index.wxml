@@ -47,7 +47,7 @@
       <view class="section-title">订单状态分布</view>
       <view class="status-list">
         <view wx:for="{{statusCounts}}" wx:key="status" class="status-item">
-          <text class="status-name">{{item.status}}</text>
+          <text class="status-name">{{item.statusName || item.status}}</text>
           <text class="status-count">{{item.count}}</text>
         </view>
       </view>

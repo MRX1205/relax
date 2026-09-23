@@ -113,6 +113,8 @@
             value="{{addForm.phone}}"
             data-field="phone"
             bindinput="handleAddInput"
+            adjust-position="{{true}}"
+            cursor-spacing="20"
           />
         </view>
 
@@ -125,6 +127,8 @@
             value="{{addForm.password}}"
             data-field="password"
             bindinput="handleAddInput"
+            adjust-position="{{true}}"
+            cursor-spacing="20"
           />
         </view>
 
@@ -136,6 +140,8 @@
             value="{{addForm.nickname}}"
             data-field="nickname"
             bindinput="handleAddInput"
+            adjust-position="{{true}}"
+            cursor-spacing="20"
           />
         </view>
 

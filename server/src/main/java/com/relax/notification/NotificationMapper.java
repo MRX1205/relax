@@ -12,14 +12,14 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface NotificationMapper {
 
-    @Insert("INSERT INTO notification (id, user_id, type, title, content, related_order_no) "
-            + "VALUES (#{id}, #{userId}, #{type}, #{title}, #{content}, #{relatedOrderNo})")
+    @Insert("INSERT INTO notification (id, user_id, type, title, content, related_order_no, image_url) "
+            + "VALUES (#{id}, #{userId}, #{type}, #{title}, #{content}, #{relatedOrderNo}, #{imageUrl})")
     void insert(@Param("id") long id, @Param("userId") long userId, @Param("type") String type,
             @Param("title") String title, @Param("content") String content,
-            @Param("relatedOrderNo") String relatedOrderNo);
+            @Param("relatedOrderNo") String relatedOrderNo, @Param("imageUrl") String imageUrl);
 
     @Select("SELECT id, user_id AS userId, type, title, content, related_order_no AS relatedOrderNo, "
-            + "read_at AS readAt, send_status AS sendStatus, created_at AS createdAt "
+            + "image_url AS imageUrl, read_at AS readAt, send_status AS sendStatus, created_at AS createdAt "
             + "FROM notification WHERE user_id = #{userId} ORDER BY id DESC LIMIT #{limit} OFFSET #{offset}")
     List<NotificationView> findByUser(@Param("userId") long userId,
             @Param("limit") int limit, @Param("offset") int offset);
@@ -34,5 +34,5 @@ public interface NotificationMapper {
     int unreadCount(@Param("userId") long userId);
 
     record NotificationView(long id, long userId, String type, String title, String content,
-            String relatedOrderNo, LocalDateTime readAt, String sendStatus, LocalDateTime createdAt) {}
+            String relatedOrderNo, String imageUrl, LocalDateTime readAt, String sendStatus, LocalDateTime createdAt) {}
 }

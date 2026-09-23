@@ -12,7 +12,7 @@ import com.relax.common.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/v1/admin/stats")
-@PreAuthorize("hasAuthority('order:read')")
+@PreAuthorize("hasAuthority('order:read') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
 public class StatsController {
 
     private final StatsMapper statsMapper;

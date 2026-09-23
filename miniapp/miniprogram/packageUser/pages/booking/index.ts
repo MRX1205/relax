@@ -185,34 +185,42 @@ Page({
       }).catch(() => []);
 
       const slots: TimeSlot[] = [];
+      const duration = this.data.durationMinutes || 60;
       const startHour = 8;
       const endHour = 22;
+      const hasAnySchedule = schedules && schedules.length > 0;
 
       for (let hour = startHour; hour < endHour; hour++) {
         const time = `${hour.toString().padStart(2, "0")}:00`;
+        const totalEndMinutes = hour * 60 + duration;
+        const endHourVal = Math.floor(totalEndMinutes / 60);
+        const endMinVal = totalEndMinutes % 60;
+        const slotEndTime = `${endHourVal.toString().padStart(2, "0")}:${endMinVal.toString().padStart(2, "0")}`;
 
         let available = false;
-        if (schedules && schedules.length > 0) {
-          for (const schedule of schedules) {
-            if (time >= schedule.startTime && time < schedule.endTime && schedule.type !== "OFF") {
-              available = true;
-              break;
+        if (hasAnySchedule) {
+          for (const s of schedules) {
+            if (s.status !== "DISABLED" && s.type !== "OFF") {
+              if (s.startTime <= time && s.endTime >= slotEndTime) {
+                available = true;
+                break;
+              }
             }
           }
-        } else {
-          available = true;
         }
 
         let statusText = "可约";
         if (date === this.data.today) {
-          const nowHour = new Date().getHours();
-          if (hour <= nowHour) {
+          const now = new Date();
+          const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+          const slotTotalMinutes = hour * 60;
+          if (slotTotalMinutes <= currentTotalMinutes + 30) {
             available = false;
             statusText = "已过";
           }
         }
         if (!available && statusText !== "已过") {
-          statusText = "约满";
+          statusText = hasAnySchedule ? "约满" : "休息";
         }
 
         slots.push({ time, display: time, available, statusText, selected: false });
@@ -226,12 +234,7 @@ Page({
         this.selectSlot(firstAvailable.time);
       }
     } catch {
-      const slots: TimeSlot[] = [];
-      for (let hour = 8; hour < 22; hour++) {
-        const time = `${hour.toString().padStart(2, "0")}:00`;
-        slots.push({ time, display: time, available: true, statusText: "可约", selected: false });
-      }
-      this.setData({ timeSlots: slots, loadingSlots: false });
+      this.setData({ timeSlots: [], loadingSlots: false });
     }
   },
 

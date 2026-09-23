@@ -14,5 +14,6 @@ server/target/
 
 deploy/backups/
 deploy/.env
+scratch/
 
 

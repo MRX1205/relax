@@ -195,6 +195,8 @@
             value="{{addForm.phone}}"
             data-field="phone"
             bindinput="handleAddInput"
+            adjust-position="{{true}}"
+            cursor-spacing="20"
           />
         </view>
 
@@ -207,6 +209,8 @@
             value="{{addForm.password}}"
             data-field="password"
             bindinput="handleAddInput"
+            adjust-position="{{true}}"
+            cursor-spacing="20"
           />
         </view>
 
@@ -218,6 +222,8 @@
             value="{{addForm.serviceName}}"
             data-field="serviceName"
             bindinput="handleAddInput"
+            adjust-position="{{true}}"
+            cursor-spacing="20"
           />
         </view>
 
@@ -229,6 +235,8 @@
             value="{{addForm.realName}}"
             data-field="realName"
             bindinput="handleAddInput"
+            adjust-position="{{true}}"
+            cursor-spacing="20"
           />
         </view>
 
@@ -241,6 +249,8 @@
             value="{{addForm.experienceYears}}"
             data-field="experienceYears"
             bindinput="handleAddInput"
+            adjust-position="{{true}}"
+            cursor-spacing="20"
           />
         </view>
 
@@ -252,6 +262,8 @@
             value="{{addForm.intro}}"
             data-field="intro"
             bindinput="handleAddInput"
+            adjust-position="{{true}}"
+            cursor-spacing="20"
           />
         </view>
       </view>

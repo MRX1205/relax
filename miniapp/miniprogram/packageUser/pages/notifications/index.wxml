@@ -1,36 +1,136 @@
-<view class="page">
-  <view class="header" wx:if="{{unreadCount > 0}}">
-    <text class="unread-text">{{unreadCount}} 条未读消息</text>
-    <text class="mark-read" bindtap="markAllRead">全部已读</text>
+<view class="notifications-page">
+  <!-- ════ 1. 顶部状态概览栏 ════ -->
+  <view class="header-glass-bar">
+    <view class="header-left">
+      <text class="page-title">消息中心</text>
+      <view class="unread-pill {{unreadCount > 0 ? 'unread-active' : ''}}">
+        <text class="unread-dot" wx:if="{{unreadCount > 0}}"></text>
+        <text class="unread-text">{{unreadCount > 0 ? unreadCount + '条未读' : '全部已读'}}</text>
+      </view>
+    </view>
+    <view
+      wx:if="{{unreadCount > 0}}"
+      class="mark-all-btn ios-touch-active"
+      bindtap="markAllRead"
+    >
+      <text class="check-icon">✓</text>
+      <text>全部已读</text>
+    </view>
   </view>
 
-  <ui-state wx:if="{{loading && notifications.length === 0}}" title="加载中" kind="loading" />
-
-  <block wx:elif="{{notifications.length === 0}}">
-    <view class="empty">
-      <view class="empty__icon">🔔</view>
-      <view class="empty__text">暂无消息</view>
-    </view>
-  </block>
-
-  <block wx:else>
-    <view class="notification-list">
+  <!-- ════ 2. 苹果风格分段选择器 (Segmented Control) ════ -->
+  <view class="segment-tabs-wrap">
+    <view class="segment-tabs">
       <view
-        wx:for="{{notifications}}"
-        wx:key="id"
-        class="notification-item surface {{!item.readAt ? 'unread' : ''}}"
-        data-item="{{item}}"
-        bindtap="handleTap"
+        class="tab-item {{currentTab === 'ALL' ? 'tab-item--active' : ''}}"
+        data-tab="ALL"
+        bindtap="setTab"
       >
-        <view class="notification-header">
-          <text class="notification-title">{{item.title}}</text>
-          <text class="notification-time">{{item.createdAt}}</text>
+        <text class="tab-label">全部</text>
+        <text class="tab-badge" wx:if="{{allNotifications.length > 0}}">{{allNotifications.length}}</text>
+      </view>
+      <view
+        class="tab-item {{currentTab === 'ANNOUNCEMENT' ? 'tab-item--active' : ''}}"
+        data-tab="ANNOUNCEMENT"
+        bindtap="setTab"
+      >
+        <text class="tab-label">📢 官方公告</text>
+        <text class="tab-badge" wx:if="{{announcementCount > 0}}">{{announcementCount}}</text>
+      </view>
+      <view
+        class="tab-item {{currentTab === 'ORDER' ? 'tab-item--active' : ''}}"
+        data-tab="ORDER"
+        bindtap="setTab"
+      >
+        <text class="tab-label">📋 订单动态</text>
+        <text class="tab-badge" wx:if="{{orderCount > 0}}">{{orderCount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ════ 3. 加载与空状态 ════ -->
+  <ui-state wx:if="{{loading && allNotifications.length === 0}}" title="正在同步消息..." kind="loading" />
+
+  <view wx:elif="{{filteredNotifications.length === 0}}" class="empty-feed">
+    <view class="empty-icon-wrap">
+      <image class="empty-art-icon" src="/assets/icons/bell.png" mode="aspectFit" />
+    </view>
+    <text class="empty-primary">暂无相关消息</text>
+    <text class="empty-desc">官方活动与订单最新动态将第一时间在此呈现</text>
+  </view>
+
+  <!-- ════ 4. 消息卡片流 ════ -->
+  <view wx:else class="notification-feed">
+    <view
+      wx:for="{{filteredNotifications}}"
+      wx:key="id"
+      class="notice-card ios-touch-active {{!item.readAt ? 'notice-card--unread' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="handleCardTap"
+    >
+      <!-- 大图封面（若管理员上传了图片） -->
+      <view
+        wx:if="{{item.imageUrl}}"
+        class="notice-cover-wrap"
+        catchtap="previewImage"
+        data-url="{{item.imageUrl}}"
+      >
+        <image class="notice-cover-img" src="{{item.imageUrl}}" mode="aspectFill" lazy-load />
+        <view class="cover-gradient-mask"></view>
+        <view class="cover-badge">
+          <text class="badge-dot">●</text>
+          <text>资讯配图 · 点击查看大图</text>
         </view>
-        <text class="notification-content">{{item.content}}</text>
-        <view wx:if="{{item.relatedOrderNo}}" class="notification-link">
-          查看订单 ›
+      </view>
+
+      <!-- 卡片主体内容 -->
+      <view class="notice-card-body">
+        <!-- 头部元信息：标签与时间 -->
+        <view class="notice-meta-row">
+          <view class="meta-left">
+            <view class="type-tag {{item.tagClass}}">
+              <text class="tag-icon">{{item.icon}}</text>
+              <text class="tag-text">{{item.tagText}}</text>
+            </view>
+            <view class="unread-pulse-dot" wx:if="{{!item.readAt}}"></view>
+          </view>
+          <text class="notice-time">{{item.formattedTime || item.createdAt}}</text>
+        </view>
+
+        <!-- 标题 -->
+        <view class="notice-title-row">
+          <text class="notice-title">{{item.title}}</text>
+        </view>
+
+        <!-- 正文 -->
+        <view class="notice-content-box {{item.expanded ? 'notice-content--full' : ''}}">
+          <text class="notice-content">{{item.content}}</text>
+        </view>
+
+        <!-- 展开/收起按钮（文字长时） -->
+        <view
+          wx:if="{{item.content && item.content.length > 80}}"
+          class="expand-action"
+          catchtap="toggleExpand"
+          data-id="{{item.id}}"
+        >
+          <text>{{item.expanded ? '收起内容 ▴' : '展开全文 ▾'}}</text>
+        </view>
+
+        <!-- 订单关联跳转横条 -->
+        <view wx:if="{{item.relatedOrderNo}}" class="notice-order-link">
+          <view class="link-left">
+            <image class="link-icon" src="/assets/icons/order.png" mode="aspectFit" />
+            <text class="link-label">关联订单: {{item.relatedOrderNo}}</text>
+          </view>
+          <text class="link-arrow">查看详情 ›</text>
         </view>
       </view>
     </view>
-  </block>
+
+    <!-- 底部无更多提示 -->
+    <view class="feed-footer" wx:if="{{!hasMore && filteredNotifications.length > 3}}">
+      <text class="feed-footer-text">已加载全部消息</text>
+    </view>
+  </view>
 </view>

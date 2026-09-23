@@ -176,4 +176,33 @@ Page({
     this.setData({ isFollowed: next });
     wx.showToast({ title: next ? "已关注" : "已取消关注", icon: "success" });
   },
+
+  handleQuickBooking() {
+    if (!this.data.detail || !this.data.detail.projects || this.data.detail.projects.length === 0) {
+      wx.showToast({ title: "技师暂无排班项目", icon: "none" });
+      return;
+    }
+    const p = this.data.detail.projects[0];
+    const techName = encodeURIComponent(this.data.detail?.technician.serviceName || "");
+    const pName = encodeURIComponent(p.projectName || "");
+    const avatar = encodeURIComponent(this.data.detail?.technician.avatarUrl || "");
+    const price = p.overridePrice || p.price || p.basePrice || 0;
+
+    wx.navigateTo({
+      url: `/packageUser/pages/booking/index?projectId=${p.projectId}&technicianId=${this.data.techId}&projectName=${pName}&technicianName=${techName}&technicianAvatar=${avatar}&duration=${p.durationMinutes || 60}&price=${price}&date=${this.data.selectedDate}`,
+    });
+  },
+
+  makeCustomerCall() {
+    const phone = this.data.detail?.technician?.phone;
+    if (phone) {
+      wx.makePhoneCall({ phoneNumber: phone });
+    } else {
+      wx.showModal({
+        title: "平台咨询",
+        content: "如需咨询技师排期与服务详情，请拨打客服专线",
+        showCancel: false,
+      });
+    }
+  },
 });

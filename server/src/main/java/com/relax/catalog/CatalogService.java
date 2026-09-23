@@ -96,6 +96,12 @@ public class CatalogService {
         return projectMapper.findById(id).orElseThrow();
     }
 
+    @Transactional
+    public void deleteProject(long id) {
+        getProject(id);
+        projectMapper.delete(id);
+    }
+
     public record CategoryRequest(String name, int sort) {
     }
 

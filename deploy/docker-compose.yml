@@ -13,13 +13,13 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_0900_ai_ci
-      - --innodb-buffer-pool-size=64M
-      - --max-connections=60
+      - --innodb-buffer-pool-size=32M
+      - --max-connections=40
       - --performance-schema=OFF
     deploy:
       resources:
         limits:
-          memory: 350M
+          memory: 300M
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
@@ -32,11 +32,11 @@ services:
   redis:
     image: redis:8.2-alpine
     restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "48mb", "--maxmemory-policy", "allkeys-lru", "--requirepass", "${REDIS_PASSWORD:-change-redis-password}"]
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "32mb", "--maxmemory-policy", "allkeys-lru", "--requirepass", "${REDIS_PASSWORD:-change-redis-password}"]
     deploy:
       resources:
         limits:
-          memory: 64M
+          memory: 48M
     volumes:
       - redis-data:/data
     healthcheck:
@@ -55,11 +55,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: 450M
     volumes:
       - ../server/target/relax-server-0.1.0-SNAPSHOT.jar:/app/app.jar:ro
     environment:
-      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx220m -XX:+UseSerialGC -Xss256k -XX:MaxMetaspaceSize=96m -XX:+ExitOnOutOfMemoryError"
+      JAVA_TOOL_OPTIONS: "-Xms48m -Xmx180m -XX:+UseSerialGC -Xss256k -XX:MaxMetaspaceSize=80m -XX:+ExitOnOutOfMemoryError"
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
       DB_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-relax}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
       DB_USERNAME: ${MYSQL_USER:-relax}

@@ -1,269 +1,323 @@
-<view class="page">
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+<view class="unified-tech-detail-page">
+  <ui-state wx:if="{{loading}}" title="加载技师资料..." kind="loading" />
 
   <block wx:elif="{{detail}}">
-    <!-- Hero 顶部全景轮播区 -->
-    <view class="hero">
-      <swiper class="hero-swiper" indicator-dots="{{detail.technician.photos.length > 1}}"
-              indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#FFFFFF"
-              autoplay circular>
-        <!-- 主照片 -->
+    <!-- ════ 1. 沉浸式 Hero 顶部风采相册 ════ -->
+    <view class="hero-section">
+      <swiper
+        class="hero-swiper"
+        indicator-dots="{{detail.technician.photos.length > 1}}"
+        indicator-color="rgba(255,255,255,0.4)"
+        indicator-active-color="#FFFFFF"
+        autoplay
+        circular
+      >
+        <!-- 主头像 -->
         <swiper-item>
-          <view class="hero-img-wrap" bindtap="previewPhotos">
-            <image wx:if="{{detail.technician.avatarUrl}}"
-                   class="hero-img" src="{{detail.technician.avatarUrl}}" mode="aspectFill" />
-            <view wx:else class="hero-img hero-img-placeholder">
-              <text class="hero-placeholder-text">{{detail.technician.serviceName[0]}}</text>
+          <view class="hero-slide-wrap" bindtap="previewPhotos">
+            <image
+              wx:if="{{detail.technician.avatarUrl}}"
+              class="hero-bg-img"
+              src="{{detail.technician.avatarUrl}}"
+              mode="aspectFill"
+            />
+            <view wx:else class="hero-ph-view">
+              <text class="hero-ph-char">{{detail.technician.serviceName[0]}}</text>
             </view>
           </view>
         </swiper-item>
-        <!-- 风采生活照 -->
+        <!-- 生活风采照 -->
         <swiper-item wx:for="{{detail.technician.photos}}" wx:key="*this">
-          <view class="hero-img-wrap" data-index="{{index}}" bindtap="previewPhotos">
-            <image class="hero-img" src="{{item}}" mode="aspectFill" />
+          <view class="hero-slide-wrap" data-index="{{index}}" bindtap="previewPhotos">
+            <image class="hero-bg-img" src="{{item}}" mode="aspectFill" />
           </view>
         </swiper-item>
       </swiper>
 
-      <!-- 顶部浮层：毛玻璃返回胶囊 + 相册数量 -->
-      <view class="hero-overlay-top">
-        <view class="back-pill ios-touch-active" bindtap="handleBack">
-          <text class="back-arrow-char">‹</text>
+      <!-- 渐变阴影遮罩 -->
+      <view class="hero-gradient-mask"></view>
+
+      <!-- 顶部浮层：返回胶囊 + 相册数量 -->
+      <view class="hero-nav-bar">
+        <view class="glass-back-pill ios-touch-active" bindtap="handleBack">
+          <text class="back-char">‹</text>
         </view>
-        <view class="photo-hint" wx:if="{{detail.technician.photos.length > 0}}">
+        <view class="glass-photo-pill" wx:if="{{detail.technician.photos.length > 0}}">
           <text>📷 {{detail.technician.photos.length + 1}} 张风采照</text>
         </view>
       </view>
 
-      <!-- 底部浮层：姓名与身份标签 -->
-      <view class="hero-overlay-bottom">
-        <view class="hero-name-row">
-          <text class="hero-name">{{detail.technician.serviceName}}</text>
-          <view class="status-pill {{detail.technician.onlineStatus === 'ONLINE' ? 'status-pill--on' : 'status-pill--off'}}">
-            <view class="pulse-dot"></view>
-            <text>{{detail.technician.onlineStatus === 'ONLINE' ? '接单中' : '休息中'}}</text>
+      <!-- 底部艺名与在线状态浮层 -->
+      <view class="hero-caption-overlay">
+        <view class="caption-title-row">
+          <text class="caption-service-name">{{detail.technician.serviceName}}</text>
+          <view class="status-chip {{detail.technician.onlineStatus === 'ONLINE' ? 'status--online' : 'status--offline'}}">
+            <view class="status-pulse-dot"></view>
+            <text>{{detail.technician.onlineStatus === 'ONLINE' ? '在线接单中' : '休息中'}}</text>
           </view>
         </view>
-        <view class="hero-tags">
-          <text wx:if="{{detail.technician.ageTag}}" class="hero-tag-pill">{{detail.technician.ageTag}}</text>
-          <text wx:if="{{detail.technician.height}}" class="hero-tag-pill">{{detail.technician.height}}cm</text>
-          <text wx:if="{{detail.technician.age}}" class="hero-tag-pill">{{detail.technician.age}}岁</text>
-          <text wx:if="{{detail.technician.weight}}" class="hero-tag-pill">{{detail.technician.weight}}kg</text>
+
+        <view class="caption-tags-row">
+          <text wx:if="{{detail.technician.ageTag}}" class="hero-mini-tag">{{detail.technician.ageTag}}</text>
+          <text wx:if="{{detail.technician.height}}" class="hero-mini-tag">{{detail.technician.height}}cm</text>
+          <text wx:if="{{detail.technician.age}}" class="hero-mini-tag">{{detail.technician.age}}岁</text>
+          <text class="hero-mini-tag">实名技师</text>
         </view>
       </view>
     </view>
 
-    <!-- 容器内容流 -->
-    <view class="detail-container">
+    <!-- ════ 2. 连续统一的主体面板 (Unified Continuous Sheet) ════ -->
+    <view class="unified-body-sheet">
 
-      <!-- 核心数据卡片 (Apple Inset Grouped Style) -->
-      <view class="ios-card stats-card">
-        <view class="stat-item">
-          <view class="stat-val-row">
-            <text class="stat-val">{{detail.technician.rating || '4.9'}}</text>
-            <text class="stat-unit">分</text>
+      <!-- 核心指标条 (Ratings / Orders / Experience / Follow) -->
+      <view class="metrics-strip">
+        <view class="metric-cell">
+          <view class="metric-val-row">
+            <text class="metric-figure figure-red">{{detail.technician.rating || '4.9'}}</text>
+            <text class="metric-unit">分</text>
           </view>
-          <text class="stat-lbl">服务好评</text>
+          <text class="metric-caption">好评率 99%</text>
         </view>
-        <view class="stat-divider" />
-        <view class="stat-item">
-          <view class="stat-val-row">
-            <text class="stat-val">{{detail.technician.annualOrders || '400+'}}</text>
-            <text class="stat-unit">单</text>
+        <view class="metric-divider"></view>
+
+        <view class="metric-cell">
+          <view class="metric-val-row">
+            <text class="metric-figure">{{detail.technician.annualOrders || '400+'}}</text>
+            <text class="metric-unit">单</text>
           </view>
-          <text class="stat-lbl">年度接单</text>
+          <text class="metric-caption">年度已服务</text>
         </view>
-        <view class="stat-divider" />
-        <view class="stat-item">
-          <view class="stat-val-row">
-            <text class="stat-val">{{detail.technician.experienceYears || '3'}}</text>
-            <text class="stat-unit">年</text>
+        <view class="metric-divider"></view>
+
+        <view class="metric-cell">
+          <view class="metric-val-row">
+            <text class="metric-figure">{{detail.technician.experienceYears || '3'}}</text>
+            <text class="metric-unit">年</text>
           </view>
-          <text class="stat-lbl">从业经验</text>
+          <text class="metric-caption">行业经验</text>
         </view>
-        <view class="stat-divider" />
-        <view class="stat-item ios-touch-active" bindtap="handleFollow">
-          <view class="follow-pill {{isFollowed ? 'follow-pill--active' : ''}}">
-            <text>{{isFollowed ? '已关注' : '+ 关注'}}</text>
+        <view class="metric-divider"></view>
+
+        <view class="metric-cell ios-touch-active" bindtap="handleFollow">
+          <view class="follow-pill {{isFollowed ? 'follow--active' : ''}}">
+            <text>{{isFollowed ? '已常约' : '+ 关注'}}</text>
           </view>
-          <text class="stat-lbl">{{isFollowed ? '常约技师' : '快捷预约'}}</text>
+          <text class="metric-caption">{{isFollowed ? '常约技师' : '快捷预约'}}</text>
         </view>
       </view>
 
-      <!-- 认证与官方背书 -->
-      <view wx:if="{{detail.technician.certifications.length > 0}}" class="ios-card cert-card">
-        <view class="cert-item" wx:for="{{detail.technician.certifications}}" wx:key="*this">
-          <view class="cert-icon-wrap">
-            <text class="cert-check">✓</text>
-          </view>
-          <text class="cert-text">{{item}}</text>
+      <!-- 官方认证背书标签横滑 -->
+      <view class="trust-endorse-bar" wx:if="{{detail.technician.certifications.length > 0}}">
+        <view class="trust-badge-item" wx:for="{{detail.technician.certifications}}" wx:key="*this">
+          <text class="trust-check">✓</text>
+          <text class="trust-txt">{{item}}</text>
         </view>
       </view>
 
-      <!-- 常驻服务地与原生地图导航 -->
-      <view wx:if="{{detail.technician.baseAddress}}" class="ios-card location-card">
-        <view class="location-header">
-          <view class="location-title">
-            <view class="icon-bubble icon-bubble--blue">
-              <image class="bubble-icon-img" src="/assets/icons/pin.png" mode="aspectFit" />
-            </view>
-            <text class="sec-heading">常驻服务区域</text>
+      <!-- 块 1: 常驻服务区域与地图 -->
+      <view class="sheet-block" wx:if="{{detail.technician.baseAddress}}">
+        <view class="block-header">
+          <view class="b-title-left">
+            <text class="b-icon">📍</text>
+            <text class="b-title">常驻服务区域</text>
           </view>
-          <view class="map-nav-pill ios-touch-active" wx:if="{{detail.technician.latitude && detail.technician.longitude}}" bindtap="openTechLocation">
-            <text>查看地图</text>
-            <text class="pill-arrow">›</text>
+          <view class="b-action-link ios-touch-active" wx:if="{{detail.technician.latitude && detail.technician.longitude}}" bindtap="openTechLocation">
+            <text>查看地图导航 ›</text>
           </view>
         </view>
-        <text class="address-desc">{{detail.technician.baseAddress}}</text>
+        <text class="b-sub-text">{{detail.technician.baseAddress}}</text>
       </view>
 
-      <!-- 个人风采与手法特色 -->
-      <view wx:if="{{detail.technician.intro}}" class="ios-card intro-card">
-        <view class="card-title-row">
-          <view class="icon-bubble icon-bubble--purple">
-            <image class="bubble-icon-img" src="/assets/icons/edit.png" mode="aspectFit" />
+      <!-- 块 2: 技师简介与手法特长 -->
+      <view class="sheet-block" wx:if="{{detail.technician.intro}}">
+        <view class="block-header">
+          <view class="b-title-left">
+            <text class="b-icon">💆</text>
+            <text class="b-title">风采与手法专长</text>
           </view>
-          <text class="sec-heading">技师风采与手法国标</text>
         </view>
-        <text class="intro-body">{{detail.technician.intro}}</text>
+        <view class="intro-textbox">
+          <text class="intro-content-txt">{{detail.technician.intro}}</text>
+        </view>
       </view>
 
-      <!-- 可服务项目列表 -->
-      <view class="ios-card project-card">
-        <view class="card-title-row">
-          <view class="icon-bubble icon-bubble--coral">
-            <image class="bubble-icon-img" src="/assets/icons/clock.png" mode="aspectFit" />
+      <!-- 块 3: 专属服务项目 (核心业务) -->
+      <view class="sheet-block" id="projects-section">
+        <view class="block-header">
+          <view class="b-title-left">
+            <text class="b-icon">✨</text>
+            <text class="b-title">专属服务项目</text>
+            <text class="b-count">（{{detail.projects.length}} 项可选）</text>
           </view>
-          <text class="sec-heading">专属服务项目</text>
-          <text class="sec-subtitle">（{{detail.projects.length}} 项）</text>
         </view>
 
-        <view wx:if="{{detail.projects.length === 0}}" class="empty-tip">该技师暂未关联可服务项目</view>
+        <view wx:if="{{detail.projects.length === 0}}" class="empty-project-tip">
+          <text>该技师暂未关联可服务项目</text>
+        </view>
 
-        <view class="project-list">
-          <view wx:for="{{detail.projects}}" wx:key="projectId" class="project-item">
-            <view class="project-item-left">
-              <image class="project-cover" src="{{item.coverUrl || item.displayCover}}" mode="aspectFill" />
-              <view class="project-meta-col">
-                <text class="project-title">{{item.projectName}}</text>
-                <view class="project-badge-row">
-                  <text class="duration-badge">{{item.durationMinutes}}分钟</text>
-                  <text class="tag-pill-light">专业理疗</text>
+        <view class="projects-continuous-list" wx:else>
+          <view
+            wx:for="{{detail.projects}}"
+            wx:key="projectId"
+            class="project-tile-card ios-touch-active"
+            data-projectid="{{item.projectId}}"
+            data-projectname="{{item.projectName}}"
+            data-duration="{{item.durationMinutes}}"
+            bindtap="goToBooking"
+          >
+            <image
+              class="tile-cover-img"
+              src="{{item.coverUrl || item.displayCover}}"
+              mode="aspectFill"
+            />
+            <view class="tile-info-col">
+              <view class="tile-title-row">
+                <text class="tile-p-name">{{item.projectName}}</text>
+              </view>
+              <view class="tile-tags-row">
+                <text class="tile-duration-tag">⏱ {{item.durationMinutes}}分钟</text>
+                <text class="tile-feature-tag">手法精选</text>
+              </view>
+              <view class="tile-bottom-row">
+                <view class="tile-price-box">
+                  <text class="tile-currency">¥</text>
+                  <text class="tile-amount">{{item.overridePrice || item.price || item.basePrice}}</text>
+                </view>
+                <view class="tile-book-btn">
+                  <text>去预约</text>
                 </view>
               </view>
             </view>
-            <view class="project-item-right">
-              <view class="price-box">
-                <text class="currency">¥</text>
-                <text class="amount">{{item.price}}</text>
-              </view>
-              <view class="ios-btn-coral ios-touch-active"
-                    data-projectid="{{item.projectId}}"
-                    data-projectname="{{item.projectName}}"
-                    data-duration="{{item.durationMinutes}}"
-                    bindtap="goToBooking">
-                预约
-              </view>
-            </view>
           </view>
         </view>
       </view>
 
-      <!-- 排班日历与可约时间段 (Segmented Control + Pill Grid) -->
-      <view class="ios-card schedule-card" wx:if="{{dateSlots.length > 0}}">
-        <view class="card-title-row">
-          <view class="icon-bubble icon-bubble--green">
-            <image class="bubble-icon-img" src="/assets/icons/calendar.png" mode="aspectFit" />
+      <!-- 块 4: 可约排期日历 -->
+      <view class="sheet-block" wx:if="{{dateSlots.length > 0}}">
+        <view class="block-header">
+          <view class="b-title-left">
+            <text class="b-icon">📅</text>
+            <text class="b-title">可约服务档期</text>
           </view>
-          <text class="sec-heading">可约排期</text>
         </view>
 
-        <!-- 日期胶囊滑条 -->
-        <scroll-view class="date-scroll" scroll-x enhanced show-scrollbar="{{false}}">
-          <view class="date-list">
-            <view wx:for="{{dateSlots}}" wx:key="date"
-                  class="date-pill {{selectedDate === item.date ? 'date-pill--active' : ''}} ios-touch-active"
-                  data-date="{{item.date}}" bindtap="handleDateTap">
-              <text class="date-label">{{item.label}}</text>
+        <!-- 日期横向滚动胶囊 -->
+        <scroll-view class="schedule-dates-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+          <view class="schedule-dates-row">
+            <view
+              wx:for="{{dateSlots}}"
+              wx:key="date"
+              class="s-date-pill {{selectedDate === item.date ? 's-date--active' : ''}} ios-touch-active"
+              data-date="{{item.date}}"
+              bindtap="handleDateTap"
+            >
+              <text class="s-date-txt">{{item.label}}</text>
             </view>
           </view>
         </scroll-view>
 
-        <!-- 时间段方阵 -->
-        <view class="time-grid">
-          <view wx:for="{{timeSlots}}" wx:key="startTime"
-                class="time-pill ios-touch-active"
-                data-start="{{item.startTime}}"
-                data-projectid="{{detail.projects.length > 0 ? detail.projects[0].projectId : ''}}"
-                bindtap="handleTimeTap">
-            <text class="time-val">{{item.startTime}}–{{item.endTime}}</text>
-            <text class="time-status">可约</text>
+        <!-- 时段网格 -->
+        <view class="schedule-slots-grid">
+          <view
+            wx:for="{{timeSlots}}"
+            wx:key="startTime"
+            class="s-time-chip ios-touch-active"
+            data-start="{{item.startTime}}"
+            data-projectid="{{detail.projects.length > 0 ? detail.projects[0].projectId : ''}}"
+            bindtap="handleTimeTap"
+          >
+            <text class="st-time">{{item.startTime}}–{{item.endTime}}</text>
+            <text class="st-status">可预约</text>
           </view>
         </view>
       </view>
 
-      <!-- 用户口碑评价 -->
-      <view wx:if="{{detail.reviews.length > 0}}" class="ios-card review-card">
-        <view class="card-title-row title-between">
-          <view class="title-left">
-            <view class="icon-bubble icon-bubble--amber">
-              <image class="bubble-icon-img" src="/assets/icons/star.png" mode="aspectFit" />
-            </view>
-            <text class="sec-heading">顾客真实口碑</text>
+      <!-- 块 5: 顾客真实口碑与评价 -->
+      <view class="sheet-block" wx:if="{{detail.reviews.length > 0}}">
+        <view class="block-header">
+          <view class="b-title-left">
+            <text class="b-icon">🌟</text>
+            <text class="b-title">顾客真实口碑</text>
           </view>
-          <text class="sec-more">全部 {{detail.reviews.length}} 条评价 ›</text>
+          <text class="b-sub-score">{{detail.technician.rating || '4.9'}}分超高评价</text>
         </view>
 
-        <view class="review-list">
-          <view wx:for="{{detail.reviews}}" wx:key="id" wx:if="{{index < 3}}" class="review-item">
-            <view class="review-header">
-              <view class="review-avatar">{{item.userName ? item.userName[0] : '客'}}</view>
-              <view class="review-user-info">
-                <text class="review-user-name">{{item.userName || '匿名顾客'}}</text>
-                <view class="review-stars-row">
-                  <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" wx:for-item="star" class="star-icon {{star <= item.score ? 'star-icon--filled' : 'star-icon--empty'}}">★</text>
+        <view class="reviews-feed">
+          <view wx:for="{{detail.reviews}}" wx:key="id" wx:if="{{index < 3}}" class="review-bubble-item">
+            <view class="rb-header">
+              <view class="rb-avatar">{{item.userName ? item.userName[0] : '客'}}</view>
+              <view class="rb-user-meta">
+                <text class="rb-name">{{item.userName || '匿名顾客'}}</text>
+                <view class="rb-stars">
+                  <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" wx:for-item="star" class="star-char {{star <= item.score ? 'star--gold' : 'star--gray'}}">★</text>
                 </view>
               </view>
-              <text class="review-date" wx:if="{{item.createdAt}}">{{item.createdAt}}</text>
+              <text class="rb-date" wx:if="{{item.createdAt}}">{{item.createdAt}}</text>
             </view>
-            <text class="review-content">{{item.content}}</text>
+            <text class="rb-comment">{{item.content}}</text>
           </view>
         </view>
       </view>
 
-      <!-- 苹果官方质感安全保障卡片 -->
-      <view class="ios-card guarantee-card">
-        <view class="guarantee-header">
-          <view class="shield-badge">
-            <image class="shield-badge-img" src="/assets/icons/shield.png" mode="aspectFit" />
-          </view>
-          <view class="guarantee-header-text">
-            <text class="guarantee-title">东莞到家 · 平台官方服务保障</text>
-            <text class="guarantee-sub">实名认证 · 执业资质 · 全程人身与资金安全</text>
+      <!-- 块 6: 平台官方服务履约保障 -->
+      <view class="guarantee-integrated-card">
+        <view class="g-head">
+          <text class="g-head-badge">🛡️</text>
+          <view class="g-head-text">
+            <text class="g-main-title">东莞到家 · 平台官方履约保障</text>
+            <text class="g-sub-title">实名认证 · 执业资质 · 全程人身与资金安全</text>
           </view>
         </view>
 
-        <view class="guarantee-grid">
-          <view class="g-item">
-            <view class="g-dot"></view>
-            <text class="g-txt">技师真确核验，公安身份认证</text>
+        <view class="g-quad-grid">
+          <view class="g-quad-item">
+            <text class="g-quad-dot">●</text>
+            <text class="g-quad-txt">技师真确核验，公安实名认证</text>
           </view>
-          <view class="g-item">
-            <view class="g-dot"></view>
-            <text class="g-txt">持证上岗培训，严遵卫生消毒规程</text>
+          <view class="g-quad-item">
+            <text class="g-quad-dot">●</text>
+            <text class="g-quad-txt">持证上岗培训，严遵卫生消毒</text>
           </view>
-          <view class="g-item">
-            <view class="g-dot"></view>
-            <text class="g-txt">行程定位追踪，24小时客服与售后</text>
+          <view class="g-quad-item">
+            <text class="g-quad-dot">●</text>
+            <text class="g-quad-txt">行程定位追踪，客服极速响应</text>
           </view>
-          <view class="g-item">
-            <view class="g-dot"></view>
-            <text class="g-txt">微信支付担保，未履约随时闪电退款</text>
+          <view class="g-quad-item">
+            <text class="g-quad-dot">●</text>
+            <text class="g-quad-txt">未履约即闪退，资金安全无忧</text>
           </view>
         </view>
       </view>
 
-      <view style="height: 60rpx;" />
+      <!-- 底部撑高防遮挡 -->
+      <view style="height: 140rpx;"></view>
     </view>
+
+    <!-- ════ 3. 底部悬浮快捷预约栏 (Sticky Floating Bottom Bar) ════ -->
+    <view class="sticky-booking-bar">
+      <view class="bar-left-col" bindtap="makeCustomerCall">
+        <view class="bar-icon-box">
+          <text class="bar-icon-char">📞</text>
+        </view>
+        <text class="bar-icon-label">电话咨询</text>
+      </view>
+
+      <view class="bar-status-col">
+        <view class="bar-online-pill {{detail.technician.onlineStatus === 'ONLINE' ? 'b-on' : 'b-off'}}">
+          <view class="b-dot"></view>
+          <text>{{detail.technician.onlineStatus === 'ONLINE' ? '空闲可约' : '忙碌中'}}</text>
+        </view>
+      </view>
+
+      <view class="bar-right-col ios-touch-active" bindtap="handleQuickBooking">
+        <view class="gradient-book-btn">
+          <text class="btn-main-txt">立即预约技师</text>
+          <text class="btn-sub-txt" wx:if="{{detail.projects.length > 0}}">
+            ¥{{detail.projects[0].overridePrice || detail.projects[0].price || detail.projects[0].basePrice}} 起
+          </text>
+        </view>
+      </view>
+    </view>
+
   </block>
 </view>

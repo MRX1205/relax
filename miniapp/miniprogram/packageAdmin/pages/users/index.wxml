@@ -31,7 +31,9 @@
       <view
         wx:for="{{users}}"
         wx:key="userId"
-        class="user-card {{item.status === 'ACTIVE' ? '' : 'user-card--disabled'}}"
+        class="user-card {{item.status === 'ACTIVE' ? '' : 'user-card--disabled'}} ios-touch-active"
+        data-user="{{item}}"
+        bindtap="openUserDetail"
       >
         <view class="card-top-row">
           <!-- 头像 -->
@@ -60,14 +62,14 @@
         </view>
 
         <!-- 卡片底部操作 -->
-        <view class="card-action-row">
-          <text class="uid-tag">UID: {{item.userId}}</text>
+        <view class="card-action-row" catchtap="">
+          <text class="uid-tag">UID: {{item.userId}} · 点击查看卡片 ›</text>
           <view class="btn-group">
             <view
               class="action-btn {{item.status === 'ACTIVE' ? 'btn-freeze' : 'btn-unfreeze'}}"
               data-id="{{item.userId}}"
               data-status="{{item.status}}"
-              bindtap="handleToggleStatus"
+              catchtap="handleToggleStatus"
             >
               {{item.status === 'ACTIVE' ? '冻结账号' : '解除冻结'}}
             </view>
@@ -76,4 +78,92 @@
       </view>
     </view>
   </block>
+
+  <!-- ════ 用户详细档案弹窗卡片 (Apple Modal Style) ════ -->
+  <view wx:if="{{showDetailModal && selectedUser}}" class="modal-mask" bindtap="closeDetailModal">
+    <view class="modal-sheet ios-card" catchtap="">
+      <!-- 弹窗顶部栏 -->
+      <view class="modal-sheet-header">
+        <view class="sheet-title-col">
+          <text class="sheet-title">用户详细档案</text>
+          <text class="sheet-sub">全生命周期数据与履约记录</text>
+        </view>
+        <view class="sheet-close-btn ios-touch-active" bindtap="closeDetailModal">✕</view>
+      </view>
+
+      <!-- 用户基础信息卡片 -->
+      <view class="user-profile-banner">
+        <view class="banner-avatar-wrap">
+          <image wx:if="{{selectedUser.avatarUrl}}" src="{{selectedUser.avatarUrl}}" class="banner-avatar-img" mode="aspectFill" />
+          <view wx:else class="banner-avatar-ph">
+            <text>{{selectedUser.nickname ? selectedUser.nickname[0] : '用'}}</text>
+          </view>
+        </view>
+
+        <view class="banner-info">
+          <view class="banner-name-row">
+            <text class="banner-nickname">{{selectedUser.nickname || '未设置昵称'}}</text>
+            <text class="status-chip {{selectedUser.status === 'ACTIVE' ? 'chip-active' : 'chip-disabled'}}">
+              {{selectedUser.status === 'ACTIVE' ? '正常' : '已冻结'}}
+            </text>
+          </view>
+          <view class="banner-phone-row" bindtap="copyUID">
+            <text class="banner-phone">📱 {{selectedUser.phone || '未绑定手机号'}}</text>
+            <text class="copy-hint">复制UID</text>
+          </view>
+          <text class="banner-uid">UID: {{selectedUser.userId}}</text>
+        </view>
+      </view>
+
+      <!-- 角色与权限 -->
+      <view class="sheet-section">
+        <text class="sec-label">身份与授权角色</text>
+        <view class="roles-chips-grid">
+          <view wx:for="{{selectedUser.roles}}" wx:key="*this" class="sheet-role-chip role-badge--{{item}}">
+            <text>{{item === 'SUPER_ADMIN' ? '超级管理员' : (item === 'ADMIN' ? '平台管理员' : (item === 'TECHNICIAN' ? '认证技师' : '注册顾客'))}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 近期订单履约 -->
+      <view class="sheet-section">
+        <view class="sec-header-between">
+          <text class="sec-label">近期服务订单</text>
+          <text class="link-more" bindtap="viewUserOrders">查看该用户全部订单 ›</text>
+        </view>
+
+        <view wx:if="{{loadingUserOrders}}" class="orders-loading">加载订单记录中...</view>
+        <view wx:elif="{{userOrders.length === 0}}" class="orders-empty-box">
+          <text>该用户暂无预约订单记录</text>
+        </view>
+        <view wx:else class="mini-orders-list">
+          <view wx:for="{{userOrders}}" wx:key="orderNo" class="mini-order-item">
+            <view class="mo-row-top">
+              <text class="mo-title">{{item.projectName || '服务预约'}}</text>
+              <text class="mo-status">{{item.status}}</text>
+            </view>
+            <view class="mo-row-sub">
+              <text class="mo-no">单号: {{item.orderNo}}</text>
+              <text class="mo-price">¥{{item.actualAmount || item.totalPrice}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 底部操作按钮 -->
+      <view class="modal-sheet-actions">
+        <button
+          class="sheet-btn {{selectedUser.status === 'ACTIVE' ? 'sheet-btn--freeze' : 'sheet-btn--unfreeze'}}"
+          data-id="{{selectedUser.userId}}"
+          data-status="{{selectedUser.status}}"
+          bindtap="handleToggleStatus"
+        >
+          {{selectedUser.status === 'ACTIVE' ? '冻结该用户账号' : '解除账号冻结'}}
+        </button>
+        <button class="sheet-btn sheet-btn--orders" bindtap="viewUserOrders">
+          查看该用户关联订单
+        </button>
+      </view>
+    </view>
+  </view>
 </view>

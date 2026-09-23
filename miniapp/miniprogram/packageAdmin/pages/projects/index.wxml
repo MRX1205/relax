@@ -1,53 +1,261 @@
-<view class="page">
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+<view class="admin-projects-page">
+
+  <!-- ════ 1. 顶部操作栏 ════ -->
+  <view class="ios-card header-bar">
+    <view class="header-main-row">
+      <view class="header-text-col">
+        <text class="page-title">服务项目管理</text>
+        <text class="page-sub">平台标准项目 · 技师自营项目 · 价格与上下架</text>
+      </view>
+      <view class="add-proj-btn ios-touch-active" bindtap="openAddModal">
+        <text class="plus-icon">+</text>
+        <text>新增项目</text>
+      </view>
+    </view>
+
+    <!-- 搜索栏 -->
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索项目名称或所属分类"
+        value="{{searchKeyword}}"
+        bindinput="handleSearchInput"
+      />
+      <text wx:if="{{searchKeyword}}" class="clear-icon ios-touch-active" bindtap="clearSearch">✕</text>
+    </view>
+
+    <!-- 分类横滑筛选标签 -->
+    <scroll-view class="category-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="cat-chips-row">
+        <view
+          class="cat-chip {{selectedCategoryId === 'ALL' ? 'cat-chip--active' : ''}} ios-touch-active"
+          data-id="ALL"
+          bindtap="handleCategorySelect"
+        >
+          <text>全部 ({{projects.length}})</text>
+        </view>
+        <view
+          wx:for="{{categories}}"
+          wx:key="id"
+          class="cat-chip {{selectedCategoryId === item.id ? 'cat-chip--active' : ''}} ios-touch-active"
+          data-id="{{item.id}}"
+          bindtap="handleCategorySelect"
+        >
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- ════ 2. 加载状态 ════ -->
+  <ui-state wx:if="{{loading}}" title="加载项目中..." kind="loading" />
+
+  <!-- ════ 3. 项目卡片列表 ════ -->
   <block wx:else>
-    <view class="list-header">
-      <view class="page-title">服务项目</view>
-      <view class="add-btn" bindtap="handleAdd">+ 新增</view>
+    <view wx:if="{{filteredProjects.length === 0}}" class="ios-card empty-card">
+      <text class="empty-emoji">📦</text>
+      <text class="empty-title">暂无匹配的服务项目</text>
+      <text class="empty-desc">点击右上角「+ 新增项目」添加或切换分类筛选</text>
     </view>
 
-    <view wx:if="{{showForm}}" class="surface form-card">
-      <view class="field">
-        <view class="field__label">分类</view>
-        <picker range="{{categories}}" range-key="name" bindchange="handleCategoryChange">
-          <view class="picker-val">{{selectedCategoryName}}</view>
-        </picker>
-      </view>
-      <ui-field label="项目名称" value="{{form.name}}" placeholder="如：全身推拿60分钟" bindinput="handleFormInput('name')" />
-      <ui-field label="时长(分钟)" value="{{form.durationMinutes}}" type="number" bindinput="handleFormInput('durationMinutes')" />
-      <ui-field label="基础价格" value="{{form.basePrice}}" type="digit" placeholder="元" bindinput="handleFormInput('basePrice')" />
-      <ui-field label="排序" value="{{form.sort}}" type="number" bindinput="handleFormInput('sort')" />
-      <ui-field label="简介" value="{{form.description}}" placeholder="项目介绍" bindinput="handleFormInput('description')" />
-      <ui-field label="须知" value="{{form.notice}}" placeholder="用户须知" bindinput="handleFormInput('notice')" />
-      <view class="field">
-        <view class="field__label">封面图</view>
-        <view class="cover-upload" bindtap="chooseCover">
-          <image wx:if="{{coverPath}}" src="{{coverPath}}" mode="aspectFill" class="cover-preview" />
-          <view wx:else class="cover-placeholder">点击上传</view>
-        </view>
-      </view>
-      <view class="form-actions">
-        <ui-button label="取消" variant="secondary" bind:action="handleCancel" />
-        <ui-button label="保存" loading="{{saving}}" bind:action="handleSave" />
-      </view>
-    </view>
-
-    <view class="proj-list">
-      <view wx:for="{{projects}}" wx:key="id" class="surface proj-item">
-        <view class="proj-main" data-item="{{item}}" bindtap="handleEdit">
-          <view class="proj-name-row">
-            <text class="proj-type-tag {{item.creatorType === 'TECHNICIAN' ? 'tag-custom' : 'tag-platform'}}">
-              {{item.creatorType === 'TECHNICIAN' ? '技师自建' : '平台标准'}}
-            </text>
-            <text class="proj-name">{{item.name}}</text>
+    <view wx:else class="proj-feed">
+      <view
+        wx:for="{{filteredProjects}}"
+        wx:key="id"
+        class="ios-card proj-card {{item.status === 'ON_SHELF' ? '' : 'proj-card--off'}}"
+      >
+        <view class="proj-top-row">
+          <!-- 封面图 -->
+          <view class="cover-box">
+            <image
+              wx:if="{{item.displayCover}}"
+              class="cover-img"
+              src="{{item.displayCover}}"
+              mode="aspectFill"
+            />
+            <view wx:else class="cover-placeholder">
+              <text>{{item.name ? item.name[0] : '项'}}</text>
+            </view>
+            <view class="cat-tag-pill">{{item.categoryName}}</view>
           </view>
-          <view class="proj-meta">{{item.categoryName}} · {{item.durationMinutes}}分钟 · ¥{{item.basePrice}}</view>
+
+          <!-- 核心信息 -->
+          <view class="proj-info-col">
+            <view class="proj-title-line">
+              <text class="creator-badge {{item.creatorType === 'TECHNICIAN' ? 'badge--tech' : 'badge--platform'}}">
+                {{item.creatorType === 'TECHNICIAN' ? '技师自营' : '平台标准'}}
+              </text>
+              <text class="proj-name-txt">{{item.name}}</text>
+            </view>
+
+            <view class="meta-pills-row">
+              <text class="duration-pill">⏱ {{item.durationMinutes}}分钟</text>
+              <text class="sort-pill">排序: {{item.sort || 0}}</text>
+            </view>
+
+            <view class="price-line">
+              <text class="currency">¥</text>
+              <text class="price-amount">{{item.basePrice}}</text>
+              <text class="unit">/次</text>
+            </view>
+
+            <text wx:if="{{item.description}}" class="desc-line">{{item.description}}</text>
+          </view>
+
+          <!-- 上下架状态开关 -->
+          <view class="status-col">
+            <view
+              class="shelf-toggle-pill {{item.status === 'ON_SHELF' ? 'shelf--on' : 'shelf--off'}} ios-touch-active"
+              data-item="{{item}}"
+              bindtap="handleToggleStatus"
+            >
+              <text>{{item.status === 'ON_SHELF' ? '已上架' : '已下架'}}</text>
+            </view>
+          </view>
         </view>
-        <view class="proj-status {{item.status === 'ON_SHELF' ? 'status-on' : 'status-off'}}" data-item="{{item}}" bindtap="handleToggleStatus">
-          {{item.status === 'ON_SHELF' ? '已上架' : item.status === 'OFF_SHELF' ? '已下架' : '草稿'}}
+
+        <!-- 卡片底部动作栏 -->
+        <view class="proj-action-bar">
+          <view class="action-btn btn--edit ios-touch-active" data-item="{{item}}" bindtap="openEditModal">
+            <text>✏️ 编辑项目</text>
+          </view>
+          <view class="action-btn btn--toggle ios-touch-active" data-item="{{item}}" bindtap="handleToggleStatus">
+            <text>{{item.status === 'ON_SHELF' ? '下架' : '立即上架'}}</text>
+          </view>
+          <view class="action-btn btn--delete ios-touch-active" data-item="{{item}}" bindtap="handleDelete">
+            <text>🗑️ 删除</text>
+          </view>
         </view>
       </view>
-      <view wx:if="{{projects.length === 0}}" class="empty-tip">暂无项目</view>
     </view>
   </block>
+
+  <!-- ════ 4. 新增 / 编辑项目弹窗 (Apple HIG Modal) ════ -->
+  <view wx:if="{{showModal}}" class="modal-mask" bindtap="closeModal">
+    <view class="modal-sheet ios-card" catchtap="">
+      <view class="modal-header">
+        <view class="modal-title-col">
+          <text class="modal-title">{{isEditing ? '编辑服务项目' : '新增服务项目'}}</text>
+          <text class="modal-sub">设定服务时长、基准售价与用户预约须知</text>
+        </view>
+        <view class="modal-close-btn ios-touch-active" bindtap="closeModal">✕</view>
+      </view>
+
+      <view class="modal-form-content">
+        <!-- 分类选择 -->
+        <view class="form-row">
+          <text class="f-label">所属分类 <text class="req">*</text></text>
+          <picker
+            range="{{categories}}"
+            range-key="name"
+            bindchange="handleCategoryPicker"
+          >
+            <view class="picker-box ios-touch-active">
+              <text class="{{form.categoryId ? 'picker-txt--selected' : 'picker-txt--ph'}}">
+                {{selectedCategoryName}}
+              </text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </picker>
+        </view>
+
+        <!-- 项目名称 -->
+        <view class="form-row">
+          <text class="f-label">项目名称 <text class="req">*</text></text>
+          <input
+            class="f-input"
+            placeholder="如：全身精油SPA 60分钟"
+            value="{{form.name}}"
+            data-field="name"
+            bindinput="handleFormInput"
+          />
+        </view>
+
+        <!-- 基础售价与服务时长 -->
+        <view class="form-dual-row">
+          <view class="dual-col">
+            <text class="f-label">基准价格 (元) <text class="req">*</text></text>
+            <input
+              class="f-input"
+              type="digit"
+              placeholder="如：198"
+              value="{{form.basePrice}}"
+              data-field="basePrice"
+              bindinput="handleFormInput"
+            />
+          </view>
+          <view class="dual-col">
+            <text class="f-label">服务时长 (分钟) <text class="req">*</text></text>
+            <input
+              class="f-input"
+              type="number"
+              placeholder="默认 60"
+              value="{{form.durationMinutes}}"
+              data-field="durationMinutes"
+              bindinput="handleFormInput"
+            />
+          </view>
+        </view>
+
+        <!-- 项目封面图 -->
+        <view class="form-row">
+          <text class="f-label">项目封面图</text>
+          <view class="cover-uploader ios-touch-active" bindtap="chooseCover">
+            <image wx:if="{{coverPath}}" src="{{coverPath}}" mode="aspectFill" class="cover-preview-img" />
+            <view wx:else class="uploader-ph">
+              <text class="ph-camera">📷</text>
+              <text class="ph-txt">点击选择或更换封面</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 排序权重 -->
+        <view class="form-row">
+          <text class="f-label">展示排序 (数值越小越靠前)</text>
+          <input
+            class="f-input"
+            type="number"
+            placeholder="0"
+            value="{{form.sort}}"
+            data-field="sort"
+            bindinput="handleFormInput"
+          />
+        </view>
+
+        <!-- 项目简介 -->
+        <view class="form-row">
+          <text class="f-label">项目简介</text>
+          <textarea
+            class="f-textarea"
+            placeholder="简述项目调理手法、适合人群及服务流程..."
+            value="{{form.description}}"
+            data-field="description"
+            bindinput="handleFormInput"
+          ></textarea>
+        </view>
+
+        <!-- 预约须知 -->
+        <view class="form-row">
+          <text class="f-label">预约须知</text>
+          <textarea
+            class="f-textarea"
+            placeholder="如：请提前1小时预约、饭后半小时内不宜理疗等..."
+            value="{{form.notice}}"
+            data-field="notice"
+            bindinput="handleFormInput"
+          ></textarea>
+        </view>
+      </view>
+
+      <!-- 弹窗底部操作 -->
+      <view class="modal-footer-actions">
+        <button class="m-cancel-btn ios-touch-active" bindtap="closeModal">取消</button>
+        <button class="m-submit-btn ios-touch-active" loading="{{saving}}" bindtap="handleSave">
+          {{isEditing ? '保存修改' : '确认添加'}}
+        </button>
+      </view>
+    </view>
+  </view>
+
 </view>

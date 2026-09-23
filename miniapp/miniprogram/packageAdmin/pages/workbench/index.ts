@@ -33,7 +33,7 @@ Page({
     } as PaymentModeInfo,
     loadingStats: true,
 
-    // 核心业务调度模块
+    // 1. 核心业务调度模块 (2x2 Grid)
     opsMenus: [
       { code: "orders", name: "订单全域调度", desc: "状态跟踪 · 技师改派", icon: "order", url: "/packageAdmin/pages/order-list/index", badge: "" },
       { code: "refunds", name: "退款审批中心", desc: "用户退款审核", icon: "refund", url: "/packageAdmin/pages/refunds/index", badge: "" },
@@ -41,17 +41,26 @@ Page({
       { code: "stats", name: "经营数据大盘", desc: "单量趋势 · 技师排行", icon: "stats", url: "/packageAdmin/pages/stats/index", badge: "" },
     ],
 
-    // 供给与系统配置模块
-    configMenus: [
-      { code: "technicians", name: "技师审核与管理", desc: "入驻资质 · 提成与状态", icon: "tech", url: "/packageAdmin/pages/technicians/index", badge: "" },
-      { code: "admins", name: "管理员权限配置", desc: "新增管理账号 · 业务模块赋权", icon: "role", url: "/packageAdmin/pages/admins/index", badge: "新" },
-      { code: "audit", name: "系统安全审计日志", desc: "敏感操作留痕 · IP溯源", icon: "shield", url: "/packageAdmin/pages/audit-logs/index", badge: "" },
-      { code: "users", name: "用户会员管理", desc: "注册顾客 · 状态冻结/解冻", icon: "user", url: "/packageAdmin/pages/users/index", badge: "" },
-      { code: "projects", name: "服务项目配置", desc: "平台项目 · 定价上下架", icon: "project", url: "/packageAdmin/pages/projects/index", badge: "" },
-      { code: "categories", name: "服务分类目录", desc: "分类管理与展示排序", icon: "category", url: "/packageAdmin/pages/categories/index", badge: "" },
+    // 2. 人员与权限中心 (3-Col Grid)
+    peopleMenus: [
+      { code: "technicians", name: "技师管理中心", desc: "资质核验 · 账号开通", icon: "tech", url: "/packageAdmin/pages/technicians/index", badge: "" },
+      { code: "admins", name: "管理员权限", desc: "新增管理账号 · 模块赋权", icon: "role", url: "/packageAdmin/pages/admins/index", badge: "新" },
+      { code: "users", name: "用户会员管理", desc: "注册顾客 · 状态冻结", icon: "user", url: "/packageAdmin/pages/users/index", badge: "" },
+    ],
+
+    // 3. 供给服务与商城运营 (4-Col Grid)
+    serviceMenus: [
+      { code: "projects", name: "服务项目管理", desc: "项目库 · 上下架", icon: "project", url: "/packageAdmin/pages/projects/index", badge: "" },
+      { code: "categories", name: "服务分类目录", desc: "分类管理与排序", icon: "category", url: "/packageAdmin/pages/categories/index", badge: "" },
+      { code: "pricing", name: "技师专属定价", desc: "自主加价 · 指派", icon: "pricing", url: "/packageAdmin/pages/tech-pricing/index", badge: "" },
       { code: "banners", name: "首页轮播管理", desc: "运营海报 · 页面跳转", icon: "banner", url: "/packageAdmin/pages/banners/index", badge: "" },
-      { code: "payment", name: "支付与结算模式", desc: "Mock / 微信 / 现场支付", icon: "pay", url: "/packageAdmin/pages/payment-config/index", badge: "核心" },
-      { code: "system", name: "系统基本设置", desc: "平台名称 · VIP入口开关", icon: "setting", url: "/packageAdmin/pages/system-settings/index", badge: "" },
+    ],
+
+    // 4. 系统安全与结算配置 (3-Col Grid)
+    systemMenus: [
+      { code: "payment", name: "支付与结算模式", desc: "现场 / 微信 / 模拟", icon: "pay", url: "/packageAdmin/pages/payment-config/index", badge: "核心" },
+      { code: "system", name: "系统基本设置", desc: "品牌名 · VIP开关", icon: "setting", url: "/packageAdmin/pages/system-settings/index", badge: "" },
+      { code: "audit", name: "安全审计日志", desc: "操作留痕 · IP溯源", icon: "shield", url: "/packageAdmin/pages/audit-logs/index", badge: "" },
     ],
   },
 
@@ -93,7 +102,7 @@ Page({
   async loadPendingCounts() {
     try {
       const [techApps, refunds] = await Promise.allSettled([
-        request<any[]>({ url: "/api/v1/admin/technicians/applications" }),
+        request<any[]>({ url: "/api/v1/admin/technicians/applications/pending" }),
         request<any[]>({ url: "/api/v1/admin/refunds?page=0" }),
       ]);
 
@@ -109,7 +118,7 @@ Page({
         return m;
       });
 
-      const configMenus = this.data.configMenus.map(m => {
+      const peopleMenus = this.data.peopleMenus.map(m => {
         if (m.code === "technicians" && techCount > 0) {
           return { ...m, badge: `${techCount}人申请` };
         }
@@ -120,7 +129,7 @@ Page({
         pendingTechCount: techCount,
         pendingRefundCount: refundCount,
         opsMenus,
-        configMenus,
+        peopleMenus,
       });
     } catch {}
   },

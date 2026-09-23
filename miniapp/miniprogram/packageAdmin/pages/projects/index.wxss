@@ -1,104 +1,543 @@
-.list-header {
+/* ==========================================================================
+   Admin Project Management — Apple HIG Modern Luxury Aesthetics
+   ========================================================================== */
+
+.admin-projects-page {
+  min-height: 100vh;
+  background: #F2F2F7;
+  padding: 24rpx;
+  box-sizing: border-box;
+  padding-bottom: 80rpx;
+}
+
+/* ════ 1. 顶部操作栏 ════ */
+.header-bar {
+  background: #FFFFFF;
+  border-radius: 28rpx;
+  padding: 28rpx 24rpx 20rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.03);
+}
+
+.header-main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.page-title {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #1C1C1E;
+}
+
+.page-sub {
+  display: block;
+  font-size: 22rpx;
+  color: #8E8E93;
+  margin-top: 4rpx;
+}
+
+.add-proj-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  background: #1C1C1E;
+  color: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: 700;
+  padding: 14rpx 28rpx;
+  border-radius: 36rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.18);
+}
+
+.plus-icon {
+  font-size: 32rpx;
+  line-height: 1;
+}
+
+/* 搜索框 */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #F2F2F7;
+  border-radius: 20rpx;
+  padding: 14rpx 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.search-icon {
+  font-size: 26rpx;
+  margin-right: 12rpx;
+  color: #8E8E93;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 26rpx;
+  color: #1C1C1E;
+}
+
+.clear-icon {
+  font-size: 26rpx;
+  color: #8E8E93;
+  padding: 0 10rpx;
+}
+
+/* 分类标签横滑 */
+.category-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.cat-chips-row {
+  display: inline-flex;
+  gap: 14rpx;
+  padding: 4rpx 0;
+}
+
+.cat-chip {
+  padding: 10rpx 26rpx;
+  border-radius: 30rpx;
+  background: #F2F2F7;
+  color: #8E8E93;
+  font-size: 24rpx;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.cat-chip--active {
+  background: #007AFF;
+  color: #FFFFFF;
+  box-shadow: 0 2rpx 10rpx rgba(0, 122, 255, 0.25);
+}
+
+/* ════ 2. 列表与卡片 ════ */
+.proj-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.proj-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.03);
+}
+
+.proj-card--off {
+  background: #FAFAFC;
+  opacity: 0.85;
+}
+
+.proj-top-row {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.cover-box {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 18rpx;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  background: #E5E5EA;
+}
+
+.cover-img {
+  width: 100%;
+  height: 100%;
+}
+
+.cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1C1C1E, #3A3A3C);
+  color: #FFFFFF;
+  font-size: 54rpx;
+  font-weight: 800;
+}
+
+.cat-tag-pill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  color: #FFFFFF;
+  font-size: 18rpx;
+  font-weight: 600;
+  text-align: center;
+  padding: 4rpx 0;
+}
+
+.proj-info-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.proj-title-line {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.creator-badge {
+  font-size: 18rpx;
+  font-weight: 700;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  white-space: nowrap;
+}
+
+.badge--platform { background: rgba(0, 122, 255, 0.12); color: #007AFF; }
+.badge--tech { background: rgba(255, 149, 0, 0.12); color: #D97706; }
+
+.proj-name-txt {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta-pills-row {
+  display: flex;
+  gap: 12rpx;
+}
+
+.duration-pill, .sort-pill {
+  font-size: 20rpx;
+  color: #8E8E93;
+  background: #F2F2F7;
+  padding: 2rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+.price-line {
+  display: flex;
+  align-items: baseline;
+}
+
+.currency {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #FF382E;
+}
+
+.price-amount {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #FF382E;
+  margin: 0 4rpx;
+}
+
+.unit {
+  font-size: 20rpx;
+  color: #8E8E93;
+}
+
+.desc-line {
+  font-size: 22rpx;
+  color: #8E8E93;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-col {
+  flex-shrink: 0;
+}
+
+.shelf-toggle-pill {
+  padding: 8rpx 18rpx;
+  border-radius: 24rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.shelf--on {
+  background: rgba(52, 199, 89, 0.15);
+  color: #248A3D;
+}
+
+.shelf--off {
+  background: #F2F2F7;
+  color: #8E8E93;
+}
+
+/* 操作栏 */
+.proj-action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid #F2F2F7;
+}
+
+.action-btn {
+  padding: 10rpx 24rpx;
+  border-radius: 24rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.btn--edit {
+  background: #F2F2F7;
+  color: #1C1C1E;
+}
+
+.btn--toggle {
+  background: rgba(0, 122, 255, 0.1);
+  color: #007AFF;
+}
+
+.btn--delete {
+  background: #FFF1EE;
+  color: #FF382E;
+}
+
+/* ════ 空状态 ════ */
+.empty-card {
+  padding: 80rpx 40rpx;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 28rpx;
+}
+
+.empty-emoji {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.empty-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.empty-desc {
+  font-size: 24rpx;
+  color: #8E8E93;
+  margin-top: 8rpx;
+}
+
+/* ════ 3. 弹窗样式 ════ */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal-sheet {
+  width: 100%;
+  max-height: 85vh;
+  background: #FFFFFF;
+  border-top-left-radius: 40rpx;
+  border-top-right-radius: 40rpx;
+  padding: 36rpx 32rpx calc(env(safe-area-inset-bottom) + 32rpx);
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24rpx;
 }
-.add-btn {
-  padding: 12rpx 24rpx;
-  background: var(--color-primary);
-  color: #FFFFFF;
-  border-radius: var(--radius-sm);
-  font-size: 26rpx;
-  font-weight: 600;
+
+.modal-title {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #1C1C1E;
 }
-.form-card {
-  padding: 24rpx;
-  margin-bottom: 24rpx;
+
+.modal-sub {
+  font-size: 22rpx;
+  color: #8E8E93;
+  margin-top: 4rpx;
+  display: block;
 }
-.field {
-  padding: 16rpx 0;
-  border-bottom: 1rpx solid var(--color-border);
-}
-.field__label {
-  font-size: 26rpx;
-  color: var(--color-text-secondary);
-  margin-bottom: 8rpx;
-}
-.picker-val {
-  font-size: 30rpx;
-  min-height: 48rpx;
+
+.modal-close-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: #F2F2F7;
+  color: #8E8E93;
   display: flex;
   align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
 }
-.form-actions {
+
+.modal-form-content {
   display: flex;
-  gap: 16rpx;
-  margin-top: 24rpx;
+  flex-direction: column;
+  gap: 20rpx;
 }
-.cover-upload {
-  width: 200rpx;
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.form-dual-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18rpx;
+}
+
+.dual-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.f-label {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.req {
+  color: #FF382E;
+}
+
+.f-input {
+  height: 80rpx;
+  background: #F2F2F7;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #1C1C1E;
+}
+
+.f-textarea {
+  width: 100%;
+  height: 140rpx;
+  background: #F2F2F7;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  color: #1C1C1E;
+  box-sizing: border-box;
+}
+
+.picker-box {
+  height: 80rpx;
+  background: #F2F2F7;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.picker-txt--selected {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1C1C1E;
+}
+
+.picker-txt--ph {
+  font-size: 28rpx;
+  color: #8E8E93;
+}
+
+.picker-arrow {
+  color: #8E8E93;
+  font-size: 32rpx;
+}
+
+.cover-uploader {
+  width: 100%;
   height: 200rpx;
-  border: 2rpx dashed var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: 20rpx;
+  background: #F2F2F7;
+  border: 2rpx dashed #C7C7CC;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
-.cover-placeholder {
-  font-size: 24rpx;
-  color: var(--color-muted);
-}
-.cover-preview {
+
+.cover-preview-img {
   width: 100%;
   height: 100%;
 }
-.proj-list {
-  display: grid;
-  gap: 16rpx;
-}
-.proj-item {
+
+.uploader-ph {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 24rpx;
+  gap: 8rpx;
 }
-.proj-name-row {
+
+.ph-camera {
+  font-size: 48rpx;
+}
+
+.ph-txt {
+  font-size: 24rpx;
+  color: #8E8E93;
+}
+
+.modal-footer-actions {
   display: flex;
-  align-items: center;
-  gap: 12rpx;
+  gap: 18rpx;
+  margin-top: 36rpx;
 }
-.proj-type-tag {
-  font-size: 20rpx;
-  font-weight: 700;
-  padding: 2rpx 10rpx;
-  border-radius: 6rpx;
-}
-.tag-custom {
-  background: #FFF3E0;
-  color: #E65100;
-}
-.tag-platform {
-  background: #E3F2FD;
-  color: #1565C0;
-}
-.proj-name {
-  font-size: 30rpx;
-  font-weight: 600;
-}
-.proj-meta {
-  font-size: 24rpx;
-  color: var(--color-muted);
-  margin-top: 6rpx;
-}
-.proj-status {
-  font-size: 24rpx;
-  font-weight: 600;
-  padding: 6rpx 16rpx;
+
+.m-cancel-btn {
+  flex: 1;
+  height: 84rpx;
   border-radius: 20rpx;
-  flex-shrink: 0;
+  background: #F2F2F7;
+  color: #636366;
+  font-size: 28rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.status-on { background: #EDF8F3; color: var(--color-success); }
-.status-off { background: #F6F7F9; color: var(--color-muted); }
-.empty-tip { text-align: center; color: var(--color-muted); padding: 48rpx; }
+
+.m-submit-btn {
+  flex: 2;
+  height: 84rpx;
+  border-radius: 20rpx;
+  background: #1C1C1E;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

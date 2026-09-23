@@ -53,6 +53,16 @@ Page({
     resetPassword: "",
     submittingReset: false,
 
+    // 搜索与过滤
+    searchKeyword: "",
+    filteredTechnicians: [] as Technician[],
+
+    // 技师详情抽屉卡片
+    showDetailModal: false,
+    selectedTech: null as Technician | null,
+    selectedTechPricing: [] as any[],
+    loadingTechDetail: false,
+
     // 驳回弹窗
     showReject: false,
     rejectId: "",
@@ -75,9 +85,62 @@ Page({
         applications: applications || [],
         loading: false,
       });
+      this.filterTechnicians();
     } catch {
       this.setData({ loading: false });
     }
+  },
+
+  handleSearchInput(e: WechatMiniprogram.Input) {
+    this.setData({ searchKeyword: e.detail.value });
+    this.filterTechnicians();
+  },
+
+  clearSearch() {
+    this.setData({ searchKeyword: "" });
+    this.filterTechnicians();
+  },
+
+  filterTechnicians() {
+    const { technicians, searchKeyword } = this.data;
+    const kw = (searchKeyword || "").trim().toLowerCase();
+    if (!kw) {
+      this.setData({ filteredTechnicians: technicians });
+      return;
+    }
+    const filtered = technicians.filter(t =>
+      (t.serviceName && t.serviceName.toLowerCase().includes(kw)) ||
+      (t.realName && t.realName.toLowerCase().includes(kw)) ||
+      (t.phone && t.phone.includes(kw))
+    );
+    this.setData({ filteredTechnicians: filtered });
+  },
+
+  async openTechDetail(e: WechatMiniprogram.TouchEvent) {
+    const item = e.currentTarget.dataset.item as Technician;
+    if (!item) return;
+    this.setData({
+      selectedTech: item,
+      showDetailModal: true,
+      loadingTechDetail: true,
+      selectedTechPricing: [],
+    });
+
+    try {
+      const pricing = await request<any[]>({
+        url: `/api/v1/admin/technicians/${item.id}/pricing`,
+      });
+      this.setData({
+        selectedTechPricing: pricing || [],
+        loadingTechDetail: false,
+      });
+    } catch {
+      this.setData({ loadingTechDetail: false });
+    }
+  },
+
+  closeDetailModal() {
+    this.setData({ showDetailModal: false, selectedTech: null });
   },
 
   switchTab(e: WechatMiniprogram.TouchEvent) {

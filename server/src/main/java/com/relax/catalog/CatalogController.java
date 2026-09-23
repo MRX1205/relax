@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Size;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,6 +96,13 @@ public class CatalogController {
     ApiResponse<ProjectMapper.ProjectView> updateProjectStatus(@AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable long id, @Valid @RequestBody StatusRequest request) {
         return ApiResponse.success(catalogService.updateProjectStatus(id, request.status()));
+    }
+
+    @DeleteMapping("/admin/projects/{id}")
+    @PreAuthorize("hasAuthority('project:write')")
+    ApiResponse<Void> deleteProject(@AuthenticationPrincipal CurrentUser currentUser, @PathVariable long id) {
+        catalogService.deleteProject(id);
+        return ApiResponse.success(null);
     }
 
     public record CategoryRequest(@NotBlank @Size(max = 64) String name, @Min(0) int sort) {

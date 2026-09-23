@@ -94,7 +94,7 @@
     </view>
   </view>
 
-  <!-- ════ 5. 运营与调度中心 (Core Operations - 2x2 Grid) ════ -->
+  <!-- ════ 5. 核心业务调度 (2x2 Grid) ════ -->
   <view class="section-container">
     <view class="section-header">
       <text class="section-title">核心业务调度</text>
@@ -116,7 +116,7 @@
             <image wx:elif="{{item.code === 'settlements'}}" src="/assets/icons/invite.png" class="ops-icon" mode="aspectFit" />
             <image wx:else src="/assets/icons/star.png" class="ops-icon" mode="aspectFit" />
           </view>
-          <text wx:if="{{item.badge}}" class="ops-badge">{{item.badge}}</text>
+          <text wx:if="{{item.badge}}" class="ops-badge badge--alert">{{item.badge}}</text>
         </view>
 
         <text class="ops-name">{{item.name}}</text>
@@ -125,42 +125,89 @@
     </view>
   </view>
 
-  <!-- ════ 6. 供给与系统设置 (Apple Inset Grouped TableView) ════ -->
+  <!-- ════ 6. 人员与权限中心 (3-Col Grid) ════ -->
   <view class="section-container">
     <view class="section-header">
-      <text class="section-title">供给与系统配置</text>
-      <text class="section-sub">技师入驻、项目库与支付设置</text>
+      <text class="section-title">人员与权限管理</text>
+      <text class="section-sub">技师入驻 · 管理员赋权 · 顾客档案</text>
     </view>
 
-    <view class="ios-card config-group">
-      <view
-        wx:for="{{configMenus}}"
-        wx:key="code"
-        class="config-cell ios-touch-active"
-        data-url="{{item.url}}"
-        bindtap="handleMenuTap"
-      >
-        <view class="config-icon-box icon-bg--{{item.code}}">
-          <image wx:if="{{item.code === 'technicians'}}" src="/assets/icons/tech.png" class="config-icon" mode="aspectFit" />
-          <image wx:elif="{{item.code === 'admins'}}" src="/assets/icons/lock.png" class="config-icon" mode="aspectFit" />
-          <image wx:elif="{{item.code === 'audit'}}" src="/assets/icons/notice.png" class="config-icon" mode="aspectFit" />
-          <image wx:elif="{{item.code === 'users'}}" src="/assets/icons/role.png" class="config-icon" mode="aspectFit" />
-          <image wx:elif="{{item.code === 'projects'}}" src="/assets/tabbar/projects-active.png" class="config-icon" mode="aspectFit" />
-          <image wx:elif="{{item.code === 'categories'}}" src="/assets/tabbar/projects.png" class="config-icon" mode="aspectFit" />
-          <image wx:elif="{{item.code === 'banners'}}" src="/assets/icons/camera.png" class="config-icon" mode="aspectFit" />
-          <image wx:elif="{{item.code === 'payment'}}" src="/assets/icons/coupon.png" class="config-icon" mode="aspectFit" />
-          <image wx:else src="/assets/icons/shield.png" class="config-icon" mode="aspectFit" />
-        </view>
-
-        <view class="config-text-col">
-          <view class="config-name-row">
-            <text class="config-name">{{item.name}}</text>
-            <text wx:if="{{item.badge}}" class="config-badge">{{item.badge}}</text>
+    <view class="ios-card grid-card-container">
+      <view class="menu-grid-3">
+        <view
+          wx:for="{{peopleMenus}}"
+          wx:key="code"
+          class="grid-tile-item ios-touch-active"
+          data-url="{{item.url}}"
+          bindtap="handleMenuTap"
+        >
+          <view class="tile-icon-box icon-bg--{{item.code}}">
+            <image wx:if="{{item.code === 'technicians'}}" src="/assets/icons/tech.png" class="tile-icon" mode="aspectFit" />
+            <image wx:elif="{{item.code === 'admins'}}" src="/assets/icons/lock.png" class="tile-icon" mode="aspectFit" />
+            <image wx:else src="/assets/icons/role.png" class="tile-icon" mode="aspectFit" />
+            <text wx:if="{{item.badge}}" class="tile-badge">{{item.badge}}</text>
           </view>
-          <text class="config-desc">{{item.desc}}</text>
+          <text class="tile-title">{{item.name}}</text>
+          <text class="tile-desc">{{item.desc}}</text>
         </view>
+      </view>
+    </view>
+  </view>
 
-        <text class="config-chevron">›</text>
+  <!-- ════ 7. 供给服务与商城运营 (4-Col Grid) ════ -->
+  <view class="section-container">
+    <view class="section-header">
+      <text class="section-title">服务供给与运营</text>
+      <text class="section-sub">项目库 · 分类排序 · 技师定价 · 轮播海报</text>
+    </view>
+
+    <view class="ios-card grid-card-container">
+      <view class="menu-grid-4">
+        <view
+          wx:for="{{serviceMenus}}"
+          wx:key="code"
+          class="grid-tile-mini ios-touch-active"
+          data-url="{{item.url}}"
+          bindtap="handleMenuTap"
+        >
+          <view class="tile-icon-box-sm icon-bg--{{item.code}}">
+            <image wx:if="{{item.code === 'projects'}}" src="/assets/tabbar/projects-active.png" class="tile-icon-sm" mode="aspectFit" />
+            <image wx:elif="{{item.code === 'categories'}}" src="/assets/tabbar/projects.png" class="tile-icon-sm" mode="aspectFit" />
+            <image wx:elif="{{item.code === 'pricing'}}" src="/assets/icons/coupon.png" class="tile-icon-sm" mode="aspectFit" />
+            <image wx:else src="/assets/icons/camera.png" class="tile-icon-sm" mode="aspectFit" />
+          </view>
+          <text class="tile-title-sm">{{item.name}}</text>
+          <text class="tile-desc-sm">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ════ 8. 系统安全与结算配置 (3-Col Grid) ════ -->
+  <view class="section-container">
+    <view class="section-header">
+      <text class="section-title">系统安全与配置</text>
+      <text class="section-sub">支付模式 · 基础设置 · 审计日志</text>
+    </view>
+
+    <view class="ios-card grid-card-container">
+      <view class="menu-grid-3">
+        <view
+          wx:for="{{systemMenus}}"
+          wx:key="code"
+          class="grid-tile-item ios-touch-active"
+          data-url="{{item.url}}"
+          bindtap="handleMenuTap"
+        >
+          <view class="tile-icon-box icon-bg--{{item.code}}">
+            <image wx:if="{{item.code === 'payment'}}" src="/assets/icons/coupon.png" class="tile-icon" mode="aspectFit" />
+            <image wx:elif="{{item.code === 'system'}}" src="/assets/icons/shield.png" class="tile-icon" mode="aspectFit" />
+            <image wx:else src="/assets/icons/notice.png" class="tile-icon" mode="aspectFit" />
+            <text wx:if="{{item.badge}}" class="tile-badge badge--pill">{{item.badge}}</text>
+          </view>
+          <text class="tile-title">{{item.name}}</text>
+          <text class="tile-desc">{{item.desc}}</text>
+        </view>
       </view>
     </view>
   </view>

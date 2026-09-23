@@ -65,7 +65,7 @@ public class TechnicianAdminController {
         return ApiResponse.success(null);
     }
 
-    @GetMapping("/applications/pending")
+    @GetMapping({"/applications", "/applications/pending"})
     ApiResponse<List<TechnicianAuditMapper.TechnicianApplicationView>> pendingApplications() {
         return ApiResponse.success(adminService.pendingApplications());
     }

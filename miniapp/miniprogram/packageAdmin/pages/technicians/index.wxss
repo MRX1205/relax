@@ -442,9 +442,198 @@
   margin-bottom: 8rpx;
 }
 
-.empty-desc {
+/* 搜索栏 */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #F2F2F7;
+  border-radius: 20rpx;
+  padding: 14rpx 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.search-icon {
+  font-size: 26rpx;
+  margin-right: 12rpx;
+  color: #8E8E93;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 26rpx;
+  color: #1C1C1E;
+}
+
+.clear-icon {
+  font-size: 26rpx;
+  color: #8E8E93;
+  padding: 0 10rpx;
+}
+
+/* 技师详情弹窗 */
+.tech-detail-modal {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-title-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.tech-profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #F9F9FB;
+  border-radius: 20rpx;
+  margin-bottom: 24rpx;
+}
+
+.hero-avatar-wrap {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1C1C1E, #3A3A3C);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hero-avatar-txt {
+  font-size: 42rpx;
+  font-weight: 800;
+}
+
+.hero-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.hero-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-tech-name {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #1C1C1E;
+}
+
+.hero-tech-real {
+  font-size: 24rpx;
+  color: #636366;
+}
+
+.hero-tech-phone {
+  font-size: 24rpx;
+  color: #007AFF;
+}
+
+.hero-tech-id {
+  font-size: 20rpx;
+  color: #8E8E93;
+}
+
+.m-section {
+  margin-bottom: 24rpx;
+}
+
+.m-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14rpx;
+}
+
+.m-section-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #1C1C1E;
+}
+
+.m-link {
+  font-size: 24rpx;
+  color: #007AFF;
+  font-weight: 600;
+}
+
+.pricing-loading, .pricing-empty {
+  padding: 24rpx;
+  text-align: center;
   font-size: 24rpx;
   color: #8E8E93;
+  background: #F9F9FB;
+  border-radius: 14rpx;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12rpx;
+}
+
+.pricing-item-pill {
+  padding: 14rpx 18rpx;
+  background: #F9F9FB;
+  border-radius: 14rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pi-name {
+  font-size: 24rpx;
+  color: #1C1C1E;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 65%;
+}
+
+.pi-price {
+  font-size: 26rpx;
+  font-weight: 800;
+  color: #FF382E;
+}
+
+.modal-footer-dual {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.m-btn-action {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 26rpx;
+  font-weight: 700;
+  border-radius: 20rpx;
+  border: none;
+}
+
+.btn--reset-pwd {
+  background: rgba(255, 149, 0, 0.15);
+  color: #D97706;
+}
+
+.btn--toggle-disable {
+  background: #FFF1EE;
+  color: #FF382E;
+}
+
+.btn--toggle-enable {
+  background: rgba(52, 199, 89, 0.15);
+  color: #248A3D;
 }
 
 .ios-touch-active:active {

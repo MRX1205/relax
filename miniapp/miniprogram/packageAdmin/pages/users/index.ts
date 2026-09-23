@@ -16,6 +16,10 @@ Page({
     loading: true,
     keyword: "",
     users: [] as AccessUserItem[],
+    showDetailModal: false,
+    selectedUser: null as AccessUserItem | null,
+    loadingUserOrders: false,
+    userOrders: [] as any[],
   },
 
   onLoad() {
@@ -87,10 +91,59 @@ Page({
       wx.showToast({ title: `已${targetStatus === "DISABLED" ? '冻结' : '解冻'}`, icon: "success" });
 
       const updated = this.data.users.map(u => (u.userId === userId ? { ...u, status: targetStatus as any } : u));
-      this.setData({ users: updated });
+      const selected = this.data.selectedUser && this.data.selectedUser.userId === userId
+        ? { ...this.data.selectedUser, status: targetStatus as any }
+        : this.data.selectedUser;
+      this.setData({ users: updated, selectedUser: selected });
     } catch (err: any) {
       wx.hideLoading();
       wx.showToast({ title: err?.message || "操作失败", icon: "none" });
     }
+  },
+
+  async openUserDetail(e: WechatMiniprogram.TouchEvent) {
+    const user = e.currentTarget.dataset.user as AccessUserItem;
+    if (!user) return;
+    this.setData({
+      selectedUser: user,
+      showDetailModal: true,
+      loadingUserOrders: true,
+      userOrders: [],
+    });
+
+    try {
+      const orders = await request<any[]>({
+        url: `/api/v1/admin/orders?page=0&size=5`,
+      });
+      // 筛选出属于该用户的订单
+      const userOrders = (orders || []).filter((o: any) => o.userId === user.userId || o.contactPhone === user.phone);
+      this.setData({
+        userOrders,
+        loadingUserOrders: false,
+      });
+    } catch {
+      this.setData({ loadingUserOrders: false });
+    }
+  },
+
+  closeDetailModal() {
+    this.setData({ showDetailModal: false, selectedUser: null });
+  },
+
+  viewUserOrders() {
+    const user = this.data.selectedUser;
+    if (!user) return;
+    this.closeDetailModal();
+    wx.navigateTo({
+      url: `/packageAdmin/pages/order-list/index?userId=${user.userId}&phone=${user.phone || ''}`,
+    });
+  },
+
+  copyUID() {
+    if (!this.data.selectedUser) return;
+    wx.setClipboardData({
+      data: String(this.data.selectedUser.userId),
+      success: () => wx.showToast({ title: "UID已复制", icon: "success" }),
+    });
   },
 });

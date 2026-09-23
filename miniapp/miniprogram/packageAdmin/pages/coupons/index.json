@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "优惠券管理",
+  "navigationBarBackgroundColor": "#FFFFFF",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F6F7F9"
+}

@@ -85,11 +85,12 @@
         <text class="tile-label">邀请有礼</text>
       </view>
 
-      <view class="quick-tile ios-touch-active" bindtap="goToMember">
-        <view class="tile-icon-box tile-vip">
-          <image class="tile-svg" src="/assets/icons/vip.png" mode="aspectFit" />
+      <view class="quick-tile ios-touch-active" bindtap="goToCoupons">
+        <view class="tile-icon-box tile-coupon">
+          <image class="tile-svg" src="/assets/icons/coupon.png" mode="aspectFit" />
+          <view class="tile-sub-badge">立减券</view>
         </view>
-        <text class="tile-label">VIP会员</text>
+        <text class="tile-label">领券中心</text>
       </view>
     </view>
 

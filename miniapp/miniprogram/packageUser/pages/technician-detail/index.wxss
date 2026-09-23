@@ -585,6 +585,27 @@
   line-height: 1.5;
 }
 
+.more-reviews-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 20rpx 0 8rpx;
+  margin-top: 12rpx;
+  border-top: 1rpx dashed #E5E5EA;
+}
+
+.more-reviews-text {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #007AFF;
+}
+
+.more-reviews-arrow {
+  font-size: 28rpx;
+  color: #007AFF;
+}
+
 /* 官方履约保障 */
 .guarantee-integrated-card {
   margin-top: 36rpx;

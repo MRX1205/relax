@@ -94,7 +94,19 @@
     </view>
   </view>
 
-  <!-- ════ 5. 核心业务调度 (2x2 Grid) ════ -->
+  <!-- ════ 5. 消息发布与全员广播横幅 ════ -->
+  <view class="ios-card broadcast-card ios-touch-active" bindtap="openBroadcastModal">
+    <view class="bc-left">
+      <view class="bc-icon-box">📢</view>
+      <view class="bc-info">
+        <text class="bc-title">发布系统消息与全员广播</text>
+        <text class="bc-desc">向全平台顾客发布活动公告或定向发送系统通知</text>
+      </view>
+    </view>
+    <view class="bc-btn">发布消息 ›</view>
+  </view>
+
+  <!-- ════ 6. 核心业务调度 (2x2 Grid) ════ -->
   <view class="section-container">
     <view class="section-header">
       <text class="section-title">核心业务调度</text>
@@ -223,4 +235,76 @@
   </view>
 
   <view style="height: 60rpx;"></view>
+
+  <!-- ════ 8. 发布系统消息与全员广播弹窗 (Solid White) ════ -->
+  <view wx:if="{{showBroadcastModal}}" class="modal-mask" bindtap="closeBroadcastModal">
+    <view class="modal-body" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">发布系统通知与公告</text>
+        <text class="modal-close ios-touch-active" bindtap="closeBroadcastModal">✕</text>
+      </view>
+      <text class="modal-sub">消息发布后将实时推送至顾客端「消息通知」列表。</text>
+
+      <view class="modal-form">
+        <view class="m-field">
+          <text class="m-label">消息标题 *</text>
+          <input
+            class="m-input"
+            placeholder="如：平台周年庆优惠券已派发"
+            value="{{broadcastTitle}}"
+            bindinput="handleBroadcastTitleInput"
+          />
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">通知正文内容 *</text>
+          <textarea
+            class="m-textarea"
+            placeholder="请输入详细通知内容..."
+            value="{{broadcastContent}}"
+            bindinput="handleBroadcastContentInput"
+          ></textarea>
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">推送目标范围</text>
+          <view class="target-radio-row">
+            <view
+              class="target-chip {{broadcastTarget === 'ALL' ? 'target-chip--active' : ''}}"
+              data-target="ALL"
+              bindtap="setBroadcastTarget"
+            >
+              📢 全体顾客 (全员广播)
+            </view>
+            <view
+              class="target-chip {{broadcastTarget === 'SINGLE' ? 'target-chip--active' : ''}}"
+              data-target="SINGLE"
+              bindtap="setBroadcastTarget"
+            >
+              🎯 指定用户ID
+            </view>
+          </view>
+        </view>
+
+        <view class="m-field" wx:if="{{broadcastTarget === 'SINGLE'}}">
+          <text class="m-label">目标顾客 User ID *</text>
+          <input
+            class="m-input"
+            type="number"
+            placeholder="请输入目标用户数字ID"
+            value="{{broadcastUserId}}"
+            bindinput="handleBroadcastUserIdInput"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="m-btn-cancel ios-touch-active" bindtap="closeBroadcastModal">取消</button>
+        <button class="m-btn-confirm ios-touch-active" loading="{{submittingBroadcast}}" bindtap="handleConfirmBroadcast">
+          确认发送
+        </button>
+      </view>
+    </view>
+  </view>
+
 </view>

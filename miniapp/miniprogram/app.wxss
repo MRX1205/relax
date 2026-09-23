@@ -47,6 +47,20 @@ page {
   font-size: 28rpx;
   color: var(--ios-text-primary);
   background-color: var(--ios-bg);
+  /* 兼容性全局变量映射 (Legacy Fallbacks) */
+  --color-primary: #FF382E;
+  --color-primary-pressed: #E03126;
+  --color-accent: #FF382E;
+  --color-surface: #FFFFFF;
+  --color-bg: #F5F5F7;
+  --color-text: #1D1D1F;
+  --color-text-secondary: #6E6E73;
+  --color-muted: #8E8E93;
+  --color-border: #E5E5EA;
+  --color-danger: #FF382E;
+  --color-success: #34C759;
+  --color-warning: #FF9500;
+
   line-height: 1.5;
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
@@ -106,8 +120,9 @@ page {
 
 /* 苹果卡片标准 */
 .ios-card {
-  background: var(--ios-card);
-  border-radius: var(--radius-lg);
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  border-radius: var(--radius-lg, 32rpx);
   box-shadow: var(--ios-shadow-card);
   border: 1rpx solid var(--ios-border);
   overflow: hidden;
@@ -116,6 +131,43 @@ page {
 
 .ios-card:active {
   transform: scale(0.985);
+}
+
+/* ═════════════════════════════════════════════════════════════ */
+/* 苹果标准弹窗系统 (Apple Modal & Dialog System)                 */
+/* ═════════════════════════════════════════════════════════════ */
+.modal-mask {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.65) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
+  padding: 40rpx !important;
+  box-sizing: border-box !important;
+}
+
+.modal-body {
+  width: 100% !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  opacity: 1 !important;
+  border-radius: 36rpx !important;
+  padding: 40rpx 36rpx !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 24rpx 64rpx rgba(0, 0, 0, 0.35) !important;
+  position: relative !important;
+  z-index: 100000 !important;
 }
 
 /* iOS Inset Grouped TableView 分组容器 */

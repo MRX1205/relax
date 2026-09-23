@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "顾客真实评价",
+  "navigationBarBackgroundColor": "#FFFFFF",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F6F7F9"
+}

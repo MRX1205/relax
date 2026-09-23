@@ -38,9 +38,13 @@ Page({
         request<ApplicationStatus | null>({ url: "/api/v1/technician/application" }).catch(() => null),
         getServiceAreas().catch(() => []),
       ]);
+      const mappedAreas = (areas || []).map((a: any) => ({
+        ...a,
+        selected: false,
+      }));
       this.setData({
         application: app,
-        serviceAreas: areas || [],
+        serviceAreas: mappedAreas,
         loading: false,
       });
     } catch {
@@ -67,16 +71,37 @@ Page({
     } else {
       areas.push(code);
     }
-    this.setData({ selectedAreas: areas });
+    const updatedServiceAreas = this.data.serviceAreas.map(a => ({
+      ...a,
+      selected: areas.includes(a.regionCode),
+    }));
+    this.setData({
+      selectedAreas: areas,
+      serviceAreas: updatedServiceAreas,
+    });
   },
 
   selectAllAreas() {
     const allCodes = this.data.serviceAreas.map(a => a.regionCode);
-    this.setData({ selectedAreas: allCodes });
+    const updatedServiceAreas = this.data.serviceAreas.map(a => ({
+      ...a,
+      selected: true,
+    }));
+    this.setData({
+      selectedAreas: allCodes,
+      serviceAreas: updatedServiceAreas,
+    });
   },
 
   clearAreas() {
-    this.setData({ selectedAreas: [] });
+    const updatedServiceAreas = this.data.serviceAreas.map(a => ({
+      ...a,
+      selected: false,
+    }));
+    this.setData({
+      selectedAreas: [],
+      serviceAreas: updatedServiceAreas,
+    });
   },
 
   async choosePhoto() {

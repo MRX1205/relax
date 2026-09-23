@@ -17,6 +17,11 @@ Page({
     isTechnician: false,
     isAdmin: false,
 
+    // 客服弹窗
+    customerModalVisible: false,
+    servicePhone: "400-800-6688",
+    customerQrUrl: "",
+
     // 管理员安全验证弹窗
     adminModalVisible: false,
     adminPinInput: "",
@@ -34,6 +39,8 @@ Page({
         this.setData({
           vipEnabled: settings.vipEnabled,
           appName: settings.appName,
+          servicePhone: settings.servicePhone || "400-800-6688",
+          customerQrUrl: settings.customerQrUrl || "",
         });
       }
     }).catch(() => {});
@@ -134,12 +141,57 @@ Page({
 
 
 
-  goToTechWorkbench() {
-    wx.navigateTo({ url: "/packageTech/pages/workbench/index" });
+  openCustomerService() {
+    this.setData({ customerModalVisible: true });
   },
 
-  goToTechAccess() {
-    wx.navigateTo({ url: "/packageTech/pages/access/index" });
+  closeCustomerService() {
+    this.setData({ customerModalVisible: false });
+  },
+
+  makeCustomerCall() {
+    const phone = this.data.servicePhone || "400-800-6688";
+    wx.makePhoneCall({ phoneNumber: phone });
+  },
+
+  previewCustomerQr() {
+    if (this.data.customerQrUrl) {
+      wx.previewImage({
+        current: this.data.customerQrUrl,
+        urls: [this.data.customerQrUrl],
+      });
+    }
+  },
+
+  saveCustomerQr() {
+    if (!this.data.customerQrUrl) return;
+    wx.showLoading({ title: "保存中…" });
+    wx.downloadFile({
+      url: this.data.customerQrUrl,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          wx.saveImageToPhotosAlbum({
+            filePath: res.tempFilePath,
+            success: () => {
+              wx.showToast({ title: "已保存至相册", icon: "success" });
+            },
+            fail: () => {
+              wx.showToast({ title: "请在设置中授权保存相册", icon: "none" });
+            },
+          });
+        }
+      },
+      fail: () => {
+        wx.showToast({ title: "下载图片失败", icon: "none" });
+      },
+      complete: () => {
+        wx.hideLoading();
+      },
+    });
+  },
+
+  goToTechWorkbench() {
+    wx.navigateTo({ url: "/packageTech/pages/workbench/index" });
   },
 
   bindPhone() {

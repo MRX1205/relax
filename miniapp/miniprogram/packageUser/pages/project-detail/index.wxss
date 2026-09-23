@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Project Detail — Apple HIG Modern Luxury Aesthetics
+   Project Detail — Apple HIG Modern Luxury Aesthetics (Unified Sheet)
    ========================================================================== */
 
 .page {
@@ -12,7 +12,7 @@
 .hero-card {
   position: relative;
   background: linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 100%);
-  padding: calc(env(safe-area-inset-top) + 40rpx) 36rpx 48rpx;
+  padding: calc(env(safe-area-inset-top) + 40rpx) 36rpx 70rpx;
   overflow: hidden;
   box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.18);
 }
@@ -139,18 +139,58 @@
   border: 1rpx solid rgba(255, 255, 255, 0.15);
 }
 
-/* ── 容器内容流 ── */
-.detail-container {
-  padding: 24rpx 28rpx 60rpx;
-  margin-top: -12rpx;
+/* ── 统一连续流 Apple HIG Sheet (完全消除割裂卡片) ── */
+.unified-body-sheet {
+  position: relative;
+  z-index: 10;
+  margin-top: -36rpx;
+  background: #FFFFFF;
+  border-top-left-radius: 44rpx;
+  border-top-right-radius: 44rpx;
+  padding: 36rpx 32rpx 160rpx;
+  box-shadow: 0 -8rpx 40rpx rgba(0, 0, 0, 0.08);
 }
 
-/* ── 通用卡片头部 ── */
-.card-title-row {
+/* 标签特性行 */
+.feature-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.ft-pill {
+  font-size: 22rpx;
+  color: #34C759;
+  background: rgba(52, 199, 89, 0.08);
+  padding: 8rpx 18rpx;
+  border-radius: 30rpx;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 14rpx;
-  margin-bottom: 20rpx;
+  gap: 6rpx;
+}
+
+.ft-dot {
+  font-weight: 800;
+}
+
+.sheet-divider {
+  height: 1.5rpx;
+  background: #F0F0F2;
+  margin: 32rpx 0;
+}
+
+/* 各版块通用样式 */
+.sheet-section {
+  padding: 4rpx 0;
+}
+
+.sheet-section-head {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 18rpx;
 }
 
 .title-between {
@@ -160,7 +200,7 @@
 .title-left {
   display: flex;
   align-items: center;
-  gap: 14rpx;
+  gap: 16rpx;
 }
 
 .icon-bubble {
@@ -176,57 +216,75 @@
 .icon-bubble--amber { background: rgba(255, 149, 0, 0.12); }
 .icon-bubble--coral { background: rgba(255, 56, 46, 0.1); }
 
-.sec-heading {
+.bubble-icon-img {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+.sheet-section-title {
   font-size: 30rpx;
   font-weight: 700;
   color: #1C1C1E;
   letter-spacing: -0.4rpx;
 }
 
-.sec-subtitle {
+.text-amber {
+  color: #B45309;
+}
+
+.sheet-section-sub {
   font-size: 24rpx;
   color: #8E8E93;
 }
 
-.card-content-body {
+.sheet-section-body {
   font-size: 26rpx;
   color: #3A3A3C;
   line-height: 1.7;
 }
 
-/* ── 温馨提示卡片 ── */
-.notice-card {
+/* 提示注意框 */
+.notice-box {
   background: #FFFBF0;
-  border: 1rpx solid rgba(255, 149, 0, 0.2);
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  border: 1rpx solid rgba(245, 158, 11, 0.2);
 }
 
 .notice-content-body {
-  font-size: 24rpx;
-  color: #8A5300;
+  font-size: 25rpx;
+  color: #78350F;
   line-height: 1.65;
 }
 
 /* ── 技师列表 ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 0;
+  gap: 16rpx;
+}
+
+.empty-text {
+  font-size: 24rpx;
+  color: #8E8E93;
+}
+
 .tech-list {
   display: flex;
   flex-direction: column;
+  gap: 20rpx;
 }
 
 .tech-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22rpx 0;
-  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
-}
-
-.tech-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.tech-item:first-child {
-  padding-top: 0;
+  padding: 20rpx;
+  background: #F8F9FA;
+  border-radius: 24rpx;
+  border: 1rpx solid rgba(0, 0, 0, 0.04);
 }
 
 .tech-item-main {
@@ -239,27 +297,17 @@
 .tech-avatar {
   width: 96rpx;
   height: 96rpx;
-  border-radius: 24rpx;
+  border-radius: 50%;
   overflow: hidden;
-  background: #F2F2F7;
+  background: #E5E5EA;
   flex-shrink: 0;
+  border: 3rpx solid #FFFFFF;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
 }
 
 .tech-avatar-img {
   width: 100%;
   height: 100%;
-}
-
-.tech-avatar-ph {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
-  color: #FFFFFF;
-  font-size: 36rpx;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .tech-item-info {
@@ -284,15 +332,15 @@
   font-size: 20rpx;
   color: #34C759;
   background: rgba(52, 199, 89, 0.12);
-  padding: 2rpx 10rpx;
-  border-radius: 6rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 8rpx;
   font-weight: 600;
 }
 
 .tech-meta-row {
   display: flex;
   align-items: center;
-  gap: 14rpx;
+  gap: 16rpx;
 }
 
 .tech-exp {
@@ -303,7 +351,7 @@
 .tech-star {
   font-size: 22rpx;
   color: #FF9500;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .tech-item-right {
@@ -331,67 +379,120 @@
 
 .ios-btn-coral {
   padding: 12rpx 28rpx;
-  background: linear-gradient(135deg, #FF5A36 0%, #FF382E 100%);
+  background: linear-gradient(135deg, #FF382E, #FF5A36);
   color: #FFFFFF;
   font-size: 24rpx;
   font-weight: 700;
-  border-radius: 40rpx;
-  box-shadow: 0 4rpx 14rpx rgba(255, 56, 46, 0.28);
+  border-radius: 30rpx;
+  box-shadow: 0 4rpx 14rpx rgba(255, 56, 46, 0.3);
 }
 
-/* ── 空状态 ── */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 48rpx 0 24rpx;
-  gap: 16rpx;
-}
-
-.empty-text {
-  font-size: 26rpx;
-  color: #8E8E93;
-}
-
-/* ── 服务保障底栏 ── */
-.guarantee-card {
-  padding: 24rpx 28rpx;
-  background: #FFFFFF;
+/* ── 品质服务保障 ── */
+.guarantee-block {
+  background: #F8F9FA;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  border: 1rpx solid rgba(0, 0, 0, 0.04);
 }
 
 .g-header {
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  margin-bottom: 16rpx;
+  gap: 14rpx;
+  margin-bottom: 20rpx;
 }
 
 .shield-badge {
-  width: 40rpx;
-  height: 40rpx;
+  width: 44rpx;
+  height: 44rpx;
   border-radius: 12rpx;
-  background: rgba(0, 122, 255, 0.1);
+  background: rgba(52, 199, 89, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .g-title {
-  font-size: 26rpx;
+  font-size: 28rpx;
   font-weight: 700;
   color: #1C1C1E;
 }
 
 .g-row {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 12rpx;
 }
 
 .g-pill {
   font-size: 22rpx;
   color: #636366;
-  background: #F2F2F7;
-  padding: 8rpx 18rpx;
-  border-radius: 30rpx;
+  background: #FFFFFF;
+  padding: 10rpx 16rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid #E5E5EA;
+  flex: 1;
+  text-align: center;
+}
+
+/* ── 底部固定悬浮预约栏 ── */
+.sticky-booking-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1rpx solid rgba(0, 0, 0, 0.06);
+  padding: 18rpx 32rpx calc(env(safe-area-inset-bottom) + 18rpx);
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+}
+
+.bar-call-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16rpx;
+  gap: 4rpx;
+}
+
+.bar-call-icon {
+  font-size: 36rpx;
+}
+
+.bar-call-text {
+  font-size: 20rpx;
+  color: #636366;
+  font-weight: 500;
+}
+
+.bar-book-btn {
+  flex: 1;
+  height: 88rpx;
+  background: linear-gradient(135deg, #FF382E, #FF5A36);
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  box-shadow: 0 8rpx 24rpx rgba(255, 56, 46, 0.35);
+}
+
+.book-btn-price {
+  font-size: 32rpx;
+  font-weight: 800;
+  color: #FFFFFF;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display";
+}
+
+.book-btn-text {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #FFFFFF;
 }

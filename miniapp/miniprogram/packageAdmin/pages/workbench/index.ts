@@ -48,20 +48,29 @@ Page({
       { code: "users", name: "用户会员管理", desc: "注册顾客 · 状态冻结", icon: "user", url: "/packageAdmin/pages/users/index", badge: "" },
     ],
 
-    // 3. 供给服务与商城运营 (4-Col Grid)
+    // 3. 供给服务与商城运营
     serviceMenus: [
       { code: "projects", name: "服务项目管理", desc: "项目库 · 上下架", icon: "project", url: "/packageAdmin/pages/projects/index", badge: "" },
       { code: "categories", name: "服务分类目录", desc: "分类管理与排序", icon: "category", url: "/packageAdmin/pages/categories/index", badge: "" },
       { code: "pricing", name: "技师专属定价", desc: "自主加价 · 指派", icon: "pricing", url: "/packageAdmin/pages/tech-pricing/index", badge: "" },
+      { code: "coupons", name: "优惠券营销", desc: "创建卡券 · 全员派发", icon: "coupon", url: "/packageAdmin/pages/coupons/index", badge: "新" },
       { code: "banners", name: "首页轮播管理", desc: "运营海报 · 页面跳转", icon: "banner", url: "/packageAdmin/pages/banners/index", badge: "" },
     ],
 
     // 4. 系统安全与结算配置 (3-Col Grid)
     systemMenus: [
       { code: "payment", name: "支付与结算模式", desc: "现场 / 微信 / 模拟", icon: "pay", url: "/packageAdmin/pages/payment-config/index", badge: "核心" },
-      { code: "system", name: "系统基本设置", desc: "品牌名 · VIP开关", icon: "setting", url: "/packageAdmin/pages/system-settings/index", badge: "" },
+      { code: "system", name: "系统基本设置", desc: "品牌名 · 客服电话 · 二维码", icon: "setting", url: "/packageAdmin/pages/system-settings/index", badge: "" },
       { code: "audit", name: "安全审计日志", desc: "操作留痕 · IP溯源", icon: "shield", url: "/packageAdmin/pages/audit-logs/index", badge: "" },
     ],
+
+    // 5. 广播通知弹窗
+    showBroadcastModal: false,
+    broadcastTitle: "",
+    broadcastContent: "",
+    broadcastTarget: "ALL",
+    broadcastUserId: "",
+    submittingBroadcast: false,
   },
 
   async onShow() {
@@ -160,6 +169,87 @@ Page({
   handleMenuTap(e: WechatMiniprogram.TouchEvent) {
     if (!this.data.authorized) return;
     wx.navigateTo({ url: e.currentTarget.dataset.url });
+  },
+
+  openBroadcastModal() {
+    this.setData({
+      showBroadcastModal: true,
+      broadcastTitle: "",
+      broadcastContent: "",
+      broadcastTarget: "ALL",
+      broadcastUserId: "",
+    });
+  },
+
+  closeBroadcastModal() {
+    this.setData({ showBroadcastModal: false });
+  },
+
+  handleBroadcastTitleInput(e: WechatMiniprogram.Input) {
+    this.setData({ broadcastTitle: e.detail.value });
+  },
+
+  handleBroadcastContentInput(e: WechatMiniprogram.Input) {
+    this.setData({ broadcastContent: e.detail.value });
+  },
+
+  setBroadcastTarget(e: WechatMiniprogram.TouchEvent) {
+    const target = e.currentTarget.dataset.target as "ALL" | "SINGLE";
+    this.setData({ broadcastTarget: target });
+  },
+
+  handleBroadcastUserIdInput(e: WechatMiniprogram.Input) {
+    this.setData({ broadcastUserId: e.detail.value });
+  },
+
+  async handleConfirmBroadcast() {
+    const title = this.data.broadcastTitle.trim();
+    const content = this.data.broadcastContent.trim();
+    if (!title) {
+      wx.showToast({ title: "请输入消息标题", icon: "none" });
+      return;
+    }
+    if (!content) {
+      wx.showToast({ title: "请输入通知正文", icon: "none" });
+      return;
+    }
+
+    let targetUserId: number | null = null;
+    if (this.data.broadcastTarget === "SINGLE") {
+      const uidStr = this.data.broadcastUserId.trim();
+      if (!uidStr) {
+        wx.showToast({ title: "请输入目标用户ID", icon: "none" });
+        return;
+      }
+      const uid = parseInt(uidStr, 10);
+      if (isNaN(uid)) {
+        wx.showToast({ title: "用户ID必须为数字", icon: "none" });
+        return;
+      }
+      targetUserId = uid;
+    }
+
+    this.setData({ submittingBroadcast: true });
+    try {
+      const res = await request<number>({
+        url: "/api/v1/notifications/admin/broadcast",
+        method: "POST",
+        data: {
+          title,
+          content,
+          type: "SYSTEM_ANNOUNCEMENT",
+          targetUserId,
+        },
+      });
+      wx.showToast({
+        title: `成功推送至 ${res || 1} 位用户！`,
+        icon: "success",
+      });
+      this.setData({ showBroadcastModal: false, submittingBroadcast: false });
+    } catch (err: any) {
+      this.setData({ submittingBroadcast: false });
+      wx.showToast({ title: err?.message || "广播发送失败", icon: "none" });
+    }
   },
 
   returnToUserMode() {

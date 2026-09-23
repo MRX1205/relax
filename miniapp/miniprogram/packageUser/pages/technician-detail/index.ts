@@ -193,16 +193,22 @@ Page({
     });
   },
 
-  makeCustomerCall() {
-    const phone = this.data.detail?.technician?.phone;
-    if (phone) {
-      wx.makePhoneCall({ phoneNumber: phone });
-    } else {
-      wx.showModal({
-        title: "平台咨询",
-        content: "如需咨询技师排期与服务详情，请拨打客服专线",
-        showCancel: false,
-      });
-    }
+  goToReviewList() {
+    const techName = encodeURIComponent(this.data.detail?.technician?.serviceName || "技师");
+    wx.navigateTo({
+      url: `/packageUser/pages/review-list/index?technicianId=${this.data.techId}&techName=${techName}`,
+    });
+  },
+
+  async makeCustomerCall() {
+    let phone = "400-800-6688";
+    try {
+      const { getPublicSystemSettings } = await import("../../../services/system");
+      const settings = await getPublicSystemSettings();
+      if (settings?.servicePhone) {
+        phone = settings.servicePhone;
+      }
+    } catch {}
+    wx.makePhoneCall({ phoneNumber: phone });
   },
 });

@@ -61,13 +61,13 @@ public class CouponController {
 
     // === Admin: Manage coupons ===
     @GetMapping("/admin/coupons")
-    @PreAuthorize("hasAuthority('content:manage')")
+    @PreAuthorize("hasAuthority('content:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<List<CouponMapper.CouponTemplate>> listTemplates() {
         return ApiResponse.success(couponService.listTemplates());
     }
 
     @PostMapping("/admin/coupons")
-    @PreAuthorize("hasAuthority('content:manage')")
+    @PreAuthorize("hasAuthority('content:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<CouponMapper.CouponTemplate> createTemplate(@Valid @RequestBody CreateTemplateRequest request) {
         return ApiResponse.success(couponService.createTemplate(
                 new CouponService.CreateTemplateRequest(request.name(), request.amount(), request.minSpend(),
@@ -75,10 +75,18 @@ public class CouponController {
     }
 
     @PutMapping("/admin/coupons/{id}/status")
-    @PreAuthorize("hasAuthority('content:manage')")
+    @PreAuthorize("hasAuthority('content:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<Void> updateStatus(@PathVariable long id, @Valid @RequestBody StatusRequest request) {
         couponService.updateTemplateStatus(id, request.status());
         return ApiResponse.success(null);
+    }
+
+    @PostMapping("/admin/coupons/{id}/grant")
+    @PreAuthorize("hasAuthority('content:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ApiResponse<Integer> grantCoupon(@PathVariable long id, @RequestBody(required = false) GrantRequest request) {
+        Long targetUserId = request != null ? request.userId() : null;
+        int count = couponService.grantCoupon(id, targetUserId);
+        return ApiResponse.success(count);
     }
 
     public record CreateTemplateRequest(
@@ -90,4 +98,6 @@ public class CouponController {
             LocalDateTime endAt) {}
 
     public record StatusRequest(@NotBlank String status) {}
+
+    public record GrantRequest(Long userId) {}
 }

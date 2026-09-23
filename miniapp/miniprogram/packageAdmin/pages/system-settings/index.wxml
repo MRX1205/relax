@@ -3,7 +3,7 @@
   <view class="hero-header">
     <view class="hero-tag">PLATFORM CONFIG</view>
     <view class="hero-title">系统基本配置</view>
-    <view class="hero-desc">管理平台对外展示品牌名称与特色会员服务入口。</view>
+    <view class="hero-desc">管理平台对外展示品牌名称、统一客服联系方式与会员活动政策。</view>
   </view>
 
   <!-- 1. 品牌名称设置卡片 -->
@@ -26,25 +26,93 @@
     </view>
   </view>
 
-  <!-- 2. VIP 会员开关卡片 -->
+  <!-- 2. 全局统一客服咨询电话 -->
+  <view class="settings-card">
+    <view class="card-header">
+      <view class="card-icon-box">📞</view>
+      <view class="card-title-wrap">
+        <text class="card-title">统一客服咨询电话</text>
+        <text class="card-sub">全小程序各处电话咨询、技师详情咨询统一拨打该电话</text>
+      </view>
+    </view>
+
+    <view class="input-wrap">
+      <input
+        class="name-input"
+        value="{{servicePhone}}"
+        placeholder="例如: 400-800-6688 或 手机号"
+        bindinput="handleServicePhoneInput"
+      />
+    </view>
+  </view>
+
+  <!-- 3. 客服微信二维码设置 -->
+  <view class="settings-card">
+    <view class="card-header">
+      <view class="card-icon-box">💬</view>
+      <view class="card-title-wrap">
+        <text class="card-title">在线客服微信二维码</text>
+        <text class="card-sub">在顾客端「我的-联系客服」中展示，支持顾客点击大图预览与长按保存</text>
+      </view>
+    </view>
+
+    <view class="qr-upload-section">
+      <view wx:if="{{customerQrUrl}}" class="qr-preview-box">
+        <image class="qr-img" src="{{customerQrUrl}}" mode="aspectFit" bindtap="previewQr" />
+        <view class="qr-action-row">
+          <text class="qr-btn qr-btn-change" bindtap="chooseQrCode">更换二维码</text>
+          <text class="qr-btn qr-btn-del" bindtap="clearQr">删除</text>
+        </view>
+      </view>
+      <view wx:else class="qr-upload-btn ios-touch-active" bindtap="chooseQrCode">
+        <text class="qr-upload-icon">📷</text>
+        <text class="qr-upload-text">点击上传客服微信二维码图片</text>
+        <text class="qr-upload-sub">支持 JPG / PNG，建议尺寸清晰方形图</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 4. 邀请奖励金设置 -->
+  <view class="settings-card">
+    <view class="card-header">
+      <view class="card-icon-box">🎁</view>
+      <view class="card-title-wrap">
+        <text class="card-title">邀请好友现金奖励金 (元)</text>
+        <text class="card-sub">用户每成功邀请1位新客完成首单时双方各得的奖励金额</text>
+      </view>
+    </view>
+
+    <view class="input-wrap">
+      <text class="currency-prefix">¥</text>
+      <input
+        class="name-input"
+        type="digit"
+        value="{{inviteRewardAmount}}"
+        placeholder="30.00"
+        bindinput="handleInviteRewardInput"
+      />
+    </view>
+  </view>
+
+  <!-- 5. VIP 会员开关卡片 -->
   <view class="settings-card">
     <view class="switch-row">
       <view class="switch-left">
         <view class="card-icon-box">👑</view>
         <view class="card-title-wrap">
           <text class="card-title">VIP 会员服务入口</text>
-          <text class="card-sub">{{vipEnabled ? '已开启：顾客端「我的」呈现黑金VIP尊享卡' : '已关闭：顾客端「我的」不显示VIP入口（默认）'}}</text>
+          <text class="card-sub">{{vipEnabled ? '已开启：顾客端「我的」呈现黑金VIP尊享卡' : '已关闭：顾客端不显示VIP入口（默认）'}}</text>
         </view>
       </view>
-      <switch checked="{{vipEnabled}}" color="#E54D42" bindchange="handleVipToggle" />
+      <switch checked="{{vipEnabled}}" color="#FF382E" bindchange="handleVipToggle" />
     </view>
   </view>
 
-  <!-- 3. 操作说明卡片 -->
+  <!-- 6. 操作说明卡片 -->
   <view class="help-card">
-    <view class="help-title">💡 配置说明</view>
-    <view class="help-item">• <strong>品牌名称</strong>：修改后点击保存，所有登录用户重新进入或刷新页面后即可看到最新品牌名。</view>
-    <view class="help-item">• <strong>VIP会员开关</strong>：在业务起步期建议关闭，待有专属会员权益政策时随时开启。</view>
+    <view class="help-title">💡 平台运营配置说明</view>
+    <view class="help-item">• <strong>统一客服电话与二维码</strong>：修改保存后立即同步全端，保障顾客能实时联系到平台官方客服人员。</view>
+    <view class="help-item">• <strong>邀请奖励金</strong>：设定活动额度，顾客在「邀请有礼」页面将按此额度展示激励文案。</view>
   </view>
 
   <!-- 底部固定保存栏 -->

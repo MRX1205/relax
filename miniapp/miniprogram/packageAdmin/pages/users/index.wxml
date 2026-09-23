@@ -81,7 +81,7 @@
 
   <!-- ════ 用户详细档案弹窗卡片 (Apple Modal Style) ════ -->
   <view wx:if="{{showDetailModal && selectedUser}}" class="modal-mask" bindtap="closeDetailModal">
-    <view class="modal-sheet ios-card" catchtap="">
+    <view class="modal-sheet" catchtap="">
       <!-- 弹窗顶部栏 -->
       <view class="modal-sheet-header">
         <view class="sheet-title-col">

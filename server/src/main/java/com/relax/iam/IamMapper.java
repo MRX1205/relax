@@ -40,6 +40,9 @@ public interface IamMapper {
             + "GROUP BY u.id, u.wechat_open_id, u.nickname, u.phone, u.status ORDER BY u.id DESC")
     List<AccessUser> listAdmins();
 
+    @Select("SELECT id FROM platform_user WHERE status = 'ACTIVE' ORDER BY id")
+    List<Long> findAllActiveUserIds();
+
     @Select("SELECT code FROM iam_role r JOIN iam_user_role ur ON ur.role_id = r.id "
             + "WHERE ur.user_id = #{userId} AND ur.status = 'ENABLED' ORDER BY r.id")
     List<String> findRoles(@Param("userId") long userId);

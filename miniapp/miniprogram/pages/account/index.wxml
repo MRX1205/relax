@@ -160,15 +160,15 @@
       </view>
       <text class="cell-label">消息通知</text>
       <text class="cell-chevron">›</text>
-      <view class="ios-cell-divider" wx:if="{{!isTechnician}}"></view>
+      <view class="ios-cell-divider"></view>
     </view>
 
-    <!-- 申请入驻（未入驻顾客可见） -->
-    <view class="ios-cell ios-touch-active" wx:if="{{!isTechnician}}" bindtap="goToTechAccess">
+    <!-- 联系在线客服 -->
+    <view class="ios-cell ios-touch-active" bindtap="openCustomerService">
       <view class="cell-icon-wrap icon-teal">
-        <image class="cell-svg" src="/assets/icons/join.png" mode="aspectFit" />
+        <image class="cell-svg" src="/assets/icons/phone.png" mode="aspectFit" />
       </view>
-      <text class="cell-label">成为技师 · 申请入驻</text>
+      <text class="cell-label">联系在线客服</text>
       <text class="cell-chevron">›</text>
     </view>
   </view>
@@ -199,6 +199,62 @@
   </view>
 
   <view class="safe-bottom-bar"></view>
+
+  <!-- 专属在线客服弹窗 (Apple HIG Modal Sheet) -->
+  <view wx:if="{{customerModalVisible}}" class="modal-mask" bindtap="closeCustomerService">
+    <view class="customer-sheet" catchtap="">
+      <view class="customer-sheet-head">
+        <view class="cs-head-icon">🎧</view>
+        <view class="cs-head-text">
+          <text class="cs-head-title">平台专属客服</text>
+          <text class="cs-head-sub">贴心服务 · 7x24小时全心为您守候</text>
+        </view>
+        <text class="cs-close-btn ios-touch-active" bindtap="closeCustomerService">✕</text>
+      </view>
+
+      <!-- 电话咨询卡片 -->
+      <view class="cs-card-item">
+        <view class="cs-card-left">
+          <view class="cs-card-icon icon-phone">📞</view>
+          <view class="cs-card-info">
+            <text class="cs-card-label">平台客服专线</text>
+            <text class="cs-card-val">{{servicePhone || '400-800-6688'}}</text>
+          </view>
+        </view>
+        <view class="cs-action-btn btn-call ios-touch-active" bindtap="makeCustomerCall">立即拨打</view>
+      </view>
+
+      <!-- 微信客服二维码卡片 -->
+      <view class="cs-card-item cs-qr-card">
+        <view class="cs-qr-head">
+          <view class="cs-card-icon icon-wechat">💬</view>
+          <view class="cs-card-info">
+            <text class="cs-card-label">官方微信客服</text>
+            <text class="cs-card-desc">添加微信客服享一对一专人咨询与订单跟进</text>
+          </view>
+        </view>
+
+        <view wx:if="{{customerQrUrl}}" class="cs-qr-body">
+          <image
+            class="cs-qr-image"
+            src="{{customerQrUrl}}"
+            mode="aspectFit"
+            bindtap="previewCustomerQr"
+            show-menu-by-longpress="{{true}}"
+          />
+          <text class="cs-qr-hint">点击可放大查看 · 支持长按识别或保存到相册</text>
+          <view class="save-qr-pill ios-touch-active" bindtap="saveCustomerQr">
+            保存二维码至相册
+          </view>
+        </view>
+        <view wx:else class="cs-qr-empty">
+          <text class="cs-empty-text">微信客服设置中，欢迎直接拨打专线电话咨询</text>
+        </view>
+      </view>
+
+      <view class="sheet-done-btn ios-touch-active" bindtap="closeCustomerService">完成</view>
+    </view>
+  </view>
 
   <!-- 管理员 2FA PIN 弹窗 -->
   <view wx:if="{{adminModalVisible}}" class="admin-auth-mask" bindtap="closeAdminAuth">

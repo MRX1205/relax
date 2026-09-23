@@ -27,13 +27,15 @@
         />
       </view>
 
-      <view class="form-row" bindtap="handleRegionTap">
-        <text class="form-label"><text class="required-star">*</text>所属区域</text>
-        <view class="picker-trigger">
-          <text wx:if="{{regionName}}" class="picker-val">{{regionName}}</text>
-          <text wx:else class="placeholder-text">选择东莞镇街 ›</text>
+      <picker mode="selector" range="{{areaNames}}" value="{{selectedAreaIndex}}" bindchange="handleRegionPickerChange">
+        <view class="form-row">
+          <text class="form-label"><text class="required-star">*</text>所属区域</text>
+          <view class="picker-trigger">
+            <text wx:if="{{regionName}}" class="picker-val">{{regionName}}</text>
+            <text wx:else class="placeholder-text">选择东莞镇街 (32镇街全覆盖) ›</text>
+          </view>
         </view>
-      </view>
+      </picker>
 
       <view class="form-row form-row--vertical">
         <text class="form-label"><text class="required-star">*</text>详细门牌地址</text>

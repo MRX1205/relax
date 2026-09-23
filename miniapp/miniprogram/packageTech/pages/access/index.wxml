@@ -148,7 +148,7 @@
         <view
           wx:for="{{serviceAreas}}"
           wx:key="id"
-          class="area-chip {{selectedAreas.indexOf(item.regionCode) >= 0 ? 'area-chip--active' : ''}} ios-touch-active"
+          class="area-chip {{item.selected ? 'area-chip--active' : ''}} ios-touch-active"
           data-code="{{item.regionCode}}"
           bindtap="toggleArea"
         >

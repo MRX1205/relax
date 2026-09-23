@@ -208,7 +208,8 @@
   background: linear-gradient(135deg, #E8F8EE 0%, #D0F2DD 100%);
 }
 
-.tile-vip {
+.tile-vip,
+.tile-coupon {
   background: linear-gradient(135deg, #FFF4E5 0%, #FFE6B8 100%);
 }
 

@@ -1,0 +1,74 @@
+<view class="review-page">
+  <!-- 顶部口碑总览卡片 -->
+  <view class="score-hero-card ios-card">
+    <view class="score-main-col">
+      <view class="score-large-wrap">
+        <text class="score-large-num">{{avgScore}}</text>
+        <text class="score-total">/ 5.0</text>
+      </view>
+      <view class="score-stars-row">
+        <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this" class="hero-star">★</text>
+      </view>
+      <text class="score-subtitle">综合口碑评分 · 真实订单履约后评价</text>
+    </view>
+    <view class="score-stat-right">
+      <view class="stat-pill-item">
+        <text class="stat-pill-val">100%</text>
+        <text class="stat-pill-lbl">好评率</text>
+      </view>
+      <view class="stat-pill-item">
+        <text class="stat-pill-val">{{reviews.length}} 条</text>
+        <text class="stat-pill-lbl">累计评价</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 技师专属标头（如果查看指定技师） -->
+  <view wx:if="{{techName}}" class="tech-scope-bar">
+    <text class="scope-tag">当前技师</text>
+    <text class="scope-name">{{techName}}</text>
+    <text class="scope-desc">的专属顾客评价</text>
+  </view>
+
+  <!-- 评价列表容器 -->
+  <view class="reviews-list-container">
+    <view wx:if="{{loading}}" class="loading-state">
+      <text class="loading-text">正在加载评价数据…</text>
+    </view>
+
+    <view wx:elif="{{reviews.length === 0}}" class="empty-state">
+      <view class="empty-icon">💬</view>
+      <text class="empty-title">暂无评价记录</text>
+      <text class="empty-desc">完成服务订单后，顾客可在此提交真实体验评价</text>
+    </view>
+
+    <view wx:else class="review-items-wrap">
+      <view wx:for="{{reviews}}" wx:key="id" class="review-card ios-card">
+        <view class="review-card-head">
+          <view class="user-avatar-circle">{{item.userName ? item.userName[0] : '客'}}</view>
+          <view class="user-meta-col">
+            <view class="user-name-row">
+              <text class="user-name">{{item.userName || '微信顾客'}}</text>
+              <text class="verified-tag">已履约实名订单</text>
+            </view>
+            <view class="review-stars-row">
+              <text
+                wx:for="{{[1,2,3,4,5]}}"
+                wx:key="*this"
+                wx:for-item="star"
+                class="star-symbol {{star <= (item.score || 5) ? 'star-gold' : 'star-muted'}}"
+              >★</text>
+            </view>
+          </view>
+          <text class="review-date" wx:if="{{item.createdAt}}">{{item.createdAt}}</text>
+        </view>
+
+        <view class="review-content">
+          <text class="content-text">{{item.content || '顾客未填写文字内容，默认好评。'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view style="height: 60rpx;"></view>
+</view>

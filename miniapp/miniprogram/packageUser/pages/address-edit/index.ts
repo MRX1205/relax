@@ -16,17 +16,26 @@ Page({
     isDefault: false,
     saving: false,
     serviceAreas: [] as ServiceArea[],
+    areaNames: [] as string[],
+    selectedAreaIndex: 0,
   },
 
   async onLoad(query: Record<string, string>) {
     try {
       const areas = await getServiceAreas();
-      this.setData({ serviceAreas: areas });
+      const areaNames = (areas || []).map(a => a.name);
+      this.setData({ serviceAreas: areas, areaNames });
       if (areas.length > 0 && !this.data.regionCode) {
-        // 默认优先选中东莞核心街道（如东城或首个区域）
-        const defaultArea = areas.find(a => a.name.includes("南城") || a.name.includes("东城")) || areas[0];
+        // 默认优先选中东莞核心街道（如南城或首个区域）
+        const defaultIdx = areas.findIndex(a => a.name.includes("南城") || a.name.includes("东城"));
+        const idx = defaultIdx >= 0 ? defaultIdx : 0;
+        const defaultArea = areas[idx];
         if (defaultArea) {
-          this.setData({ regionCode: defaultArea.regionCode, regionName: defaultArea.name });
+          this.setData({
+            selectedAreaIndex: idx,
+            regionCode: defaultArea.regionCode,
+            regionName: defaultArea.name,
+          });
         }
       }
     } catch {
@@ -67,20 +76,16 @@ Page({
     }
   },
 
-  handleRegionTap() {
-    if (!this.data.serviceAreas || this.data.serviceAreas.length === 0) {
-      wx.showToast({ title: "正在获取服务区域…", icon: "none" });
-      getServiceAreas().then(areas => this.setData({ serviceAreas: areas })).catch(() => {});
-      return;
+  handleRegionPickerChange(e: WechatMiniprogram.PickerChange) {
+    const idx = Number(e.detail.value);
+    const area = this.data.serviceAreas[idx];
+    if (area) {
+      this.setData({
+        selectedAreaIndex: idx,
+        regionCode: area.regionCode,
+        regionName: area.name,
+      });
     }
-    const names = this.data.serviceAreas.map(a => a.name);
-    wx.showActionSheet({
-      itemList: names.slice(0, 6), // 微信最多支持6项
-      success: res => {
-        const area = this.data.serviceAreas[res.tapIndex];
-        this.setData({ regionCode: area.regionCode, regionName: area.name });
-      },
-    });
   },
 
   handlePickLocation() {

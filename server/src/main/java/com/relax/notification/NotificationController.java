@@ -44,4 +44,17 @@ public class NotificationController {
     ApiResponse<Integer> unreadCount(@AuthenticationPrincipal CurrentUser currentUser) {
         return ApiResponse.success(notificationService.unreadCount(currentUser.id()));
     }
+
+    @PostMapping("/admin/broadcast")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('content:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ApiResponse<Integer> broadcast(@jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody BroadcastRequest request) {
+        int count = notificationService.broadcast(request.type(), request.title(), request.content(), request.targetUserId());
+        return ApiResponse.success(count);
+    }
+
+    public record BroadcastRequest(
+            String type,
+            @jakarta.validation.constraints.NotBlank String title,
+            @jakarta.validation.constraints.NotBlank String content,
+            Long targetUserId) {}
 }

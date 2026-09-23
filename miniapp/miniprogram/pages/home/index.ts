@@ -182,6 +182,10 @@ Page({
     wx.navigateTo({ url: "/packageUser/pages/invite/index" });
   },
 
+  goToCoupons() {
+    wx.navigateTo({ url: "/packageUser/pages/coupons/index" });
+  },
+
   goToMember() {
     wx.navigateTo({ url: "/packageUser/pages/vip/index" });
   },

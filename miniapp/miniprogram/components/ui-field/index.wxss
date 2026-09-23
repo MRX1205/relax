@@ -1,13 +1,13 @@
 .field__label {
   margin-bottom: 12rpx;
-  color: var(--color-text);
+  color: var(--color-text, #1D1D1F);
   font-size: 28rpx;
   font-weight: 600;
 }
 
 .field__required,
 .field__error {
-  color: var(--color-danger);
+  color: var(--color-danger, #FF382E);
 }
 
 .field__required {
@@ -19,12 +19,13 @@
   box-sizing: border-box;
   padding: 0 24rpx;
   background: #FFFFFF;
-  border: 1rpx solid var(--color-border);
+  color: #1D1D1F;
+  border: 1rpx solid var(--color-border, #E5E5EA);
   border-radius: 12rpx;
 }
 
 .field__input--error {
-  border-color: var(--color-danger);
+  border-color: var(--color-danger, #FF382E);
 }
 
 .field__error {

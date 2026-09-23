@@ -133,7 +133,7 @@
 
   <!-- ════ 4. 新增 / 编辑项目弹窗 (Apple HIG Modal) ════ -->
   <view wx:if="{{showModal}}" class="modal-mask" bindtap="closeModal">
-    <view class="modal-sheet ios-card" catchtap="">
+    <view class="modal-sheet" catchtap="">
       <view class="modal-header">
         <view class="modal-title-col">
           <text class="modal-title">{{isEditing ? '编辑服务项目' : '新增服务项目'}}</text>

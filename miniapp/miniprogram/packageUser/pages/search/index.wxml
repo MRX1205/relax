@@ -72,7 +72,7 @@
     <scroll-view wx:else scroll-y class="result-scroll">
 
       <!-- 1. 服务项目模块 -->
-      <view wx:if="(currentTab === 'all' || currentTab === 'projects') && projects.length > 0" class="section-group">
+      <view wx:if="{{(currentTab === 'all' || currentTab === 'projects') && projects.length > 0}}" class="section-group">
         <view class="section-header">
           <text class="sec-title">💆 匹配服务项目 ({{projects.length}})</text>
         </view>
@@ -108,7 +108,7 @@
       </view>
 
       <!-- 2. 理疗技师模块 -->
-      <view wx:if="(currentTab === 'all' || currentTab === 'technicians') && technicians.length > 0" class="section-group">
+      <view wx:if="{{(currentTab === 'all' || currentTab === 'technicians') && technicians.length > 0}}" class="section-group">
         <view class="section-header">
           <text class="sec-title">👑 匹配理疗技师 ({{technicians.length}})</text>
         </view>

@@ -17,18 +17,23 @@
 }
 
 .button--primary {
-  background: var(--color-primary);
-  color: #FFFFFF;
+  background: #FF382E !important;
+  background-color: #FF382E !important;
+  color: #FFFFFF !important;
+  border-radius: 44rpx;
+  box-shadow: 0 6rpx 20rpx rgba(255, 56, 46, 0.3);
 }
 
 .button--primary:active {
-  background: var(--color-primary-pressed);
+  background: #E03126 !important;
+  opacity: 0.9;
 }
 
 .button--secondary {
-  background: #FFFFFF;
-  color: var(--color-primary);
-  border: 1rpx solid var(--color-primary);
+  background: #FFFFFF !important;
+  color: #FF382E !important;
+  border: 1.5rpx solid #FF382E !important;
+  border-radius: 44rpx;
 }
 
 .button[disabled] {

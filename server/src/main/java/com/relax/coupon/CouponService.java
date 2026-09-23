@@ -11,13 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.relax.common.api.BusinessException;
 
+import com.relax.iam.IamMapper;
+
 @Service
 public class CouponService {
 
     private final CouponMapper couponMapper;
+    private final IamMapper iamMapper;
 
-    CouponService(CouponMapper couponMapper) {
+    CouponService(CouponMapper couponMapper, IamMapper iamMapper) {
         this.couponMapper = couponMapper;
+        this.iamMapper = iamMapper;
     }
 
     // === User endpoints ===
@@ -111,6 +115,34 @@ public class CouponService {
         if (couponMapper.updateTemplateStatus(id, status) == 0) {
             throw new BusinessException(HttpStatus.NOT_FOUND, "COUPON_NOT_FOUND", "优惠券模板不存在");
         }
+    }
+
+    @Transactional
+    public int grantCoupon(long templateId, Long targetUserId) {
+        couponMapper.findTemplateById(templateId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "COUPON_NOT_FOUND", "优惠券不存在"));
+
+        if (targetUserId != null && targetUserId > 0) {
+            if (couponMapper.countUserCoupon(targetUserId, templateId) == 0) {
+                long id = IdWorker.getId();
+                couponMapper.insertUserCoupon(id, targetUserId, templateId);
+                couponMapper.incrementIssuedCount(templateId);
+                return 1;
+            }
+            return 0;
+        }
+
+        List<Long> allUserIds = iamMapper.findAllActiveUserIds();
+        int count = 0;
+        for (Long uid : allUserIds) {
+            if (couponMapper.countUserCoupon(uid, templateId) == 0) {
+                long id = IdWorker.getId();
+                couponMapper.insertUserCoupon(id, uid, templateId);
+                couponMapper.incrementIssuedCount(templateId);
+                count++;
+            }
+        }
+        return count;
     }
 
     public record CreateTemplateRequest(String name, BigDecimal amount, BigDecimal minSpend,

@@ -32,40 +32,56 @@
       </view>
     </view>
 
-    <view class="detail-container">
+    <!-- 统一连续连续流 Apple HIG Sheet (消除割裂零碎卡片) -->
+    <view class="unified-body-sheet">
+      <!-- 1. 服务标签特性行 -->
+      <view class="feature-tags-row">
+        <view class="ft-pill"><text class="ft-dot">✓</text> 执业认证技师</view>
+        <view class="ft-pill"><text class="ft-dot">✓</text> 一客一换一消毒</view>
+        <view class="ft-pill"><text class="ft-dot">✓</text> 准时极速上门</view>
+        <view class="ft-pill"><text class="ft-dot">✓</text> 未服务随时退</view>
+      </view>
 
-      <!-- 服务功效与介绍 (Apple Inset Grouped) -->
-      <view wx:if="{{detail.project.description}}" class="ios-card info-card">
-        <view class="card-title-row">
+      <view class="sheet-divider"></view>
+
+      <!-- 2. 服务详情与手法国标 -->
+      <view class="sheet-section" wx:if="{{detail.project.description}}">
+        <view class="sheet-section-head">
           <view class="icon-bubble icon-bubble--blue">
             <image class="bubble-icon-img" src="/assets/icons/edit.png" mode="aspectFit" />
           </view>
-          <text class="sec-heading">服务详情与手法国标</text>
+          <text class="sheet-section-title">服务详情与手法国标</text>
         </view>
-        <text class="card-content-body">{{detail.project.description}}</text>
+        <text class="sheet-section-body">{{detail.project.description}}</text>
       </view>
 
-      <!-- 温馨提示 / 禁忌卡片 -->
-      <view wx:if="{{detail.project.notice}}" class="ios-card notice-card">
-        <view class="card-title-row">
+      <view class="sheet-divider" wx:if="{{detail.project.description && detail.project.notice}}"></view>
+
+      <!-- 3. 温馨提示与禁忌须知 -->
+      <view class="sheet-section notice-section" wx:if="{{detail.project.notice}}">
+        <view class="sheet-section-head">
           <view class="icon-bubble icon-bubble--amber">
             <image class="bubble-icon-img" src="/assets/icons/shield.png" mode="aspectFit" />
           </view>
-          <text class="sec-heading" style="color: #995B00;">预约与体验须知</text>
+          <text class="sheet-section-title text-amber">预约与体验须知</text>
         </view>
-        <text class="notice-content-body">{{detail.project.notice}}</text>
+        <view class="notice-box">
+          <text class="notice-content-body">{{detail.project.notice}}</text>
+        </view>
       </view>
 
-      <!-- 可预约执业技师 -->
-      <view class="ios-card tech-section-card">
-        <view class="card-title-row title-between">
+      <view class="sheet-divider"></view>
+
+      <!-- 4. 可预约执业技师团队 -->
+      <view class="sheet-section">
+        <view class="sheet-section-head title-between">
           <view class="title-left">
             <view class="icon-bubble icon-bubble--coral">
               <image class="bubble-icon-img" src="/assets/tabbar/technicians.png" mode="aspectFit" />
             </view>
-            <text class="sec-heading">可服务技师团队</text>
+            <text class="sheet-section-title">可服务技师团队</text>
           </view>
-          <text class="sec-subtitle">（{{detail.technicianCount}} 人在线）</text>
+          <text class="sheet-section-sub">（{{detail.technicianCount}} 人在线）</text>
         </view>
 
         <!-- 暂无技师 -->
@@ -75,7 +91,7 @@
         </view>
 
         <!-- 技师列表 -->
-        <view class="tech-list">
+        <view class="tech-list" wx:else>
           <view wx:for="{{detail.technicians}}" wx:key="id" class="tech-item">
             <view class="tech-item-main ios-touch-active" data-id="{{item.id}}" bindtap="goToTechnician">
               <view class="tech-avatar">
@@ -84,7 +100,7 @@
               <view class="tech-item-info">
                 <view class="tech-item-title-row">
                   <text class="tech-name">{{item.serviceName}}</text>
-                  <text class="tech-badge-light">持证</text>
+                  <text class="tech-badge-light">认证</text>
                 </view>
                 <view class="tech-meta-row">
                   <text class="tech-exp">{{item.experienceYears}} 年从业</text>
@@ -105,8 +121,10 @@
         </view>
       </view>
 
-      <!-- 服务标准保障 -->
-      <view class="ios-card guarantee-card">
+      <view class="sheet-divider"></view>
+
+      <!-- 5. 平台品质服务保障 -->
+      <view class="guarantee-block">
         <view class="g-header">
           <view class="shield-badge">
             <image src="/assets/icons/shield.png" style="width: 32rpx; height: 32rpx;" mode="aspectFit" />
@@ -120,7 +138,19 @@
         </view>
       </view>
 
-      <view style="height: 60rpx;"></view>
+      <view style="height: 140rpx;"></view>
+    </view>
+
+    <!-- 底部悬浮固定预约栏 -->
+    <view class="sticky-booking-bar">
+      <view class="bar-call-btn ios-touch-active" bindtap="makeCustomerCall">
+        <text class="bar-call-icon">📞</text>
+        <text class="bar-call-text">电话咨询</text>
+      </view>
+      <view class="bar-book-btn ios-touch-active" bindtap="handleQuickBooking">
+        <text class="book-btn-price">¥{{detail.project.basePrice}}</text>
+        <text class="book-btn-text">立即预约</text>
+      </view>
     </view>
   </block>
 </view>

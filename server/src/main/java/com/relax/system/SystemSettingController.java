@@ -27,9 +27,9 @@ public class SystemSettingController {
     @PutMapping("/admin/system/settings")
     @PreAuthorize("hasAuthority('admin:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     public ApiResponse<SystemSettingService.PublicSettings> updateSettings(@RequestBody UpdateSettingsRequest request) {
-        settingService.updateSettings(request.appName(), request.vipEnabled());
+        settingService.updateSettings(request.appName(), request.vipEnabled(), request.servicePhone(), request.customerQrUrl(), request.inviteRewardAmount());
         return ApiResponse.success(settingService.getPublicSettings());
     }
 
-    public record UpdateSettingsRequest(String appName, Boolean vipEnabled) {}
+    public record UpdateSettingsRequest(String appName, Boolean vipEnabled, String servicePhone, String customerQrUrl, String inviteRewardAmount) {}
 }

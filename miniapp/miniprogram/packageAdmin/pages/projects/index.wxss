@@ -345,9 +345,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.65) !important;
   backdrop-filter: blur(8px);
-  z-index: 999;
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100000 !important;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -356,12 +357,15 @@
 .modal-sheet {
   width: 100%;
   max-height: 85vh;
-  background: #FFFFFF;
+  background: #FFFFFF !important;
   border-top-left-radius: 40rpx;
   border-top-right-radius: 40rpx;
   padding: 36rpx 32rpx calc(env(safe-area-inset-bottom) + 32rpx);
   box-sizing: border-box;
   overflow-y: auto;
+  box-shadow: 0 -12rpx 48rpx rgba(0, 0, 0, 0.28) !important;
+  position: relative;
+  z-index: 100001 !important;
 }
 
 .modal-header {

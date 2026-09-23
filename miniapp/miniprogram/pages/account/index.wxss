@@ -485,3 +485,190 @@
   background: #1D1D1F;
   color: #FFFFFF;
 }
+
+/* ════ 专属在线客服弹窗 (Apple Inset Sheet) ════ */
+.customer-sheet {
+  width: 100%;
+  max-height: 85vh;
+  background: #FFFFFF !important;
+  border-top-left-radius: 40rpx;
+  border-top-right-radius: 40rpx;
+  padding: 36rpx 32rpx calc(env(safe-area-inset-bottom) + 32rpx);
+  box-sizing: border-box;
+  overflow-y: auto;
+  box-shadow: 0 -12rpx 48rpx rgba(0, 0, 0, 0.28) !important;
+  position: relative;
+  z-index: 100001 !important;
+}
+
+.customer-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28rpx;
+}
+
+.cs-head-icon {
+  font-size: 44rpx;
+  margin-right: 16rpx;
+}
+
+.cs-head-text {
+  flex: 1;
+}
+
+.cs-head-title {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #1C1C1E;
+  display: block;
+}
+
+.cs-head-sub {
+  font-size: 22rpx;
+  color: #8E8E93;
+  margin-top: 4rpx;
+  display: block;
+}
+
+.cs-close-btn {
+  font-size: 32rpx;
+  color: #8E8E93;
+  padding: 8rpx 16rpx;
+}
+
+.cs-card-item {
+  background: #F8F9FA;
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1rpx solid rgba(0,0,0,0.04);
+}
+
+.cs-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.cs-card-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.icon-phone {
+  background: #E8F5E9;
+}
+
+.icon-wechat {
+  background: #E3F2FD;
+}
+
+.cs-card-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.cs-card-label {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #1C1C1E;
+}
+
+.cs-card-val {
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #007AFF;
+  margin-top: 4rpx;
+}
+
+.cs-card-desc {
+  font-size: 20rpx;
+  color: #8E8E93;
+  margin-top: 4rpx;
+}
+
+.cs-action-btn {
+  padding: 12rpx 28rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.btn-call {
+  background: #34C759;
+  color: #FFFFFF;
+}
+
+.cs-qr-card {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16rpx;
+}
+
+.cs-qr-head {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.cs-qr-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.cs-qr-image {
+  width: 280rpx;
+  height: 280rpx;
+  border-radius: 16rpx;
+  background: #FFFFFF;
+  border: 1rpx solid #E5E5EA;
+}
+
+.cs-qr-hint {
+  font-size: 20rpx;
+  color: #8E8E93;
+  margin-top: 12rpx;
+}
+
+.save-qr-pill {
+  margin-top: 16rpx;
+  padding: 12rpx 32rpx;
+  border-radius: 30rpx;
+  background: #007AFF;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.cs-qr-empty {
+  padding: 24rpx;
+  text-align: center;
+}
+
+.cs-empty-text {
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
+.sheet-done-btn {
+  margin-top: 24rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 44rpx;
+  background: #1C1C1E;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 700;
+  text-align: center;
+}

@@ -497,12 +497,15 @@
   font-size: 26rpx;
   font-weight: 700;
   color: #1C1C1E;
+}
+
 .modal-form-scroll {
   max-height: 62vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 4rpx 2rpx 20rpx;
 }
+
 
 .req {
   color: #FF382E;

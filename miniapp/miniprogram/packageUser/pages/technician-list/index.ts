@@ -35,8 +35,9 @@ Page({
         earliestAvailableTime: item.earliestAvailableTime || "随时可约",
       }));
 
+      const sortedList = this.sortList(enrichedList, this.data.sortBy);
       this.setData({
-        technicians: reset ? enrichedList : [...this.data.technicians, ...enrichedList],
+        technicians: reset ? sortedList : this.sortList([...this.data.technicians, ...enrichedList], this.data.sortBy),
         page: this.data.page + 1,
         hasMore: list.length >= 20,
         loading: false,
@@ -46,11 +47,32 @@ Page({
     }
   },
 
+  sortList(list: TechnicianItem[], sortBy: string): TechnicianItem[] {
+    const copy = [...list];
+    if (sortBy === "rating") {
+      copy.sort((a: any, b: any) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
+    } else if (sortBy === "price") {
+      copy.sort((a: any, b: any) => (Number(a.startPrice || a.minPrice || 168) - Number(b.startPrice || b.minPrice || 168)));
+    } else if (sortBy === "orders") {
+      copy.sort((a: any, b: any) => (Number(b.annualOrders || b.orderCount || 0) - Number(a.annualOrders || a.orderCount || 0)));
+    } else {
+      copy.sort((a: any, b: any) => {
+        const aOnline = a.onlineStatus === "ONLINE" ? 1 : 0;
+        const bOnline = b.onlineStatus === "ONLINE" ? 1 : 0;
+        if (aOnline !== bOnline) return bOnline - aOnline;
+        return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+      });
+    }
+    return copy;
+  },
+
   handleFilterTap(e: WechatMiniprogram.TouchEvent) {
     const sort = e.currentTarget.dataset.sort as string;
     if (sort === this.data.sortBy) return;
-    this.setData({ sortBy: sort });
-    this.loadTechnicians(true);
+    this.setData({
+      sortBy: sort,
+      technicians: this.sortList(this.data.technicians, sort),
+    });
   },
 
   handleTap(e: WechatMiniprogram.TouchEvent) {

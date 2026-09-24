@@ -42,6 +42,50 @@
   border-radius: 2rpx;
 }
 
+/* Date Filter & Export Bar */
+.date-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  background: #FFFFFF;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+
+.date-tabs {
+  display: flex;
+  gap: 12rpx;
+  flex: 1;
+}
+
+.d-tab {
+  padding: 10rpx 18rpx;
+  background: #F3F4F6;
+  border-radius: 14rpx;
+  font-size: 22rpx;
+  color: #4B5563;
+  font-weight: 600;
+  border: 1rpx solid transparent;
+}
+
+.d-tab--active {
+  background: #EEF2FF;
+  color: #4F46E5;
+  border-color: #6366F1;
+}
+
+.export-icon-btn {
+  padding: 10rpx 20rpx;
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: #FFFFFF;
+  border-radius: 24rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+  box-shadow: 0 4rpx 10rpx rgba(16, 185, 129, 0.25);
+  flex-shrink: 0;
+}
+
 .empty-wrap {
   padding-top: 120rpx;
 }
@@ -228,25 +272,43 @@
   font-weight: 700;
 }
 
-/* Detail overlay */
+/* Detail overlay & Centered Modal */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: 100000;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx;
+  box-sizing: border-box;
+}
+
+.detail-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1;
 }
 
 .detail-panel {
-  width: 88%;
-  height: 100%;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 680rpx;
+  max-height: 85vh;
   background: #F8F9FA;
+  border-radius: 36rpx;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24rpx 64rpx rgba(0, 0, 0, 0.35);
 }
 
 .detail-header {

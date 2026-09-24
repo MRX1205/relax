@@ -237,78 +237,90 @@
   <view style="height: 60rpx;"></view>
 
   <!-- ════ 8. 发布系统消息与全员广播弹窗 (Solid White) ════ -->
-  <view wx:if="{{showBroadcastModal}}" class="modal-mask" bindtap="closeBroadcastModal">
-    <view class="modal-body" catchtap="">
+  <view wx:if="{{showBroadcastModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeBroadcastModal"></view>
+    <view class="modal-body" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">发布系统通知与公告</text>
         <text class="modal-close ios-touch-active" bindtap="closeBroadcastModal">✕</text>
       </view>
       <text class="modal-sub">消息发布后将实时推送至顾客端「消息通知」列表。</text>
 
-      <view class="modal-form">
-        <view class="m-field">
-          <text class="m-label">消息标题 *</text>
-          <input
-            class="m-input"
-            placeholder="如：平台周年庆优惠券已派发"
-            value="{{broadcastTitle}}"
-            bindinput="handleBroadcastTitleInput"
-          />
-        </view>
-
-        <view class="m-field">
-          <text class="m-label">通知正文内容 *</text>
-          <textarea
-            class="m-textarea"
-            placeholder="请输入详细通知内容..."
-            value="{{broadcastContent}}"
-            bindinput="handleBroadcastContentInput"
-          ></textarea>
-        </view>
-
-        <view class="m-field">
-          <text class="m-label">通知宣传配图（可选）</text>
-          <view wx:if="{{broadcastImageUrl}}" class="broadcast-img-preview-box">
-            <image class="preview-img" src="{{broadcastImageUrl}}" mode="aspectFill" bindtap="previewBroadcastImage" />
-            <view class="del-img-btn ios-touch-active" bindtap="clearBroadcastImage">✕ 移除配图</view>
+      <scroll-view scroll-y class="modal-scroll-body" style="max-height: 55vh;">
+        <view class="modal-form">
+          <view class="m-field">
+            <text class="m-label">消息标题 *</text>
+            <input
+              class="m-input"
+              always-embed="{{true}}"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+              placeholder="如：平台周年庆优惠券已派发"
+              value="{{broadcastTitle}}"
+              bindinput="handleBroadcastTitleInput"
+            />
           </view>
-          <view wx:else class="upload-img-box ios-touch-active" bindtap="chooseBroadcastImage">
-            <text class="upload-plus">+</text>
-            <text class="upload-txt">点击上传公告封面或横幅海报</text>
-          </view>
-        </view>
 
-        <view class="m-field">
-          <text class="m-label">推送目标范围</text>
-          <view class="target-radio-row">
-            <view
-              class="target-chip {{broadcastTarget === 'ALL' ? 'target-chip--active' : ''}}"
-              data-target="ALL"
-              bindtap="setBroadcastTarget"
-            >
-              📢 全体顾客 (全员广播)
+          <view class="m-field">
+            <text class="m-label">通知正文内容 *</text>
+            <textarea
+              class="m-textarea"
+              always-embed="{{true}}"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+              placeholder="请输入详细通知内容..."
+              value="{{broadcastContent}}"
+              bindinput="handleBroadcastContentInput"
+            ></textarea>
+          </view>
+
+          <view class="m-field">
+            <text class="m-label">通知宣传配图（可选）</text>
+            <view wx:if="{{broadcastImageUrl}}" class="broadcast-img-preview-box">
+              <image class="preview-img" src="{{broadcastImageUrl}}" mode="aspectFill" bindtap="previewBroadcastImage" />
+              <view class="del-img-btn ios-touch-active" bindtap="clearBroadcastImage">✕ 移除配图</view>
             </view>
-            <view
-              class="target-chip {{broadcastTarget === 'SINGLE' ? 'target-chip--active' : ''}}"
-              data-target="SINGLE"
-              bindtap="setBroadcastTarget"
-            >
-              🎯 指定用户ID
+            <view wx:else class="upload-img-box ios-touch-active" bindtap="chooseBroadcastImage">
+              <text class="upload-plus">+</text>
+              <text class="upload-txt">点击上传公告封面或横幅海报</text>
             </view>
           </view>
-        </view>
 
-        <view class="m-field" wx:if="{{broadcastTarget === 'SINGLE'}}">
-          <text class="m-label">目标顾客 User ID *</text>
-          <input
-            class="m-input"
-            type="number"
-            placeholder="请输入目标用户数字ID"
-            value="{{broadcastUserId}}"
-            bindinput="handleBroadcastUserIdInput"
-          />
+          <view class="m-field">
+            <text class="m-label">推送目标范围</text>
+            <view class="target-radio-row">
+              <view
+                class="target-chip {{broadcastTarget === 'ALL' ? 'target-chip--active' : ''}}"
+                data-target="ALL"
+                bindtap="setBroadcastTarget"
+              >
+                📢 全体顾客 (全员广播)
+              </view>
+              <view
+                class="target-chip {{broadcastTarget === 'SINGLE' ? 'target-chip--active' : ''}}"
+                data-target="SINGLE"
+                bindtap="setBroadcastTarget"
+              >
+                🎯 指定用户ID
+              </view>
+            </view>
+          </view>
+
+          <view class="m-field" wx:if="{{broadcastTarget === 'SINGLE'}}">
+            <text class="m-label">目标顾客 User ID *</text>
+            <input
+              class="m-input"
+              type="number"
+              always-embed="{{true}}"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+              placeholder="请输入目标用户数字ID"
+              value="{{broadcastUserId}}"
+              bindinput="handleBroadcastUserIdInput"
+            />
+          </view>
         </view>
-      </view>
+      </scroll-view>
 
       <view class="modal-footer">
         <button class="m-btn-cancel ios-touch-active" bindtap="closeBroadcastModal">取消</button>

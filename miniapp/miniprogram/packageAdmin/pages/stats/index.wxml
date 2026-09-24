@@ -1,43 +1,82 @@
 <view class="container">
+  <!-- 顶部筛选与导出控制台 -->
+  <view class="filter-panel">
+    <view class="filter-tabs">
+      <view
+        class="f-tab {{filterMode === 'ALL' ? 'f-tab--active' : ''}}"
+        data-mode="ALL"
+        bindtap="setFilterMode"
+      >
+        全部累计
+      </view>
+
+      <picker mode="date" value="{{selectedDate}}" bindchange="handleDateChange">
+        <view class="f-tab {{filterMode === 'DAY' ? 'f-tab--active' : ''}}">
+          📅 {{filterMode === 'DAY' ? selectedDate : '按日筛选'}}
+        </view>
+      </picker>
+
+      <picker mode="date" fields="month" value="{{selectedMonth}}" bindchange="handleMonthChange">
+        <view class="f-tab {{filterMode === 'MONTH' ? 'f-tab--active' : ''}}">
+          🗓️ {{filterMode === 'MONTH' ? selectedMonth : '按月筛选'}}
+        </view>
+      </picker>
+    </view>
+
+    <view class="export-bar">
+      <view class="filter-label">
+        当前统计: 
+        <text class="filter-highlight">
+          {{filterMode === 'ALL' ? '历史全量累计' : (filterMode === 'DAY' ? selectedDate + ' 单日' : selectedMonth + ' 整月')}}
+        </text>
+      </view>
+      <view class="export-btn" bindtap="handleExport">
+        📥 导出经营报表
+      </view>
+    </view>
+  </view>
+
   <view wx:if="{{loading}}" class="loading">
-    <text>加载中...</text>
+    <text>正在统计最新经营数据...</text>
   </view>
   
   <view wx:else>
-    <!-- 总览统计 -->
+    <!-- 经营概况统计 -->
     <view class="section">
-      <view class="section-title">总览</view>
+      <view class="section-title">
+        {{filterMode === 'ALL' ? '总体概况' : (filterMode === 'DAY' ? selectedDate + ' 经营概况' : selectedMonth + ' 经营概况')}}
+      </view>
       <view class="stats-grid">
         <view class="stat-card">
-          <text class="stat-value">{{overview.totalOrders}}</text>
-          <text class="stat-label">总订单</text>
+          <text class="stat-value">{{overview.totalOrders || 0}}</text>
+          <text class="stat-label">有效订单 (单)</text>
         </view>
         <view class="stat-card">
-          <text class="stat-value">¥{{overview.totalRevenue}}</text>
-          <text class="stat-label">总收入</text>
+          <text class="stat-value">¥{{overview.totalRevenue || '0.00'}}</text>
+          <text class="stat-label">营业营收 (元)</text>
         </view>
         <view class="stat-card">
-          <text class="stat-value">{{overview.totalUsers}}</text>
-          <text class="stat-label">用户数</text>
+          <text class="stat-value">{{overview.totalUsers || 0}}</text>
+          <text class="stat-label">注册顾客 (人)</text>
         </view>
         <view class="stat-card">
-          <text class="stat-value">{{overview.totalTechnicians}}</text>
-          <text class="stat-label">技师数</text>
+          <text class="stat-value">{{overview.totalTechnicians || 0}}</text>
+          <text class="stat-label">在册技师 (人)</text>
         </view>
       </view>
     </view>
 
-    <!-- 今日统计 -->
-    <view class="section">
-      <view class="section-title">今日</view>
-      <view class="stats-grid">
-        <view class="stat-card">
-          <text class="stat-value">{{overview.todayOrders}}</text>
-          <text class="stat-label">今日订单</text>
+    <!-- 今日速览 (仅在全部累计模式展示) -->
+    <view class="section" wx:if="{{filterMode === 'ALL'}}">
+      <view class="section-title">今日实时速览</view>
+      <view class="stats-grid stats-grid-today">
+        <view class="stat-card stat-card-today">
+          <text class="stat-value">{{overview.todayOrders || 0}}</text>
+          <text class="stat-label">今日新增订单</text>
         </view>
-        <view class="stat-card">
-          <text class="stat-value">¥{{overview.todayRevenue}}</text>
-          <text class="stat-label">今日收入</text>
+        <view class="stat-card stat-card-today">
+          <text class="stat-value">¥{{overview.todayRevenue || '0.00'}}</text>
+          <text class="stat-label">今日经营收入</text>
         </view>
       </view>
     </view>
@@ -45,29 +84,48 @@
     <!-- 订单状态分布 -->
     <view class="section">
       <view class="section-title">订单状态分布</view>
-      <view class="status-list">
+      <view class="status-list" wx:if="{{statusCounts.length > 0}}">
         <view wx:for="{{statusCounts}}" wx:key="status" class="status-item">
           <text class="status-name">{{item.statusName || item.status}}</text>
-          <text class="status-count">{{item.count}}</text>
+          <text class="status-count">{{item.count}} 单</text>
         </view>
       </view>
+      <view wx:else class="empty-tip">该时间段内暂无订单记录</view>
     </view>
 
-    <!-- 技师排行 -->
+    <!-- 技师业绩排行 -->
     <view class="section">
-      <view class="section-title">技师排行（Top 5）</view>
-      <view class="ranking-list">
-        <view wx:for="{{techRanking}}" wx:key="technicianId" class="ranking-item">
-          <text class="ranking-index">{{index + 1}}</text>
-          <text class="ranking-name">{{item.name}}</text>
-          <text class="ranking-orders">{{item.orderCount}}单</text>
-          <text class="ranking-revenue">¥{{item.revenue}}</text>
+      <view class="section-title-row">
+        <view class="section-title">技师业绩排行 (点击查看名下订单)</view>
+        <text class="section-sub-tip">可点击查看详情 ›</text>
+      </view>
+      <view class="ranking-list" wx:if="{{techRanking.length > 0}}">
+        <view
+          wx:for="{{techRanking}}"
+          wx:key="technicianId"
+          class="ranking-item ios-touch-active"
+          data-tech="{{item}}"
+          bindtap="handleTechTap"
+        >
+          <view class="ranking-left">
+            <text class="ranking-index rank-{{index + 1}}">{{index + 1}}</text>
+            <view class="ranking-tech-info">
+              <text class="ranking-name">{{item.name}}</text>
+              <text class="ranking-tap-hint">点击查看该时段订单</text>
+            </view>
+          </view>
+          <view class="ranking-right">
+            <view class="ranking-orders">{{item.orderCount}}单</view>
+            <view class="ranking-revenue">¥{{item.revenue}}</view>
+            <text class="ranking-arrow">›</text>
+          </view>
         </view>
       </view>
+      <view wx:else class="empty-tip">该时间段内暂无技师业绩</view>
     </view>
 
-    <!-- 每日趋势 -->
-    <view class="section">
+    <!-- 每日趋势 (仅在全部累计模式展示) -->
+    <view class="section" wx:if="{{filterMode === 'ALL'}}">
       <view class="section-title">近7日趋势</view>
       <view class="trend-list">
         <view wx:for="{{dailyTrend}}" wx:key="date" class="trend-item">
@@ -75,6 +133,67 @@
           <text class="trend-orders">{{item.orderCount}}单</text>
           <text class="trend-valid">有效{{item.validOrders}}单</text>
         </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 技师时段订单明细弹窗 (解耦式遮罩与弹窗，无变透明与冒泡问题) -->
+  <view wx:if="{{showTechModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeTechModal"></view>
+    <view class="modal-body" catchtap="noop">
+      <view class="modal-header">
+        <view class="modal-header-col">
+          <text class="modal-title">技师【{{selectedTech.name}}】订单记录</text>
+          <text class="modal-sub">
+            时段：{{filterMode === 'ALL' ? '全部记录' : (filterMode === 'DAY' ? selectedDate : selectedMonth)}} · 共 {{techOrders.length}} 笔订单
+          </text>
+        </view>
+        <view class="modal-close ios-touch-active" bindtap="closeTechModal">✕</view>
+      </view>
+
+      <view wx:if="{{techOrdersLoading}}" class="modal-loading">
+        <text>加载技师订单中...</text>
+      </view>
+
+      <scroll-view wx:elif="{{techOrders.length > 0}}" scroll-y class="modal-order-scroll" style="max-height: 58vh;">
+        <view class="tech-order-list">
+          <view wx:for="{{techOrders}}" wx:key="id" class="t-order-card">
+            <view class="t-order-head">
+              <text class="t-order-no">#{{item.orderNo}}</text>
+              <text class="t-order-status">{{getStatusName(item.status)}}</text>
+            </view>
+            <view class="t-order-body">
+              <view class="t-order-row">
+                <text class="t-label">服务项目:</text>
+                <text class="t-val">{{item.projectName}} ({{item.durationMinutes}}分钟)</text>
+              </view>
+              <view class="t-order-row">
+                <text class="t-label">预约时间:</text>
+                <text class="t-val">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+              </view>
+              <view class="t-order-row">
+                <text class="t-label">预约客户:</text>
+                <text class="t-val">{{item.customerName}} {{item.customerPhone}}</text>
+              </view>
+              <view class="t-order-row" wx:if="{{item.serviceAddress}}">
+                <text class="t-label">服务地址:</text>
+                <text class="t-val t-val-addr">{{item.serviceAddress}}</text>
+              </view>
+              <view class="t-order-row">
+                <text class="t-label">实收金额:</text>
+                <text class="t-val t-val-price">¥{{item.paidAmount != null ? item.paidAmount : item.payableAmount}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view wx:else class="modal-empty-tip">
+        该时段内未查询到该技师的名下订单
+      </view>
+
+      <view class="modal-footer-bar">
+        <button class="modal-btn-confirm" bindtap="closeTechModal">关闭</button>
       </view>
     </view>
   </view>

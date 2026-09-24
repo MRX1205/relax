@@ -54,10 +54,22 @@ public class CatalogService {
         }
     }
 
-    // === 项目 ===
-
     public List<ProjectMapper.ProjectView> listProjects() {
         return projectMapper.findAll();
+    }
+
+    public List<AdminProjectItemView> listAdminProjects() {
+        List<ProjectMapper.ProjectView> projects = projectMapper.findAll();
+        List<ProjectMapper.ProjectOnlineTech> allOnline = projectMapper.findOnlineTechniciansForAllProjects();
+        java.util.Map<Long, List<ProjectMapper.ProjectOnlineTech>> onlineMap = allOnline.stream()
+                .collect(java.util.stream.Collectors.groupingBy(ProjectMapper.ProjectOnlineTech::projectId));
+
+        return projects.stream().map(p -> new AdminProjectItemView(
+                p.id(), p.categoryId(), p.categoryName(), p.name(), p.durationMinutes(),
+                p.basePrice(), p.description(), p.notice(), p.coverFileId(),
+                p.status(), p.sort(), p.creatorType(), p.creatorId(), p.createdAt(),
+                onlineMap.getOrDefault(p.id(), List.of())
+        )).toList();
     }
 
     public ProjectMapper.ProjectView getProject(long id) {
@@ -107,5 +119,12 @@ public class CatalogService {
 
     public record ProjectRequest(long categoryId, String name, int durationMinutes, BigDecimal basePrice,
             String description, String notice, Long coverFileId, int sort) {
+    }
+
+    public record AdminProjectItemView(
+            long id, long categoryId, String categoryName, String name, int durationMinutes,
+            BigDecimal basePrice, String description, String notice, Long coverFileId,
+            String status, int sort, String creatorType, Long creatorId, java.time.LocalDateTime createdAt,
+            List<ProjectMapper.ProjectOnlineTech> onlineTechnicians) {
     }
 }

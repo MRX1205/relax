@@ -1,109 +1,289 @@
 import { request } from "../../../services/http";
 
 interface Pricing {
-  id: string; technicianId: string; technicianName: string;
-  projectId: string; projectName: string; overridePrice: number;
-  effectivePrice: number; status: string;
+  id: string;
+  technicianId: string;
+  technicianName: string;
+  projectId: string;
+  projectName: string;
+  overridePrice: number;
+  effectivePrice: number;
+  status: string;
 }
-interface Project { id: string; name: string; basePrice: number; status: string; }
+
+interface Project {
+  id: string;
+  name: string;
+  basePrice: number;
+  durationMinutes: number;
+  status: string;
+}
+
+interface TechnicianOption {
+  id: string;
+  serviceName: string;
+  realName: string;
+  phone: string;
+}
+
+interface MergedProjectPricing {
+  projectId: string;
+  projectName: string;
+  durationMinutes: number;
+  basePrice: number;
+  hasCustomPrice: boolean;
+  overridePrice: number | null;
+  effectivePrice: number;
+  diffText: string;
+  diffType: "higher" | "lower" | "equal";
+  pricingId: string | null;
+}
 
 Page({
   data: {
     technicianId: "",
     technicianName: "",
+    technicians: [] as TechnicianOption[],
+    selectedTechIndex: 0,
     loading: true,
-    pricing: [] as Pricing[],
-    projects: [] as Project[],
-    showAdd: false,
-    selectedProjectId: "",
-    overridePrice: "",
+    mergedList: [] as MergedProjectPricing[],
+    showEditModal: false,
+    editingProject: null as MergedProjectPricing | null,
+    inputPrice: "",
+    priceDiffPreview: "",
     saving: false,
   },
 
-  onLoad(query: Record<string, string>) {
-    this.setData({ technicianId: query.technicianId || "", technicianName: decodeURIComponent(query.name || "") });
-    wx.setNavigationBarTitle({ title: `${this.data.technicianName} - 定价` });
-    this.loadData();
+  async onLoad(query: Record<string, string>) {
+    const techId = query.technicianId || "";
+    const techName = query.name ? decodeURIComponent(query.name) : "";
+    this.setData({ technicianId: techId, technicianName: techName });
+    await this.initData();
   },
 
-  async loadData() {
+  async initData() {
+    this.setData({ loading: true });
     try {
-      let techId = this.data.technicianId;
-      let techName = this.data.technicianName;
-      if (!techId) {
-        const techs = await request<any[]>({ url: "/api/v1/admin/technicians" }).catch(() => []);
-        if (techs && techs.length > 0) {
-          techId = String(techs[0].id);
-          techName = techs[0].serviceName;
-          this.setData({ technicianId: techId, technicianName: techName });
-          wx.setNavigationBarTitle({ title: `${techName} - 专属定价` });
+      // 1. 加载技师列表
+      const rawTechs = await request<any[]>({ url: "/api/v1/admin/technicians" }).catch(() => []);
+      const technicians: TechnicianOption[] = (rawTechs || []).map((t: any) => ({
+        id: String(t.id),
+        serviceName: t.serviceName || "专业技师",
+        realName: t.realName || "",
+        phone: t.phone || "",
+      }));
+
+      let currentTechId = this.data.technicianId;
+      let currentTechName = this.data.technicianName;
+      let techIndex = 0;
+
+      if (technicians.length > 0) {
+        if (!currentTechId) {
+          currentTechId = technicians[0].id;
+          currentTechName = technicians[0].serviceName;
+        } else {
+          const foundIdx = technicians.findIndex((t) => t.id === currentTechId);
+          if (foundIdx >= 0) {
+            techIndex = foundIdx;
+            currentTechName = technicians[foundIdx].serviceName;
+          }
         }
       }
-      if (!techId) {
-        this.setData({ loading: false });
-        return;
+
+      this.setData({
+        technicians,
+        selectedTechIndex: techIndex,
+        technicianId: currentTechId,
+        technicianName: currentTechName,
+      });
+
+      if (currentTechName) {
+        wx.setNavigationBarTitle({ title: `${currentTechName} - 专属定价` });
       }
-      const [pricing, projects] = await Promise.all([
-        request<Pricing[]>({ url: `/api/v1/admin/technicians/${techId}/pricing` }).catch(() => []),
-        request<Project[]>({ url: "/api/v1/admin/projects" }).catch(() => []),
-      ]);
-      this.setData({ pricing: pricing || [], projects: projects || [], loading: false });
+
+      await this.loadPricingForTech(currentTechId);
     } catch {
       this.setData({ loading: false });
     }
   },
 
-  handleShowAdd() {
-    this.setData({ showAdd: true, selectedProjectId: "", overridePrice: "" });
-  },
+  async loadPricingForTech(techId: string) {
+    if (!techId) {
+      this.setData({ loading: false, mergedList: [] });
+      return;
+    }
+    this.setData({ loading: true });
+    try {
+      const [pricingList, projectsList] = await Promise.all([
+        request<Pricing[]>({ url: `/api/v1/admin/technicians/${techId}/pricing` }).catch(() => []),
+        request<Project[]>({ url: "/api/v1/admin/projects" }).catch(() => []),
+      ]);
 
-  handleProjectChange(e: WechatMiniprogram.PickerChange) {
-    const proj = this.data.projects[parseInt(e.detail.value as string)];
-    if (proj) {
-      this.setData({ selectedProjectId: proj.id, overridePrice: String(proj.basePrice) });
+      const pricingMap = new Map<string, Pricing>();
+      (pricingList || []).forEach((p) => {
+        pricingMap.set(String(p.projectId), p);
+      });
+
+      const mergedList: MergedProjectPricing[] = (projectsList || []).map((proj) => {
+        const custom = pricingMap.get(String(proj.id));
+        const hasCustom = !!custom && custom.overridePrice != null;
+        const overridePrice = hasCustom ? Number(custom.overridePrice) : null;
+        const basePrice = Number(proj.basePrice);
+        const effectivePrice = hasCustom ? overridePrice! : basePrice;
+
+        let diffText = "使用统一指导价";
+        let diffType: "higher" | "lower" | "equal" = "equal";
+
+        if (hasCustom) {
+          const diff = effectivePrice - basePrice;
+          if (diff > 0) {
+            diffText = `资深溢价 +¥${diff.toFixed(2)}`;
+            diffType = "higher";
+          } else if (diff < 0) {
+            diffText = `特惠让利 -¥${Math.abs(diff).toFixed(2)}`;
+            diffType = "lower";
+          } else {
+            diffText = "与基础指导价持平";
+            diffType = "equal";
+          }
+        }
+
+        return {
+          projectId: String(proj.id),
+          projectName: proj.name,
+          durationMinutes: proj.durationMinutes || 60,
+          basePrice,
+          hasCustomPrice: hasCustom,
+          overridePrice,
+          effectivePrice,
+          diffText,
+          diffType,
+          pricingId: custom ? String(custom.id) : null,
+        };
+      });
+
+      this.setData({ mergedList, loading: false });
+    } catch {
+      this.setData({ loading: false });
     }
   },
 
+  handleTechPickerChange(e: WechatMiniprogram.PickerChange) {
+    const idx = parseInt(e.detail.value as string);
+    const tech = this.data.technicians[idx];
+    if (tech) {
+      this.setData({
+        selectedTechIndex: idx,
+        technicianId: tech.id,
+        technicianName: tech.serviceName,
+      });
+      wx.setNavigationBarTitle({ title: `${tech.serviceName} - 专属定价` });
+      this.loadPricingForTech(tech.id);
+    }
+  },
+
+  openEdit(e: WechatMiniprogram.TouchEvent) {
+    const item = e.currentTarget.dataset.item as MergedProjectPricing;
+    const defaultVal = item.hasCustomPrice ? String(item.overridePrice) : String(item.basePrice);
+    this.setData({
+      showEditModal: true,
+      editingProject: item,
+      inputPrice: defaultVal,
+    });
+    this.calculateDiffPreview(defaultVal, item.basePrice);
+  },
+
+  closeEdit() {
+    this.setData({ showEditModal: false, editingProject: null });
+  },
+
   handlePriceInput(e: WechatMiniprogram.Input) {
-    this.setData({ overridePrice: e.detail.value });
+    const val = e.detail.value;
+    this.setData({ inputPrice: val });
+    if (this.data.editingProject) {
+      this.calculateDiffPreview(val, this.data.editingProject.basePrice);
+    }
   },
 
-  handleCancel() {
-    this.setData({ showAdd: false });
+  calculateDiffPreview(inputVal: string, basePrice: number) {
+    const num = parseFloat(inputVal);
+    if (isNaN(num) || num <= 0) {
+      this.setData({ priceDiffPreview: "请输入有效数字金额" });
+      return;
+    }
+    const diff = num - basePrice;
+    if (diff > 0) {
+      this.setData({ priceDiffPreview: `比平台指导价高 ¥${diff.toFixed(2)} (技师资深溢价)` });
+    } else if (diff < 0) {
+      this.setData({ priceDiffPreview: `比平台指导价优惠 ¥${Math.abs(diff).toFixed(2)} (促销特价)` });
+    } else {
+      this.setData({ priceDiffPreview: "与平台基础指导价一致" });
+    }
   },
 
-  async handleSave() {
-    const { technicianId, selectedProjectId, overridePrice } = this.data;
-    if (!selectedProjectId) return wx.showToast({ title: "请选择项目", icon: "none" });
-    if (!overridePrice || parseFloat(overridePrice) <= 0) return wx.showToast({ title: "请输入有效价格", icon: "none" });
+  async handleSavePrice() {
+    const { technicianId, editingProject, inputPrice } = this.data;
+    if (!editingProject) return;
+    const priceNum = parseFloat(inputPrice);
+    if (isNaN(priceNum) || priceNum <= 0) {
+      wx.showToast({ title: "请输入有效价格", icon: "none" });
+      return;
+    }
+
     this.setData({ saving: true });
     try {
       await request({
-        url: `/api/v1/admin/technicians/${technicianId}/pricing/${selectedProjectId}`,
+        url: `/api/v1/admin/technicians/${technicianId}/pricing/${editingProject.projectId}`,
         method: "PUT",
-        data: { overridePrice: parseFloat(overridePrice) },
+        data: { overridePrice: priceNum },
       });
-      this.setData({ showAdd: false });
-      this.loadData();
-    } catch (err) {
+      wx.showToast({ title: "专属定价设置成功", icon: "success" });
+      this.closeEdit();
+      this.loadPricingForTech(technicianId);
+    } catch {
       wx.showToast({ title: "保存失败", icon: "none" });
     } finally {
       this.setData({ saving: false });
     }
   },
 
-  async handleDelete(e: WechatMiniprogram.TouchEvent) {
-    const id = e.currentTarget.dataset.id;
-    const confirmed = await new Promise<boolean>(r => {
-      wx.showModal({ title: "删除定价", content: "确认删除该定价规则？", success: res => r(res.confirm) });
+  async handleResetPrice(e: WechatMiniprogram.TouchEvent) {
+    const item = e.currentTarget.dataset.item as MergedProjectPricing;
+    const confirmed = await new Promise<boolean>((resolve) => {
+      wx.showModal({
+        title: "恢复默认指导价",
+        content: `确定取消技师在【${item.projectName}】上的专属定价，恢复使用平台基础价 ¥${item.basePrice} 吗？`,
+        confirmText: "恢复默认",
+        confirmColor: "#FF382E",
+        success: (res) => resolve(res.confirm),
+      });
     });
     if (!confirmed) return;
+
     try {
-      await request({
-        url: `/api/v1/admin/technicians/${this.data.technicianId}/pricing/${id}`,
-        method: "DELETE",
-      });
-      this.loadData();
-    } catch { wx.showToast({ title: "删除失败", icon: "none" }); }
+      wx.showLoading({ title: "正在恢复..." });
+      // If server supports deleting override or setting equal
+      if (item.pricingId) {
+        await request({
+          url: `/api/v1/admin/technicians/pricing/${item.pricingId}`,
+          method: "DELETE",
+        }).catch(() => {
+          // fallback update to base price
+          return request({
+            url: `/api/v1/admin/technicians/${this.data.technicianId}/pricing/${item.projectId}`,
+            method: "PUT",
+            data: { overridePrice: item.basePrice },
+          });
+        });
+      }
+      wx.hideLoading();
+      wx.showToast({ title: "已恢复平台基础价", icon: "success" });
+      this.loadPricingForTech(this.data.technicianId);
+    } catch {
+      wx.hideLoading();
+      wx.showToast({ title: "操作失败", icon: "none" });
+    }
   },
+
+  noop() {},
 });

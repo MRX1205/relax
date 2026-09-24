@@ -115,6 +115,25 @@
           </view>
         </view>
 
+        <!-- 对应在线技师展示条 -->
+        <view class="online-techs-container">
+          <view wx:if="{{item.onlineTechnicians && item.onlineTechnicians.length > 0}}" class="online-techs-bar">
+            <view class="techs-tag-label">
+              <text class="green-dot">●</text>
+              <text class="label-text">当前在线技师 ({{item.onlineTechnicians.length}}人):</text>
+            </view>
+            <view class="techs-pills-wrap">
+              <view wx:for="{{item.onlineTechnicians}}" wx:for-item="tech" wx:key="technicianId" class="tech-mini-chip">
+                <text class="chip-name">{{tech.serviceName}}</text>
+              </view>
+            </view>
+          </view>
+          <view wx:else class="online-techs-empty">
+            <text class="gray-dot">○</text>
+            <text class="empty-txt">暂无技师在线提供此服务</text>
+          </view>
+        </view>
+
         <!-- 卡片底部动作栏 -->
         <view class="proj-action-bar">
           <view class="action-btn btn--edit ios-touch-active" data-item="{{item}}" bindtap="openEditModal">
@@ -132,8 +151,9 @@
   </block>
 
   <!-- ════ 4. 新增 / 编辑项目弹窗 (Apple HIG Modal) ════ -->
-  <view wx:if="{{showModal}}" class="modal-mask" bindtap="closeModal">
-    <view class="modal-sheet" catchtap="">
+  <view wx:if="{{showModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeModal"></view>
+    <view class="modal-sheet" catchtap="noop">
       <view class="modal-header">
         <view class="modal-title-col">
           <text class="modal-title">{{isEditing ? '编辑服务项目' : '新增服务项目'}}</text>
@@ -142,111 +162,131 @@
         <view class="modal-close-btn ios-touch-active" bindtap="closeModal">✕</view>
       </view>
 
-      <view class="modal-form-content">
-        <!-- 分类选择 -->
-        <view class="form-row">
-          <text class="f-label">所属分类 <text class="req">*</text></text>
-          <picker
-            range="{{categories}}"
-            range-key="name"
-            bindchange="handleCategoryPicker"
-          >
-            <view class="picker-box ios-touch-active">
-              <text class="{{form.categoryId ? 'picker-txt--selected' : 'picker-txt--ph'}}">
-                {{selectedCategoryName}}
-              </text>
-              <text class="picker-arrow">›</text>
-            </view>
-          </picker>
-        </view>
+      <scroll-view scroll-y style="max-height: 60vh;">
+        <view class="modal-form-content">
+          <!-- 分类选择 -->
+          <view class="form-row">
+            <text class="f-label">所属分类 <text class="req">*</text></text>
+            <picker
+              range="{{categories}}"
+              range-key="name"
+              bindchange="handleCategoryPicker"
+            >
+              <view class="picker-box ios-touch-active">
+                <text class="{{form.categoryId ? 'picker-txt--selected' : 'picker-txt--ph'}}">
+                  {{selectedCategoryName}}
+                </text>
+                <text class="picker-arrow">›</text>
+              </view>
+            </picker>
+          </view>
 
-        <!-- 项目名称 -->
-        <view class="form-row">
-          <text class="f-label">项目名称 <text class="req">*</text></text>
-          <input
-            class="f-input"
-            placeholder="如：全身精油SPA 60分钟"
-            value="{{form.name}}"
-            data-field="name"
-            bindinput="handleFormInput"
-          />
-        </view>
-
-        <!-- 基础售价与服务时长 -->
-        <view class="form-dual-row">
-          <view class="dual-col">
-            <text class="f-label">基准价格 (元) <text class="req">*</text></text>
+          <!-- 项目名称 -->
+          <view class="form-row">
+            <text class="f-label">项目名称 <text class="req">*</text></text>
             <input
               class="f-input"
-              type="digit"
-              placeholder="如：198"
-              value="{{form.basePrice}}"
-              data-field="basePrice"
+              always-embed="{{true}}"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+              placeholder="如：全身精油SPA 60分钟"
+              value="{{form.name}}"
+              data-field="name"
               bindinput="handleFormInput"
             />
           </view>
-          <view class="dual-col">
-            <text class="f-label">服务时长 (分钟) <text class="req">*</text></text>
+
+          <!-- 基础售价与服务时长 -->
+          <view class="form-dual-row">
+            <view class="dual-col">
+              <text class="f-label">基准价格 (元) <text class="req">*</text></text>
+              <input
+                class="f-input"
+                type="digit"
+                always-embed="{{true}}"
+                adjust-position="{{true}}"
+                cursor-spacing="30"
+                placeholder="如：198"
+                value="{{form.basePrice}}"
+                data-field="basePrice"
+                bindinput="handleFormInput"
+              />
+            </view>
+            <view class="dual-col">
+              <text class="f-label">服务时长 (分钟) <text class="req">*</text></text>
+              <input
+                class="f-input"
+                type="number"
+                always-embed="{{true}}"
+                adjust-position="{{true}}"
+                cursor-spacing="30"
+                placeholder="默认 60"
+                value="{{form.durationMinutes}}"
+                data-field="durationMinutes"
+                bindinput="handleFormInput"
+              />
+            </view>
+          </view>
+
+          <!-- 项目封面图 -->
+          <view class="form-row">
+            <text class="f-label">项目封面图</text>
+            <view class="cover-uploader ios-touch-active" bindtap="chooseCover">
+              <image wx:if="{{coverPath}}" src="{{coverPath}}" mode="aspectFill" class="cover-preview-img" />
+              <view wx:else class="uploader-ph">
+                <text class="ph-camera">📷</text>
+                <text class="ph-txt">点击选择或更换封面</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 排序权重 -->
+          <view class="form-row">
+            <text class="f-label">展示排序 (数值越小越靠前)</text>
             <input
               class="f-input"
               type="number"
-              placeholder="默认 60"
-              value="{{form.durationMinutes}}"
-              data-field="durationMinutes"
+              always-embed="{{true}}"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+              placeholder="0"
+              value="{{form.sort}}"
+              data-field="sort"
               bindinput="handleFormInput"
             />
           </view>
-        </view>
 
-        <!-- 项目封面图 -->
-        <view class="form-row">
-          <text class="f-label">项目封面图</text>
-          <view class="cover-uploader ios-touch-active" bindtap="chooseCover">
-            <image wx:if="{{coverPath}}" src="{{coverPath}}" mode="aspectFill" class="cover-preview-img" />
-            <view wx:else class="uploader-ph">
-              <text class="ph-camera">📷</text>
-              <text class="ph-txt">点击选择或更换封面</text>
-            </view>
+          <!-- 项目简介 -->
+          <view class="form-row">
+            <text class="f-label">项目简介</text>
+            <textarea
+              class="f-textarea"
+              always-embed="{{true}}"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+              placeholder="简述项目调理手法、适合人群及服务流程..."
+              value="{{form.description}}"
+              data-field="description"
+              bindinput="handleFormInput"
+            ></textarea>
+          </view>
+
+          <!-- 预约须知 -->
+          <view class="form-row">
+            <text class="f-label">预约须知</text>
+            <textarea
+              class="f-textarea"
+              always-embed="{{true}}"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+              placeholder="如：请提前1小时预约、饭后半小时内不宜理疗等..."
+              value="{{form.notice}}"
+              data-field="notice"
+              bindinput="handleFormInput"
+            ></textarea>
           </view>
         </view>
-
-        <!-- 排序权重 -->
-        <view class="form-row">
-          <text class="f-label">展示排序 (数值越小越靠前)</text>
-          <input
-            class="f-input"
-            type="number"
-            placeholder="0"
-            value="{{form.sort}}"
-            data-field="sort"
-            bindinput="handleFormInput"
-          />
-        </view>
-
-        <!-- 项目简介 -->
-        <view class="form-row">
-          <text class="f-label">项目简介</text>
-          <textarea
-            class="f-textarea"
-            placeholder="简述项目调理手法、适合人群及服务流程..."
-            value="{{form.description}}"
-            data-field="description"
-            bindinput="handleFormInput"
-          ></textarea>
-        </view>
-
-        <!-- 预约须知 -->
-        <view class="form-row">
-          <text class="f-label">预约须知</text>
-          <textarea
-            class="f-textarea"
-            placeholder="如：请提前1小时预约、饭后半小时内不宜理疗等..."
-            value="{{form.notice}}"
-            data-field="notice"
-            bindinput="handleFormInput"
-          ></textarea>
-        </view>
-      </view>
+      </scroll-view>
 
       <!-- 弹窗底部操作 -->
       <view class="modal-footer-actions">

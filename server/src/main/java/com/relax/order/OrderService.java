@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -164,6 +165,96 @@ public class OrderService {
 
     public List<OrderMapper.OrderListItem> listAllOrders(int page, int size) {
         return orderMapper.findEnrichedAll(size, page * size);
+    }
+
+    public List<OrderMapper.OrderListItem> listAdminOrders(String status, Long technicianId, String date, String month, int page, int size) {
+        return orderMapper.findEnrichedFiltered(status, technicianId, date, month, size, page * size);
+    }
+
+    public byte[] generateOrdersCsv(List<OrderMapper.OrderListItem> orders) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('\uFEFF'); // UTF-8 BOM
+        sb.append("订单编号,下单时间,预约服务日期,预约时间段,订单状态,服务项目,时长(分钟),应付金额(元),实付金额(元),服务技师,技师电话,预约客户,客户电话,服务地址,客户备注,取消原因\n");
+        for (OrderMapper.OrderListItem o : orders) {
+            sb.append(escapeCsv(o.orderNo())).append(',')
+              .append(escapeCsv(o.createdAt() != null ? o.createdAt().toString().replace('T', ' ') : "")).append(',')
+              .append(escapeCsv(o.serviceDate() != null ? o.serviceDate().toString() : "")).append(',')
+              .append(escapeCsv((o.startTime() != null ? o.startTime() : "") + "-" + (o.endTime() != null ? o.endTime() : ""))).append(',')
+              .append(escapeCsv(formatStatusName(o.status()))).append(',')
+              .append(escapeCsv(o.projectName())).append(',')
+              .append(o.durationMinutes()).append(',')
+              .append(o.payableAmount() != null ? o.payableAmount().toString() : "0.00").append(',')
+              .append(o.paidAmount() != null ? o.paidAmount().toString() : "0.00").append(',')
+              .append(escapeCsv(o.technicianName())).append(',')
+              .append(escapeCsv(o.technicianPhone())).append(',')
+              .append(escapeCsv(o.customerName())).append(',')
+              .append(escapeCsv(o.customerPhone())).append(',')
+              .append(escapeCsv(o.serviceAddress())).append(',')
+              .append(escapeCsv(o.note())).append(',')
+              .append(escapeCsv(o.cancelReason())).append('\n');
+        }
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    public byte[] generateOrdersExcel(List<OrderMapper.OrderListItem> orders) {
+        List<List<Object>> rows = new java.util.ArrayList<>();
+        rows.add(List.of(
+                "订单编号", "下单时间", "预约服务日期", "预约时间段", "订单状态",
+                "服务项目", "时长(分钟)", "应付金额(元)", "实付金额(元)",
+                "服务技师", "技师电话", "预约客户", "客户电话",
+                "服务地址", "客户备注", "取消原因"
+        ));
+        for (OrderMapper.OrderListItem o : orders) {
+            rows.add(List.of(
+                    o.orderNo() != null ? o.orderNo() : "",
+                    o.createdAt() != null ? o.createdAt().toString().replace('T', ' ') : "",
+                    o.serviceDate() != null ? o.serviceDate().toString() : "",
+                    (o.startTime() != null ? o.startTime() : "") + "-" + (o.endTime() != null ? o.endTime() : ""),
+                    formatStatusName(o.status()),
+                    o.projectName() != null ? o.projectName() : "",
+                    o.durationMinutes(),
+                    o.payableAmount() != null ? o.payableAmount() : BigDecimal.ZERO,
+                    o.paidAmount() != null ? o.paidAmount() : BigDecimal.ZERO,
+                    o.technicianName() != null ? o.technicianName() : "",
+                    o.technicianPhone() != null ? o.technicianPhone() : "",
+                    o.customerName() != null ? o.customerName() : "",
+                    o.customerPhone() != null ? o.customerPhone() : "",
+                    o.serviceAddress() != null ? o.serviceAddress() : "",
+                    o.note() != null ? o.note() : "",
+                    o.cancelReason() != null ? o.cancelReason() : ""
+            ));
+        }
+        try {
+            return com.relax.common.util.SimpleExcelWriter.writeWorkbook("订单明细", rows);
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("生成订单 Excel 失败", e);
+        }
+    }
+
+    private String escapeCsv(String val) {
+        if (val == null) return "";
+        if (val.contains(",") || val.contains("\"") || val.contains("\n") || val.contains("\r")) {
+            return "\"" + val.replace("\"", "\"\"") + "\"";
+        }
+        return val;
+    }
+
+    private String formatStatusName(String status) {
+        if (status == null) return "";
+        return switch (status) {
+            case "PENDING_PAYMENT" -> "待支付";
+            case "PAID" -> "已支付";
+            case "ACCEPTED" -> "已接单";
+            case "DEPARTED" -> "已出发";
+            case "ARRIVED" -> "已到达";
+            case "IN_SERVICE" -> "服务中";
+            case "COMPLETED" -> "已完成";
+            case "CANCELLED" -> "已取消";
+            case "EXPIRED" -> "已过期";
+            case "REFUNDING" -> "退款中";
+            case "REFUNDED" -> "已退款";
+            default -> status;
+        };
     }
 
     @Transactional

@@ -257,4 +257,6 @@ Page({
     }
     wx.reLaunch({ url: "/pages/login/index" });
   },
+
+  noop() {},
 });

@@ -192,13 +192,12 @@
 }
 
 /* 弹窗通用样式 (Solid White Non-Transparent) */
-.modal-mask {
+.modal-container {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.65) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,10 +206,21 @@
   box-sizing: border-box;
 }
 
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65) !important;
+  z-index: 1;
+}
+
 .modal-body {
+  position: relative;
+  z-index: 2;
   width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
+  max-width: 680rpx;
   background: #FFFFFF !important;
   background-color: #FFFFFF !important;
   opacity: 1 !important;
@@ -218,12 +228,6 @@
   padding: 36rpx 32rpx;
   box-sizing: border-box;
   box-shadow: 0 24rpx 64rpx rgba(0, 0, 0, 0.35) !important;
-  position: relative;
-  z-index: 100001 !important;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  isolation: isolate;
-  -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {

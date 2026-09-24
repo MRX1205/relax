@@ -146,4 +146,6 @@ Page({
       success: () => wx.showToast({ title: "UID已复制", icon: "success" }),
     });
   },
+
+  noop() {},
 });

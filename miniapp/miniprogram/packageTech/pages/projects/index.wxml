@@ -89,8 +89,9 @@
   </block>
 
   <!-- 弹窗 1：自主创建服务项目 -->
-  <view wx:if="{{showCustomModal}}" class="modal-mask" bindtap="closeCustomModal">
-    <view class="modal-dialog" catchtap="">
+  <view wx:if="{{showCustomModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeCustomModal"></view>
+    <view class="modal-dialog" catchtap="noop">
       <view class="dialog-header">
         <text class="dialog-title">自主创建服务项目</text>
         <text class="dialog-close" bindtap="closeCustomModal">✕</text>
@@ -163,8 +164,9 @@
   </view>
 
   <!-- 弹窗 2：从平台项目库加入 -->
-  <view wx:if="{{showPlatformModal}}" class="modal-mask" bindtap="closePlatformModal">
-    <view class="modal-dialog" catchtap="">
+  <view wx:if="{{showPlatformModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closePlatformModal"></view>
+    <view class="modal-dialog" catchtap="noop">
       <view class="dialog-header">
         <text class="dialog-title">加入平台项目库</text>
         <text class="dialog-close" bindtap="closePlatformModal">✕</text>
@@ -208,8 +210,9 @@
   </view>
 
   <!-- 弹窗 3：编辑价格 / 项目详情 -->
-  <view wx:if="{{showEditModal && editingProject}}" class="modal-mask" bindtap="closeEditModal">
-    <view class="modal-dialog" catchtap="">
+  <view wx:if="{{showEditModal && editingProject}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeEditModal"></view>
+    <view class="modal-dialog" catchtap="noop">
       <view class="dialog-header">
         <text class="dialog-title">编辑项目信息</text>
         <text class="dialog-close" bindtap="closeEditModal">✕</text>

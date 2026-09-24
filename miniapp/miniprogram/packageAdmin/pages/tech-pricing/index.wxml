@@ -1,41 +1,152 @@
-<view class="page">
-  <view class="list-header">
-    <view class="page-title">{{technicianName}} 的项目定价</view>
-    <view class="add-btn" bindtap="handleShowAdd">+ 设置</view>
+<view class="tech-pricing-page">
+
+  <!-- ════ 1. 业务功能使用说明横幅 ════ -->
+  <view class="ios-card guide-banner">
+    <view class="guide-header">
+      <text class="guide-icon">💡</text>
+      <text class="guide-title">什么是「技师专属定价」？</text>
+    </view>
+    <text class="guide-body">
+      平台所有服务项目均设有【平台统一指导价】。当某位技师资质资深（如金牌技师、专家级理疗师）或需要个性化调价时，管理员可在此为其各项目设置专属价格。顾客在预约该技师时将以专属价格结算，未设置的项目将自动使用平台统一指导价。
+    </text>
   </view>
 
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
-
-  <block wx:else>
-    <view wx:if="{{showAdd}}" class="surface form-card">
-      <view class="field">
-        <view class="field__label">项目</view>
-        <picker range="{{projects}}" range-key="name" bindchange="handleProjectChange">
-          <view class="picker-val">{{selectedProjectId ? '已选择' : '点击选择项目'}}</view>
-        </picker>
-      </view>
-      <view class="field">
-        <view class="field__label">技师价格（元）</view>
-        <input class="price-input" type="digit" value="{{overridePrice}}" placeholder="输入技师实际价格" bindinput="handlePriceInput" />
-      </view>
-      <view class="form-actions">
-        <ui-button label="取消" variant="secondary" bind:action="handleCancel" />
-        <ui-button label="保存" loading="{{saving}}" bind:action="handleSave" />
+  <!-- ════ 2. 技师快速切换栏 ════ -->
+  <view class="ios-card tech-picker-card">
+    <view class="picker-label-col">
+      <text class="picker-hint">当前定价对象技师</text>
+      <view class="picker-name-row">
+        <text class="tech-name-bold">{{technicianName || '未选择技师'}}</text>
+        <text class="tech-count-tag">共 {{mergedList.length}} 个项目</text>
       </view>
     </view>
 
-    <view class="pricing-list">
-      <view wx:for="{{pricing}}" wx:key="id" class="surface pricing-item">
-        <view class="pricing-info">
-          <view class="pricing-project">{{item.projectName}}</view>
-          <view class="pricing-detail">
-            <text>技师价：¥{{item.overridePrice}}</text>
-            <text class="pricing-base">（基础价 ¥{{item.effectivePrice}}）</text>
+    <picker
+      wx:if="{{technicians.length > 0}}"
+      range="{{technicians}}"
+      range-key="serviceName"
+      value="{{selectedTechIndex}}"
+      bindchange="handleTechPickerChange"
+    >
+      <view class="switch-tech-btn ios-touch-active">
+        <text>切换技师</text>
+        <text class="chevron-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- ════ 3. 加载与列表 ════ -->
+  <ui-state wx:if="{{loading}}" title="正在加载定价列表..." kind="loading" />
+
+  <view wx:elif="{{mergedList.length === 0}}" class="ios-card empty-pricing-card">
+    <text class="empty-emoji">💆</text>
+    <text class="empty-title">平台暂无可定价的服务项目</text>
+    <text class="empty-desc">请先在「服务项目管理」中创建并上架项目</text>
+  </view>
+
+  <!-- 项目定价卡片流 -->
+  <view wx:else class="pricing-matrix-feed">
+    <view
+      wx:for="{{mergedList}}"
+      wx:key="projectId"
+      class="ios-card project-pricing-card {{item.hasCustomPrice ? 'card--custom' : ''}}"
+    >
+      <view class="card-head-row">
+        <view class="title-group">
+          <text class="p-name">{{item.projectName}}</text>
+          <text class="p-duration">⏱ {{item.durationMinutes}}分钟</text>
+        </view>
+        <view class="status-pill {{item.hasCustomPrice ? (item.diffType === 'higher' ? 'pill-higher' : 'pill-lower') : 'pill-default'}}">
+          {{item.diffText}}
+        </view>
+      </view>
+
+      <!-- 价格对比区 -->
+      <view class="price-compare-grid">
+        <view class="compare-col">
+          <text class="col-label">平台基础指导价</text>
+          <view class="price-row">
+            <text class="symbol">¥</text>
+            <text class="num">{{item.basePrice}}</text>
           </view>
         </view>
-        <view class="pricing-delete" data-id="{{item.id}}" bindtap="handleDelete">删除</view>
+
+        <view class="compare-divider">➔</view>
+
+        <view class="compare-col">
+          <text class="col-label">该技师当前实结价</text>
+          <view class="price-row {{item.hasCustomPrice ? 'price-row--active' : ''}}">
+            <text class="symbol">¥</text>
+            <text class="num">{{item.effectivePrice}}</text>
+            <text wx:if="{{item.hasCustomPrice}}" class="custom-badge">专属价</text>
+          </view>
+        </view>
       </view>
-      <view wx:if="{{pricing.length === 0}}" class="empty-tip">暂未设置独立定价，将使用项目基础价</view>
+
+      <!-- 操作栏 -->
+      <view class="card-footer-row">
+        <view
+          wx:if="{{item.hasCustomPrice}}"
+          class="action-reset ios-touch-active"
+          data-item="{{item}}"
+          bindtap="handleResetPrice"
+        >
+          <text>↺ 恢复平台指导价</text>
+        </view>
+        <view class="action-edit ios-touch-active" data-item="{{item}}" bindtap="openEdit">
+          <text>{{item.hasCustomPrice ? '✏️ 修改专属价' : '+ 设置专属价'}}</text>
+        </view>
+      </view>
     </view>
-  </block>
+  </view>
+
+  <!-- ════ 4. 修改定价弹窗 (Apple HIG Modal) ════ -->
+  <view wx:if="{{showEditModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeEdit"></view>
+    <view class="modal-body" catchtap="noop">
+      <view class="modal-header">
+        <text class="modal-title">设置技师专属价格</text>
+        <text class="modal-close ios-touch-active" bindtap="closeEdit">✕</text>
+      </view>
+      <text class="modal-sub">
+        技师：{{technicianName}} · 项目：{{editingProject.projectName}}
+      </text>
+
+      <view class="modal-form">
+        <view class="m-field">
+          <text class="m-label">平台基础指导价</text>
+          <view class="readonly-base-price">
+            <text>¥ {{editingProject.basePrice}} 元 / {{editingProject.durationMinutes}}分钟</text>
+          </view>
+        </view>
+
+        <view class="m-field">
+          <text class="m-label">该技师专属价格 (元) *</text>
+          <input
+            class="m-input"
+            type="digit"
+            always-embed="{{true}}"
+            adjust-position="{{true}}"
+            cursor-spacing="30"
+            placeholder="如：238"
+            value="{{inputPrice}}"
+            bindinput="handlePriceInput"
+          />
+        </view>
+
+        <!-- 价格差额实时计算预览 -->
+        <view wx:if="{{priceDiffPreview}}" class="diff-preview-box">
+          <text class="diff-preview-txt">💡 差额提示：{{priceDiffPreview}}</text>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="m-btn-cancel ios-touch-active" bindtap="closeEdit">取消</button>
+        <button class="m-btn-confirm ios-touch-active" loading="{{saving}}" bindtap="handleSavePrice">
+          确认保存专属价
+        </button>
+      </view>
+    </view>
+  </view>
+
 </view>

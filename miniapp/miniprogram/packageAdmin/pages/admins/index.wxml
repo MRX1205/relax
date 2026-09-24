@@ -94,79 +94,85 @@
   </view>
 
   <!-- ════ 4. 新增管理员弹窗 ════ -->
-  <view wx:if="{{showAddModal}}" class="modal-mask" bindtap="closeAddModal">
-    <view class="modal-body" catchtap="">
+  <view wx:if="{{showAddModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeAddModal"></view>
+    <view class="modal-body" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">新增运营管理员</text>
         <text class="modal-close ios-touch-active" bindtap="closeAddModal">✕</text>
       </view>
       <text class="modal-sub">创建后管理员可使用该账号密码直接登录服务端工作台进行调度。</text>
 
-      <view class="modal-form">
-        <view class="m-field">
-          <text class="m-label">登录手机号 <text class="req">*</text></text>
-          <input
-            class="m-input"
-            type="number"
-            maxlength="11"
-            placeholder="11位手机号码（登录账号）"
-            value="{{addForm.phone}}"
-            data-field="phone"
-            bindinput="handleAddInput"
-            adjust-position="{{true}}"
-            cursor-spacing="20"
-          />
-        </view>
+      <scroll-view scroll-y style="max-height: 55vh;">
+        <view class="modal-form">
+          <view class="m-field">
+            <text class="m-label">登录手机号 <text class="req">*</text></text>
+            <input
+              class="m-input"
+              type="number"
+              maxlength="11"
+              always-embed="{{true}}"
+              placeholder="11位手机号码（登录账号）"
+              value="{{addForm.phone}}"
+              data-field="phone"
+              bindinput="handleAddInput"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+            />
+          </view>
 
-        <view class="m-field">
-          <text class="m-label">初始密码 <text class="req">*</text></text>
-          <input
-            class="m-input"
-            password
-            placeholder="不少于6位登录密码"
-            value="{{addForm.password}}"
-            data-field="password"
-            bindinput="handleAddInput"
-            adjust-position="{{true}}"
-            cursor-spacing="20"
-          />
-        </view>
+          <view class="m-field">
+            <text class="m-label">初始密码 <text class="req">*</text></text>
+            <input
+              class="m-input"
+              password
+              always-embed="{{true}}"
+              placeholder="不少于6位登录密码"
+              value="{{addForm.password}}"
+              data-field="password"
+              bindinput="handleAddInput"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+            />
+          </view>
 
-        <view class="m-field">
-          <text class="m-label">姓名 / 备注</text>
-          <input
-            class="m-input"
-            placeholder="如: 张经理（订单运营）"
-            value="{{addForm.nickname}}"
-            data-field="nickname"
-            bindinput="handleAddInput"
-            adjust-position="{{true}}"
-            cursor-spacing="20"
-          />
-        </view>
+          <view class="m-field">
+            <text class="m-label">姓名 / 备注</text>
+            <input
+              class="m-input"
+              always-embed="{{true}}"
+              placeholder="如: 张经理（订单运营）"
+              value="{{addForm.nickname}}"
+              data-field="nickname"
+              bindinput="handleAddInput"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
+            />
+          </view>
 
-        <!-- 权限组选择 -->
-        <view class="m-field">
-          <text class="m-label">授权业务模块（可多选）</text>
-          <view class="group-select-grid">
-            <view
-              wx:for="{{groups}}"
-              wx:key="code"
-              class="group-select-item {{addForm.selectedGroups.indexOf(item.code) >= 0 ? 'group-select-item--active' : ''}} ios-touch-active"
-              data-code="{{item.code}}"
-              bindtap="toggleAddGroup"
-            >
-              <view class="item-head">
-                <text class="item-name">{{item.name}}</text>
-                <text class="item-check">{{addForm.selectedGroups.indexOf(item.code) >= 0 ? '✓' : '+'}}</text>
+          <!-- 权限组选择 -->
+          <view class="m-field">
+            <text class="m-label">授权业务模块（可多选）</text>
+            <view class="group-select-grid">
+              <view
+                wx:for="{{groups}}"
+                wx:key="code"
+                class="group-select-item {{addForm.selectedGroups.indexOf(item.code) >= 0 ? 'group-select-item--active' : ''}} ios-touch-active"
+                data-code="{{item.code}}"
+                bindtap="toggleAddGroup"
+              >
+                <view class="item-head">
+                  <text class="item-name">{{item.name}}</text>
+                  <text class="item-check">{{addForm.selectedGroups.indexOf(item.code) >= 0 ? '✓' : '+'}}</text>
+                </view>
+                <text class="item-desc">
+                  {{item.code === 'SUPPLY' ? '技师入驻/资质核验/项目定价' : (item.code === 'ORDERS' ? '全域订单调度/技师改派' : (item.code === 'FINANCE' ? '退款审批/技师结算出款' : '轮播图/分类/系统基本配置'))}}
+                </text>
               </view>
-              <text class="item-desc">
-                {{item.code === 'SUPPLY' ? '技师入驻/资质核验/项目定价' : (item.code === 'ORDERS' ? '全域订单调度/技师改派' : (item.code === 'FINANCE' ? '退款审批/技师结算出款' : '轮播图/分类/系统基本配置'))}}
-              </text>
             </view>
           </view>
         </view>
-      </view>
+      </scroll-view>
 
       <view class="modal-footer">
         <button class="m-btn-cancel ios-touch-active" bindtap="closeAddModal">取消</button>
@@ -178,36 +184,39 @@
   </view>
 
   <!-- ════ 5. 修改权限组弹窗 ════ -->
-  <view wx:if="{{showEditModal}}" class="modal-mask" bindtap="closeEditModal">
-    <view class="modal-body" catchtap="">
+  <view wx:if="{{showEditModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeEditModal"></view>
+    <view class="modal-body" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">调整权限范围</text>
         <text class="modal-close ios-touch-active" bindtap="closeEditModal">✕</text>
       </view>
       <text class="modal-sub">管理员：{{editTarget.nickname}} ({{editTarget.phone}})</text>
 
-      <view class="modal-form">
-        <view class="m-field">
-          <text class="m-label">授权业务模块</text>
-          <view class="group-select-grid">
-            <view
-              wx:for="{{groups}}"
-              wx:key="code"
-              class="group-select-item {{editSelectedGroups.indexOf(item.code) >= 0 ? 'group-select-item--active' : ''}} ios-touch-active"
-              data-code="{{item.code}}"
-              bindtap="toggleEditGroup"
-            >
-              <view class="item-head">
-                <text class="item-name">{{item.name}}</text>
-                <text class="item-check">{{editSelectedGroups.indexOf(item.code) >= 0 ? '✓' : '+'}}</text>
+      <scroll-view scroll-y style="max-height: 55vh;">
+        <view class="modal-form">
+          <view class="m-field">
+            <text class="m-label">授权业务模块</text>
+            <view class="group-select-grid">
+              <view
+                wx:for="{{groups}}"
+                wx:key="code"
+                class="group-select-item {{editSelectedGroups.indexOf(item.code) >= 0 ? 'group-select-item--active' : ''}} ios-touch-active"
+                data-code="{{item.code}}"
+                bindtap="toggleEditGroup"
+              >
+                <view class="item-head">
+                  <text class="item-name">{{item.name}}</text>
+                  <text class="item-check">{{editSelectedGroups.indexOf(item.code) >= 0 ? '✓' : '+'}}</text>
+                </view>
+                <text class="item-desc">
+                  {{item.code === 'SUPPLY' ? '技师入驻/资质核验/项目定价' : (item.code === 'ORDERS' ? '全域订单调度/技师改派' : (item.code === 'FINANCE' ? '退款审批/技师结算出款' : '轮播图/分类/系统基本配置'))}}
+                </text>
               </view>
-              <text class="item-desc">
-                {{item.code === 'SUPPLY' ? '技师入驻/资质核验/项目定价' : (item.code === 'ORDERS' ? '全域订单调度/技师改派' : (item.code === 'FINANCE' ? '退款审批/技师结算出款' : '轮播图/分类/系统基本配置'))}}
-              </text>
             </view>
           </view>
         </view>
-      </view>
+      </scroll-view>
 
       <view class="modal-footer">
         <button class="m-btn-cancel ios-touch-active" bindtap="closeEditModal">取消</button>
@@ -219,8 +228,9 @@
   </view>
 
   <!-- ════ 6. 重置密码弹窗 ════ -->
-  <view wx:if="{{showResetModal}}" class="modal-mask" bindtap="closeResetModal">
-    <view class="modal-body" catchtap="">
+  <view wx:if="{{showResetModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeResetModal"></view>
+    <view class="modal-body" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">重置管理员密码</text>
         <text class="modal-close ios-touch-active" bindtap="closeResetModal">✕</text>
@@ -233,6 +243,9 @@
           <input
             class="m-input"
             password
+            always-embed="{{true}}"
+            adjust-position="{{true}}"
+            cursor-spacing="30"
             placeholder="不少于6位新密码"
             value="{{resetPassword}}"
             bindinput="handleResetPasswordInput"

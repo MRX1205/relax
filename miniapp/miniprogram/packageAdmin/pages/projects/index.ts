@@ -321,4 +321,6 @@ Page({
       wx.showToast({ title: err?.message || "删除失败", icon: "none" });
     }
   },
+
+  noop() {},
 });

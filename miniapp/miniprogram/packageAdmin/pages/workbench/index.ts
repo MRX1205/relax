@@ -296,6 +296,8 @@ Page({
     }
   },
 
+  noop() {},
+
   returnToUserMode() {
     wx.switchTab({ url: "/pages/home/index" });
   },

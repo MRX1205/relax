@@ -206,4 +206,6 @@ Page({
       wx.showToast({ title: err?.message || "操作失败", icon: "none" });
     }
   },
+
+  noop() {},
 });

@@ -5,7 +5,7 @@ import {
   adminReassign,
   updateOrderNote,
 } from "../../services/order";
-import { request } from "../../../services/http";
+import { request, downloadAndOpenDocument } from "../../../services/http";
 import { formatOrderStatus } from "../../../utils/order-status";
 
 Page({
@@ -27,9 +27,22 @@ Page({
       { key: "COMPLETED", label: "已完成" },
       { key: "CANCELLED", label: "已取消" },
     ],
+
+    // 时间筛选维度
+    dateFilterMode: "ALL" as "ALL" | "DAY" | "MONTH",
+    selectedDate: "",
+    selectedMonth: "",
   },
 
   onLoad() {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    this.setData({
+      selectedDate: `${yyyy}-${mm}-${dd}`,
+      selectedMonth: `${yyyy}-${mm}`,
+    });
     this.loadOrders(true);
   },
 
@@ -41,7 +54,13 @@ Page({
     if (reset) this.setData({ page: 0, hasMore: true });
     this.setData({ loading: true });
     try {
-      const orders = await getAdminOrders(this.data.page);
+      const { activeTab, dateFilterMode, selectedDate, selectedMonth, page } = this.data;
+      const currentPage = reset ? 0 : page;
+      const statusParam = activeTab === "ALL" ? "" : activeTab;
+      const dateParam = dateFilterMode === "DAY" ? selectedDate : "";
+      const monthParam = dateFilterMode === "MONTH" ? selectedMonth : "";
+
+      const orders = await getAdminOrders(currentPage, statusParam, dateParam, monthParam);
       const rawList = reset ? orders : [...this.data.rawOrders, ...orders];
       const list = (rawList || []).map((order: any) => {
         const sInfo = formatOrderStatus(order.status);
@@ -56,8 +75,8 @@ Page({
 
       this.setData({
         rawOrders: rawList,
-        orders: this.filterByTab(list, this.data.activeTab),
-        page: (reset ? 0 : this.data.page) + 1,
+        orders: list,
+        page: currentPage + 1,
         hasMore: (orders || []).length >= 20,
         loading: false,
       });
@@ -66,29 +85,53 @@ Page({
     }
   },
 
-  filterByTab(list: any[], tab: string) {
-    if (tab === "ALL") return list;
-    if (tab === "PROCESSING") {
-      return list.filter(o => ["PAID", "ACCEPTED", "DEPARTED", "ARRIVED", "IN_SERVICE"].includes(o.status));
-    }
-    return list.filter(o => o.status === tab);
+  setDateFilterMode(e: WechatMiniprogram.TouchEvent) {
+    const mode = e.currentTarget.dataset.mode as "ALL" | "DAY" | "MONTH";
+    if (this.data.dateFilterMode === mode) return;
+    this.setData({ dateFilterMode: mode }, () => {
+      this.loadOrders(true);
+    });
+  },
+
+  handleDateChange(e: WechatMiniprogram.PickerChange) {
+    const val = e.detail.value as string;
+    this.setData({ selectedDate: val, dateFilterMode: "DAY" }, () => {
+      this.loadOrders(true);
+    });
+  },
+
+  handleMonthChange(e: WechatMiniprogram.PickerChange) {
+    const val = e.detail.value as string;
+    this.setData({ selectedMonth: val, dateFilterMode: "MONTH" }, () => {
+      this.loadOrders(true);
+    });
   },
 
   handleTabChange(e: WechatMiniprogram.TouchEvent) {
     const key = e.currentTarget.dataset.key;
-    this.setData({
-      activeTab: key,
-      orders: this.filterByTab(this.data.rawOrders.map((o: any) => {
-        const sInfo = formatOrderStatus(o.status);
-        return {
-          ...o,
-          statusText: sInfo.text,
-          statusColor: sInfo.color,
-          statusBg: sInfo.bg,
-          statusIcon: sInfo.icon,
-        };
-      }), key),
+    this.setData({ activeTab: key }, () => {
+      this.loadOrders(true);
     });
+  },
+
+  async handleExport() {
+    const { activeTab, dateFilterMode, selectedDate, selectedMonth } = this.data;
+    let query = "";
+    if (activeTab && activeTab !== "ALL") {
+      query += `status=${activeTab}`;
+    }
+    if (dateFilterMode === "DAY" && selectedDate) {
+      query += `${query ? "&" : ""}date=${selectedDate}`;
+    } else if (dateFilterMode === "MONTH" && selectedMonth) {
+      query += `${query ? "&" : ""}month=${selectedMonth}`;
+    }
+    const path = `/api/v1/admin/orders/export${query ? `?${query}` : ""}`;
+    const name = `订单明细_${dateFilterMode === "DAY" ? selectedDate : (dateFilterMode === "MONTH" ? selectedMonth : "全期")}.xlsx`;
+    try {
+      await downloadAndOpenDocument(path, name, "xlsx");
+    } catch {
+      // Handled
+    }
   },
 
   async handleTap(e: WechatMiniprogram.TouchEvent) {
@@ -113,6 +156,8 @@ Page({
   closeDetail() {
     this.setData({ showDetail: false, detail: null, detailStatusInfo: null });
   },
+
+  noop() {},
 
   handleNoteInput(e: WechatMiniprogram.Input) {
     this.setData({ noteInput: e.detail.value });

@@ -278,6 +278,67 @@
   color: #8E8E93;
 }
 
+/* 对应在线技师展示条 */
+.online-techs-container {
+  margin: 16rpx 0 14rpx;
+  padding: 14rpx 18rpx;
+  background: #F8F9FA;
+  border-radius: 16rpx;
+}
+
+.online-techs-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.techs-tag-label {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 22rpx;
+  color: #1D1D1F;
+  font-weight: 600;
+}
+
+.green-dot {
+  color: #34C759;
+  font-size: 16rpx;
+}
+
+.gray-dot {
+  color: #C7C7CC;
+  font-size: 16rpx;
+}
+
+.techs-pills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.tech-mini-chip {
+  background: #FFFFFF;
+  border: 1rpx solid rgba(52, 199, 89, 0.3);
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.03);
+}
+
+.chip-name {
+  font-size: 22rpx;
+  color: #1D1D1F;
+  font-weight: 500;
+}
+
+.online-techs-empty {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+
 /* 操作栏 */
 .proj-action-bar {
   display: flex;
@@ -338,20 +399,31 @@
 }
 
 /* ════ 3. 弹窗样式 ════ */
-.modal-mask {
+.modal-container {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.65) !important;
   z-index: 100000 !important;
   display: flex;
   align-items: flex-end;
   justify-content: center;
 }
 
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65) !important;
+  z-index: 1;
+}
+
 .modal-sheet {
+  position: relative;
+  z-index: 2;
   width: 100%;
   max-height: 85vh;
   background: #FFFFFF !important;
@@ -361,14 +433,7 @@
   border-top-right-radius: 40rpx;
   padding: 36rpx 32rpx calc(env(safe-area-inset-bottom) + 32rpx);
   box-sizing: border-box;
-  overflow-y: auto;
   box-shadow: 0 -12rpx 48rpx rgba(0, 0, 0, 0.35) !important;
-  position: relative;
-  z-index: 100001 !important;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  isolation: isolate;
-  -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {

@@ -62,7 +62,7 @@
         </view>
 
         <!-- 卡片底部操作 -->
-        <view class="card-action-row" catchtap="">
+        <view class="card-action-row" catchtap="noop">
           <text class="uid-tag">UID: {{item.userId}} · 点击查看卡片 ›</text>
           <view class="btn-group">
             <view
@@ -80,8 +80,9 @@
   </block>
 
   <!-- ════ 用户详细档案弹窗卡片 (Apple Modal Style) ════ -->
-  <view wx:if="{{showDetailModal && selectedUser}}" class="modal-mask" bindtap="closeDetailModal">
-    <view class="modal-sheet" catchtap="">
+  <view wx:if="{{showDetailModal && selectedUser}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeDetailModal"></view>
+    <view class="modal-sheet" catchtap="noop">
       <!-- 弹窗顶部栏 -->
       <view class="modal-sheet-header">
         <view class="sheet-title-col">

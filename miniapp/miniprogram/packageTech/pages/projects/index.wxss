@@ -246,32 +246,37 @@
 }
 
 /* Modal Dialogs */
-.modal-mask {
+.modal-container {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 1000;
+  z-index: 10000;
   display: flex;
   align-items: flex-end;
 }
 
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
 .modal-dialog {
+  position: relative;
+  z-index: 2;
   width: 100%;
   max-height: 85vh;
-  background: #FFFFFF;
+  background: #FFFFFF !important;
   border-top-left-radius: 32rpx;
   border-top-right-radius: 32rpx;
   display: flex;
   flex-direction: column;
-  animation: slideUp 0.25s ease-out;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
 }
 
 .dialog-header {

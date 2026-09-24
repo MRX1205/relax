@@ -349,6 +349,8 @@ Page({
     wx.previewImage({ urls: [url] });
   },
 
+  noop() {},
+
   makePhoneCall(e: WechatMiniprogram.TouchEvent) {
     const phone = e.currentTarget.dataset.phone;
     if (!phone) return;

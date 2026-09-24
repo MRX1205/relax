@@ -25,9 +25,19 @@ public interface SearchMapper {
             + "(SELECT MIN(COALESCE(tp.override_price, p.base_price)) FROM technician_project tp "
             + " JOIN service_project p ON p.id = tp.project_id AND p.status = 'ON_SHELF' "
             + " WHERE tp.technician_id = t.id AND tp.status = 'ENABLED') AS startPrice "
-            + "FROM technician t JOIN platform_user u ON u.id = t.user_id "
+            + "FROM technician t LEFT JOIN platform_user u ON u.id = t.user_id "
             + "WHERE t.status = 'ACTIVE' "
-            + "AND (t.service_name LIKE CONCAT('%', #{q}, '%') OR t.intro LIKE CONCAT('%', #{q}, '%')) "
+            + "AND ("
+            + "   t.service_name LIKE CONCAT('%', #{q}, '%') "
+            + "   OR t.real_name LIKE CONCAT('%', #{q}, '%') "
+            + "   OR t.intro LIKE CONCAT('%', #{q}, '%') "
+            + "   OR EXISTS ("
+            + "       SELECT 1 FROM technician_project tp "
+            + "       JOIN service_project sp ON sp.id = tp.project_id "
+            + "       WHERE tp.technician_id = t.id AND tp.status = 'ENABLED' "
+            + "       AND (sp.name LIKE CONCAT('%', #{q}, '%') OR sp.description LIKE CONCAT('%', #{q}, '%'))"
+            + "   )"
+            + ") "
             + "ORDER BY (t.online_status = 'ONLINE') DESC, t.id DESC LIMIT 20")
     List<TechnicianResult> searchTechnicians(@Param("q") String q);
 

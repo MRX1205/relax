@@ -69,8 +69,8 @@ public class CatalogController {
 
     @GetMapping("/admin/projects")
     @PreAuthorize("hasAuthority('project:read') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    ApiResponse<List<ProjectMapper.ProjectView>> listAllProjects() {
-        return ApiResponse.success(catalogService.listProjects());
+    ApiResponse<List<CatalogService.AdminProjectItemView>> listAllProjects() {
+        return ApiResponse.success(catalogService.listAdminProjects());
     }
 
     @PostMapping("/admin/projects")

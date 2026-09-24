@@ -74,12 +74,12 @@
             <view class="badges-line">
               <view class="star-rating">
                 <text class="star-char">★</text>
-                <text class="star-val">4.9</text>
+                <text class="star-val">{{item.rating || '4.9'}}</text>
               </view>
               <text class="dot-separator">•</text>
               <text class="stat-text">{{item.experienceYears || 5}}年经验</text>
               <text class="dot-separator">•</text>
-              <text class="stat-text">已服务 800+ 单</text>
+              <text class="stat-text">已服务 {{item.orderCount || '300+'}} 单</text>
             </view>
 
             <text class="intro-snippet">{{item.intro || '手法细腻专业，擅长全身放松与深层肌肉理疗。'}}</text>

@@ -64,11 +64,12 @@
   </view>
 
   <!-- 提现弹窗 -->
-  <view wx:if="{{withdrawModalVisible}}" class="modal-mask" bindtap="closeWithdraw">
-    <view class="modal-content" catchtap="">
+  <view wx:if="{{withdrawModalVisible}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeWithdraw"></view>
+    <view class="modal-content" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">申请提现至微信零钱</text>
-        <text class="modal-close" bindtap="closeWithdraw">✕</text>
+        <text class="modal-close ios-touch-active" bindtap="closeWithdraw">✕</text>
       </view>
       <view class="modal-body">
         <view class="avail-tip">当前可提现余额：¥{{totalEarnings}}</view>
@@ -77,6 +78,9 @@
           <input
             class="amt-input"
             type="digit"
+            always-embed="{{true}}"
+            adjust-position="{{true}}"
+            cursor-spacing="30"
             value="{{withdrawAmount}}"
             placeholder="输入提现金额"
             bindinput="handleAmountInput"

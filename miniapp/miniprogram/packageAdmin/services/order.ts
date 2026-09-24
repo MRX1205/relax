@@ -33,8 +33,12 @@ export function simulatePayment(paymentNo: string, scenario = "SUCCESS"): Promis
 }
 
 // Admin
-export function getAdminOrders(page = 0): Promise<OrderView[]> {
-  return request<OrderView[]>({ url: `/api/v1/admin/orders?page=${page}` });
+export function getAdminOrders(page = 0, status?: string, date?: string, month?: string): Promise<OrderView[]> {
+  let q = `page=${page}`;
+  if (status && status !== "ALL") q += `&status=${status}`;
+  if (date) q += `&date=${date}`;
+  if (month) q += `&month=${month}`;
+  return request<OrderView[]>({ url: `/api/v1/admin/orders?${q}` });
 }
 
 export function getAdminOrderDetail(orderNo: string): Promise<OrderDetailView> {

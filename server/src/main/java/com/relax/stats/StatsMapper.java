@@ -54,6 +54,37 @@ public interface StatsMapper {
             + "GROUP BY DATE(created_at) ORDER BY date")
     List<DailyTrend> dailyTrend(@Param("days") int days);
 
+    // === 筛选统计（日期/月份） ===
+    @Select("SELECT COUNT(*) FROM service_order o "
+            + "WHERE o.status NOT IN ('CANCELLED','EXPIRED') "
+            + "AND (#{date} IS NULL OR #{date} = '' OR DATE(o.created_at) = #{date}) "
+            + "AND (#{month} IS NULL OR #{month} = '' OR DATE_FORMAT(o.created_at, '%Y-%m') = #{month})")
+    long filteredOrdersCount(@Param("date") String date, @Param("month") String month);
+
+    @Select("SELECT COALESCE(SUM(oa.payable_amount), 0) FROM order_amount oa "
+            + "JOIN service_order o ON o.id = oa.order_id "
+            + "WHERE o.status IN ('PAID','COMPLETED','IN_SERVICE','ACCEPTED') "
+            + "AND (#{date} IS NULL OR #{date} = '' OR DATE(o.created_at) = #{date}) "
+            + "AND (#{month} IS NULL OR #{month} = '' OR DATE_FORMAT(o.created_at, '%Y-%m') = #{month})")
+    BigDecimal filteredRevenue(@Param("date") String date, @Param("month") String month);
+
+    @Select("SELECT o.status, COUNT(*) as count FROM service_order o "
+            + "WHERE (#{date} IS NULL OR #{date} = '' OR DATE(o.created_at) = #{date}) "
+            + "AND (#{month} IS NULL OR #{month} = '' OR DATE_FORMAT(o.created_at, '%Y-%m') = #{month}) "
+            + "GROUP BY o.status")
+    List<StatusCount> filteredOrderStatusCounts(@Param("date") String date, @Param("month") String month);
+
+    @Select("SELECT t.id AS technicianId, t.service_name AS name, COUNT(o.id) AS orderCount, "
+            + "COALESCE(SUM(oa.payable_amount), 0) AS revenue "
+            + "FROM technician t "
+            + "LEFT JOIN service_order o ON o.technician_id = t.id AND o.status = 'COMPLETED' "
+            + "AND (#{date} IS NULL OR #{date} = '' OR DATE(o.created_at) = #{date}) "
+            + "AND (#{month} IS NULL OR #{month} = '' OR DATE_FORMAT(o.created_at, '%Y-%m') = #{month}) "
+            + "LEFT JOIN order_amount oa ON oa.order_id = o.id "
+            + "WHERE t.status = 'ACTIVE' "
+            + "GROUP BY t.id, t.service_name ORDER BY orderCount DESC, revenue DESC LIMIT #{limit}")
+    List<TechRanking> filteredTechRanking(@Param("date") String date, @Param("month") String month, @Param("limit") int limit);
+
     record StatusCount(String status, long count) {}
 
     record TechRanking(long technicianId, String name, long orderCount, BigDecimal revenue) {}

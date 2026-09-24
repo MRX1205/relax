@@ -83,4 +83,6 @@ Page({
       query: `inviteCode=${this.data.inviteCode}`,
     };
   },
+
+  noop() {},
 });

@@ -227,20 +227,31 @@
 }
 
 /* ════ 用户详情弹窗 (Apple HIG Modal) ════ */
-.modal-mask {
+.modal-container {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.65) !important;
   z-index: 100000 !important;
   display: flex;
   align-items: flex-end;
   justify-content: center;
 }
 
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65) !important;
+  z-index: 1;
+}
+
 .modal-sheet {
+  position: relative;
+  z-index: 2;
   width: 100%;
   max-height: 82vh;
   background: #FFFFFF !important;
@@ -250,14 +261,7 @@
   border-top-right-radius: 40rpx;
   padding: 36rpx 32rpx calc(env(safe-area-inset-bottom) + 32rpx);
   box-sizing: border-box;
-  overflow-y: auto;
   box-shadow: 0 -12rpx 48rpx rgba(0, 0, 0, 0.35) !important;
-  position: relative;
-  z-index: 100001 !important;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  isolation: isolate;
-  -webkit-overflow-scrolling: touch;
 }
 
 .modal-sheet-header {

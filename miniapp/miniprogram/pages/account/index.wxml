@@ -201,8 +201,9 @@
   <view class="safe-bottom-bar"></view>
 
   <!-- 专属在线客服弹窗 (Apple HIG Modal Sheet) -->
-  <view wx:if="{{customerModalVisible}}" class="modal-mask" bindtap="closeCustomerService">
-    <view class="customer-sheet" catchtap="">
+  <view wx:if="{{customerModalVisible}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeCustomerService"></view>
+    <view class="customer-sheet" catchtap="noop">
       <view class="customer-sheet-head">
         <view class="cs-head-icon">🎧</view>
         <view class="cs-head-text">
@@ -257,8 +258,9 @@
   </view>
 
   <!-- 管理员 2FA PIN 弹窗 -->
-  <view wx:if="{{adminModalVisible}}" class="admin-auth-mask" bindtap="closeAdminAuth">
-    <view class="admin-auth-dialog ios-blur" catchtap="">
+  <view wx:if="{{adminModalVisible}}" class="admin-modal-container">
+    <view class="admin-auth-mask" catchtouchmove="true" bindtap="closeAdminAuth"></view>
+    <view class="admin-auth-dialog" catchtap="noop">
       <view class="dialog-head">
         <text class="d-icon">🔐</text>
         <text class="d-title">管理员安全验证</text>
@@ -273,6 +275,9 @@
           password
           type="number"
           maxlength="10"
+          always-embed="{{true}}"
+          adjust-position="{{true}}"
+          cursor-spacing="30"
           value="{{adminPinInput}}"
           placeholder="请输入管理员 PIN 码"
           bindinput="handlePinInput"
@@ -280,8 +285,8 @@
       </view>
 
       <view class="d-actions">
-        <button class="d-btn btn-cancel" bindtap="closeAdminAuth">取消</button>
-        <button class="d-btn btn-confirm" loading="{{verifyingPin}}" bindtap="confirmAdminPin">验证进入</button>
+        <button class="d-btn btn-cancel ios-touch-active" bindtap="closeAdminAuth">取消</button>
+        <button class="d-btn btn-confirm ios-touch-active" loading="{{verifyingPin}}" bindtap="confirmAdminPin">验证进入</button>
       </view>
     </view>
   </view>

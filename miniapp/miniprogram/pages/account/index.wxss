@@ -403,24 +403,42 @@
 }
 
 /* ════ 管理员 2FA PIN 弹窗 ════ */
-.admin-auth-mask {
+.admin-modal-container {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 1000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 40rpx;
+  box-sizing: border-box;
+}
+
+.admin-auth-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1;
 }
 
 .admin-auth-dialog {
+  position: relative;
+  z-index: 2;
   width: 100%;
   max-width: 600rpx;
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  opacity: 1 !important;
   border-radius: 36rpx;
   padding: 44rpx 36rpx;
   box-sizing: border-box;
-  box-shadow: 0 24rpx 64rpx rgba(0, 0, 0, 0.2);
+  box-shadow: 0 24rpx 64rpx rgba(0, 0, 0, 0.35);
 }
 
 .dialog-head {
@@ -495,7 +513,6 @@
   border-top-right-radius: 40rpx;
   padding: 36rpx 32rpx calc(env(safe-area-inset-bottom) + 32rpx);
   box-sizing: border-box;
-  overflow-y: auto;
   box-shadow: 0 -12rpx 48rpx rgba(0, 0, 0, 0.28) !important;
   position: relative;
   z-index: 100001 !important;

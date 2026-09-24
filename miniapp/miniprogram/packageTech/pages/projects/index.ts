@@ -315,4 +315,6 @@ Page({
       wx.showToast({ title: err?.message || "保存失败", icon: "none" });
     }
   },
+
+  noop() {},
 });

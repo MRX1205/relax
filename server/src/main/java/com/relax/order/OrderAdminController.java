@@ -5,6 +5,9 @@ import java.util.List;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,9 +35,29 @@ public class OrderAdminController {
 
     @GetMapping
     ApiResponse<List<OrderMapper.OrderListItem>> listOrders(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long technicianId,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) String month,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "20") int size) {
-        return ApiResponse.success(orderService.listAllOrders(page, size));
+        return ApiResponse.success(orderService.listAdminOrders(status, technicianId, date, month, page, size));
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportOrders(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long technicianId,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) String month) {
+        List<OrderMapper.OrderListItem> orders = orderService.listAdminOrders(status, technicianId, date, month, 0, 5000);
+        byte[] xlsx = orderService.generateOrdersExcel(orders);
+        String label = (date != null && !date.isBlank()) ? date : ((month != null && !month.isBlank()) ? month : "all");
+        String filename = "orders-" + label + ".xlsx";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(xlsx);
     }
 
     @GetMapping("/{orderNo}")

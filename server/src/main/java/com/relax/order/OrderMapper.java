@@ -137,6 +137,44 @@ public interface OrderMapper {
             + "ORDER BY o.id DESC LIMIT #{limit} OFFSET #{offset}")
     List<OrderListItem> findEnrichedAll(@Param("limit") int limit, @Param("offset") int offset);
 
+    @Select("SELECT o.id, o.order_no AS orderNo, o.user_id AS userId, o.technician_id AS technicianId, "
+            + "COALESCE(t.service_name, '专业技师') AS technicianName, "
+            + "COALESCE(t.phone, '') AS technicianPhone, "
+            + "COALESCE(t.avatar_url, '') AS technicianAvatarUrl, "
+            + "o.project_id AS projectId, "
+            + "COALESCE(ops.project_name, p.name, '理疗推拿服务') AS projectName, "
+            + "COALESCE(ops.duration_minutes, p.duration_minutes, 60) AS durationMinutes, "
+            + "COALESCE(oas.contact_name, u.nickname, '顾客') AS customerName, "
+            + "COALESCE(oas.contact_phone, u.phone, '') AS customerPhone, "
+            + "CONCAT(COALESCE(oas.region_name, ''), ' ', COALESCE(oas.detail, '')) AS serviceAddress, "
+            + "oas.longitude, oas.latitude, "
+            + "o.status, o.service_date AS serviceDate, o.start_time AS startTime, o.end_time AS endTime, "
+            + "COALESCE(oa.payable_amount, 0) AS payableAmount, "
+            + "COALESCE(oa.paid_amount, 0) AS paidAmount, "
+            + "o.note, o.cancel_reason AS cancelReason, "
+            + "o.created_at AS createdAt, o.updated_at AS updatedAt "
+            + "FROM service_order o "
+            + "LEFT JOIN technician t ON t.id = o.technician_id "
+            + "LEFT JOIN service_project p ON p.id = o.project_id "
+            + "LEFT JOIN platform_user u ON u.id = o.user_id "
+            + "LEFT JOIN order_project_snapshot ops ON ops.order_id = o.id "
+            + "LEFT JOIN order_address_snapshot oas ON oas.order_id = o.id "
+            + "LEFT JOIN order_amount oa ON oa.order_id = o.id "
+            + "WHERE (#{status} IS NULL OR #{status} = '' OR #{status} = 'ALL' "
+            + "   OR (#{status} = 'PROCESSING' AND o.status IN ('PAID','ACCEPTED','DEPARTED','ARRIVED','IN_SERVICE')) "
+            + "   OR o.status = #{status}) "
+            + "AND (#{technicianId} IS NULL OR #{technicianId} <= 0 OR o.technician_id = #{technicianId}) "
+            + "AND (#{date} IS NULL OR #{date} = '' OR DATE(o.created_at) = #{date} OR o.service_date = #{date}) "
+            + "AND (#{month} IS NULL OR #{month} = '' OR DATE_FORMAT(o.created_at, '%Y-%m') = #{month} OR DATE_FORMAT(o.service_date, '%Y-%m') = #{month}) "
+            + "ORDER BY o.id DESC LIMIT #{limit} OFFSET #{offset}")
+    List<OrderListItem> findEnrichedFiltered(
+            @Param("status") String status,
+            @Param("technicianId") Long technicianId,
+            @Param("date") String date,
+            @Param("month") String month,
+            @Param("limit") int limit,
+            @Param("offset") int offset);
+
     @Update("UPDATE service_order SET status = #{toStatus}, version = version + 1, updated_at = CURRENT_TIMESTAMP "
             + "WHERE order_no = #{orderNo} AND status = #{fromStatus} AND version = #{version}")
     int transitionStatus(@Param("orderNo") String orderNo, @Param("fromStatus") String fromStatus,

@@ -67,6 +67,15 @@ public interface ProjectMapper {
     @Delete("DELETE FROM service_project WHERE id = #{id}")
     int delete(@Param("id") long id);
 
+    @Select("SELECT tp.project_id AS projectId, t.id AS technicianId, t.service_name AS serviceName, "
+            + "COALESCE(t.avatar_url, '') AS avatarUrl, t.online_status AS onlineStatus "
+            + "FROM technician_project tp "
+            + "JOIN technician t ON t.id = tp.technician_id "
+            + "WHERE tp.status = 'ENABLED' AND t.status = 'ACTIVE' AND t.online_status = 'ONLINE'")
+    List<ProjectOnlineTech> findOnlineTechniciansForAllProjects();
+
+    record ProjectOnlineTech(long projectId, long technicianId, String serviceName, String avatarUrl, String onlineStatus) {}
+
     record ProjectView(long id, long categoryId, String categoryName, String name, int durationMinutes,
             BigDecimal basePrice, String description, String notice, Long coverFileId,
             String status, int sort, String creatorType, Long creatorId, LocalDateTime createdAt) {

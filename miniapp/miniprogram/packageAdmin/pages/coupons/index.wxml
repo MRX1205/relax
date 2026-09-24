@@ -65,8 +65,9 @@
   </view>
 
   <!-- ════ 新建卡券弹窗 (Solid White Apple Modal) ════ -->
-  <view wx:if="{{showCreateModal}}" class="modal-mask" bindtap="closeCreateModal">
-    <view class="modal-body" catchtap="">
+  <view wx:if="{{showCreateModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeCreateModal"></view>
+    <view class="modal-body" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">新建优惠券模板</text>
         <text class="modal-close ios-touch-active" bindtap="closeCreateModal">✕</text>
@@ -78,6 +79,9 @@
           <text class="m-label">优惠券名称 *</text>
           <input
             class="m-input"
+            always-embed="{{true}}"
+            adjust-position="{{true}}"
+            cursor-spacing="30"
             placeholder="如：全场通用减20元券"
             value="{{formName}}"
             bindinput="handleNameInput"
@@ -90,6 +94,9 @@
             <input
               class="m-input"
               type="digit"
+              always-embed="{{true}}"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
               placeholder="如：20"
               value="{{formAmount}}"
               bindinput="handleAmountInput"
@@ -100,6 +107,9 @@
             <input
               class="m-input"
               type="digit"
+              always-embed="{{true}}"
+              adjust-position="{{true}}"
+              cursor-spacing="30"
               placeholder="0为无门槛"
               value="{{formMinSpend}}"
               bindinput="handleMinSpendInput"
@@ -112,6 +122,9 @@
           <input
             class="m-input"
             type="number"
+            always-embed="{{true}}"
+            adjust-position="{{true}}"
+            cursor-spacing="30"
             placeholder="如：500"
             value="{{formTotalCount}}"
             bindinput="handleTotalCountInput"
@@ -129,8 +142,9 @@
   </view>
 
   <!-- ════ 定向派发弹窗 ════ -->
-  <view wx:if="{{showGrantModal}}" class="modal-mask" bindtap="closeGrantModal">
-    <view class="modal-body" catchtap="">
+  <view wx:if="{{showGrantModal}}" class="modal-container">
+    <view class="modal-mask" catchtouchmove="true" bindtap="closeGrantModal"></view>
+    <view class="modal-body" catchtap="noop">
       <view class="modal-header">
         <text class="modal-title">定向派发优惠券</text>
         <text class="modal-close ios-touch-active" bindtap="closeGrantModal">✕</text>
@@ -143,6 +157,9 @@
           <input
             class="m-input"
             type="number"
+            always-embed="{{true}}"
+            adjust-position="{{true}}"
+            cursor-spacing="30"
             placeholder="在「用户会员管理」中查看UID"
             value="{{targetUserIdInput}}"
             bindinput="handleTargetUserIdInput"

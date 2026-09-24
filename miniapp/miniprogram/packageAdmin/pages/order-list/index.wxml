@@ -12,11 +12,37 @@
     </view>
   </view>
 
+  <!-- 2. 日期/月份筛选与导出栏 -->
+  <view class="date-filter-bar">
+    <view class="date-tabs">
+      <view
+        class="d-tab {{dateFilterMode === 'ALL' ? 'd-tab--active' : ''}}"
+        data-mode="ALL"
+        bindtap="setDateFilterMode"
+      >
+        全部日期
+      </view>
+      <picker mode="date" value="{{selectedDate}}" bindchange="handleDateChange">
+        <view class="d-tab {{dateFilterMode === 'DAY' ? 'd-tab--active' : ''}}">
+          📅 {{dateFilterMode === 'DAY' ? selectedDate : '按日筛选'}}
+        </view>
+      </picker>
+      <picker mode="date" fields="month" value="{{selectedMonth}}" bindchange="handleMonthChange">
+        <view class="d-tab {{dateFilterMode === 'MONTH' ? 'd-tab--active' : ''}}">
+          🗓️ {{dateFilterMode === 'MONTH' ? selectedMonth : '按月筛选'}}
+        </view>
+      </picker>
+    </view>
+    <view class="export-icon-btn ios-touch-active" bindtap="handleExport">
+      📥 导出订单
+    </view>
+  </view>
+
   <ui-state wx:if="{{loading && orders.length === 0}}" title="加载中" kind="loading" />
 
   <block wx:else>
     <view wx:if="{{orders.length === 0}}" class="empty-wrap">
-      <ui-state title="暂无相关订单" description="当前筛选分类下无订单数据" />
+      <ui-state title="暂无相关订单" description="当前时间或筛选分类下无订单数据" />
     </view>
 
     <!-- 订单卡片列表 -->
@@ -50,47 +76,53 @@
           </view>
         </view>
 
-        <view class="meta-row time-row">
-          <text class="meta-icon">⏱️</text>
-          <text class="meta-label">预约时间：</text>
-          <text class="meta-value">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
-        </view>
-
-        <view class="meta-row" wx:if="{{item.technicianName}}">
-          <text class="meta-icon">💆</text>
-          <text class="meta-label">服务技师：</text>
-          <text class="meta-value bold-val">{{item.technicianName}} ({{item.technicianPhone || '无电话'}})</text>
-        </view>
-
-        <view class="meta-row" wx:if="{{item.customerName || item.addressDetail}}">
-          <text class="meta-icon">📍</text>
-          <text class="meta-label">客户地址：</text>
-          <text class="meta-value">{{item.customerName ? item.customerName + ' · ' : ''}}{{item.addressDetail || ''}}</text>
+        <view class="service-meta">
+          <view class="meta-row">
+            <text class="meta-icon">👤</text>
+            <text class="meta-label">客户：</text>
+            <text class="meta-val">{{item.customerName}} {{item.customerPhone}}</text>
+          </view>
+          <view class="meta-row">
+            <text class="meta-icon">💆</text>
+            <text class="meta-label">技师：</text>
+            <text class="meta-val">{{item.technicianName || '待分配'}}</text>
+          </view>
+          <view class="meta-row">
+            <text class="meta-icon">🕒</text>
+            <text class="meta-label">预约：</text>
+            <text class="meta-val">{{item.serviceDate}} {{item.startTime}}-{{item.endTime}}</text>
+          </view>
+          <view class="meta-row" wx:if="{{item.serviceAddress}}">
+            <text class="meta-icon">📍</text>
+            <text class="meta-label">地址：</text>
+            <text class="meta-val">{{item.serviceAddress}}</text>
+          </view>
         </view>
 
         <view class="order-footer">
           <view class="order-footer-left">
             <text class="order-time">{{item.createdAt}}</text>
-            <text wx:if="{{item.note}}" class="order-note-tag">📝 {{item.note}}</text>
+            <text wx:if="{{item.note}}" class="order-note-tag">有备注</text>
           </view>
-          <text class="order-link">管理详情 ›</text>
+          <view class="order-link">查看详情 ›</view>
         </view>
       </view>
     </view>
   </block>
 
-  <!-- 订单详情抽屉 (Detail overlay) -->
-  <view wx:if="{{showDetail && detail}}" class="overlay" bindtap="closeDetail">
-    <view class="detail-panel" catchtap="">
+  <!-- 订单详情弹窗（解耦式遮罩与居中弹窗，彻底解决弹窗偏右和透明问题） -->
+  <view wx:if="{{showDetail && detail}}" class="overlay">
+    <view class="detail-mask" catchtouchmove="true" bindtap="closeDetail"></view>
+    <view class="detail-panel" catchtap="noop">
       <view class="detail-header">
         <view class="detail-title-col">
           <text class="detail-title">订单详情</text>
           <text class="detail-subno">单号：{{detail.order.orderNo}}</text>
         </view>
-        <view class="detail-close" bindtap="closeDetail">✕</view>
+        <view class="detail-close ios-touch-active" bindtap="closeDetail">✕</view>
       </view>
 
-      <scroll-view scroll-y class="detail-body">
+      <scroll-view scroll-y class="detail-body" style="max-height: 70vh;">
         <!-- 状态横幅 -->
         <view class="drawer-status-banner" style="background: {{detailStatusInfo.bg}};">
           <text class="drawer-status-icon">{{detailStatusInfo.icon}}</text>
@@ -170,15 +202,23 @@
         <!-- 管理员备注 -->
         <view class="drawer-card">
           <view class="drawer-section-title">管理备注 (仅管理员可见)</view>
-          <textarea class="note-input" value="{{noteInput}}" bindinput="handleNoteInput" placeholder="输入跟进备注或特殊要求" />
-          <view class="note-save" bindtap="handleSaveNote">保存备注</view>
+          <textarea
+            class="note-input"
+            value="{{noteInput}}"
+            bindinput="handleNoteInput"
+            placeholder="输入跟进备注或特殊要求"
+            always-embed="{{true}}"
+            adjust-position="{{true}}"
+            cursor-spacing="30"
+          />
+          <view class="note-save ios-touch-active" bindtap="handleSaveNote">保存备注</view>
         </view>
 
         <!-- 操作按钮 -->
         <view class="drawer-actions">
           <view
             wx:if="{{detail.order.status === 'PAID' || detail.order.status === 'ACCEPTED'}}"
-            class="action-drawer-btn btn-reassign"
+            class="action-drawer-btn btn-reassign ios-touch-active"
             bindtap="handleReassign"
           >
             改派技师
@@ -186,7 +226,7 @@
 
           <view
             wx:if="{{detail.order.status !== 'CANCELLED' && detail.order.status !== 'EXPIRED' && detail.order.status !== 'COMPLETED'}}"
-            class="action-drawer-btn btn-cancel"
+            class="action-drawer-btn btn-cancel ios-touch-active"
             bindtap="handleCancel"
           >
             强制取消订单并退款

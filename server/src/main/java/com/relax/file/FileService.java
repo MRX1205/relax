@@ -110,10 +110,11 @@ public class FileService {
         long id = IdWorker.getId();
         String safeName = (originalFilename != null && !originalFilename.isBlank()) ? originalFilename : "image.jpg";
         String safeType = (contentType != null && !contentType.isBlank()) ? contentType : "image/jpeg";
+        long ownerId = (userId != null && userId > 0) ? userId : 1001L;
         String safePurpose = (purpose != null && !purpose.isBlank()) ? purpose.toUpperCase() : "IMAGE";
-        String objectKey = safePurpose.toLowerCase() + "/" + (userId != null ? userId : 0L) + "/" + id + "-" + safeName;
+        String objectKey = safePurpose.toLowerCase() + "/" + ownerId + "/" + id + "-" + safeName;
 
-        FileAsset asset = new FileAsset(id, userId != null ? userId : 0L, safePurpose, "DATABASE", objectKey,
+        FileAsset asset = new FileAsset(id, ownerId, safePurpose, "DATABASE", objectKey,
                 safeName, safeType, (long) bytes.length, (long) bytes.length, "READY",
                 null, null, LocalDateTime.now(), LocalDateTime.now());
         fileMapper.insert(asset);

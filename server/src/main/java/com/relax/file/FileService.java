@@ -119,6 +119,7 @@ public class FileService {
                 null, null, LocalDateTime.now(), LocalDateTime.now());
         fileMapper.insert(asset);
         storage.storeLocal(asset, bytes);
+        fileMapper.markReady(id, bytes.length);
         return new DirectUploadView(id, "/api/v1/public/files/" + id, safeName);
     }
 

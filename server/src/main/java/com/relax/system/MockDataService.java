@@ -57,12 +57,22 @@ public class MockDataService {
 
     @Transactional
     public void cleanMockData() {
-        jdbcTemplate.update("DELETE FROM order_status_log WHERE order_id BETWEEN 6000 AND 6999");
-        jdbcTemplate.update("DELETE FROM order_amount WHERE order_id BETWEEN 6000 AND 6999");
-        jdbcTemplate.update("DELETE FROM order_project_snapshot WHERE order_id BETWEEN 6000 AND 6999");
-        jdbcTemplate.update("DELETE FROM order_address_snapshot WHERE order_id BETWEEN 6000 AND 6999");
-        jdbcTemplate.update("DELETE FROM review WHERE id BETWEEN 8000 AND 8999");
-        jdbcTemplate.update("DELETE FROM service_order WHERE id BETWEEN 6000 AND 6999 OR order_no LIKE 'ORD2026%'");
+        jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 0");
+        try {
+            jdbcTemplate.update("DELETE FROM technician_income WHERE order_id BETWEEN 6000 AND 6999 OR order_id IN (SELECT id FROM service_order WHERE order_no LIKE 'ORD2026%')");
+            jdbcTemplate.update("DELETE FROM order_payment WHERE order_id BETWEEN 6000 AND 6999 OR order_id IN (SELECT id FROM service_order WHERE order_no LIKE 'ORD2026%')");
+            jdbcTemplate.update("DELETE FROM order_refund WHERE order_id BETWEEN 6000 AND 6999 OR order_id IN (SELECT id FROM service_order WHERE order_no LIKE 'ORD2026%')");
+            jdbcTemplate.update("DELETE FROM aftersale_ticket WHERE order_id BETWEEN 6000 AND 6999 OR order_id IN (SELECT id FROM service_order WHERE order_no LIKE 'ORD2026%')");
+            jdbcTemplate.update("DELETE FROM order_reassign_request WHERE order_id BETWEEN 6000 AND 6999 OR order_id IN (SELECT id FROM service_order WHERE order_no LIKE 'ORD2026%')");
+            jdbcTemplate.update("DELETE FROM review WHERE id BETWEEN 8000 AND 8999 OR order_id BETWEEN 6000 AND 6999");
+            jdbcTemplate.update("DELETE FROM order_status_log WHERE order_id BETWEEN 6000 AND 6999 OR order_id IN (SELECT id FROM service_order WHERE order_no LIKE 'ORD2026%')");
+            jdbcTemplate.update("DELETE FROM order_amount WHERE order_id BETWEEN 6000 AND 6999 OR order_id IN (SELECT id FROM service_order WHERE order_no LIKE 'ORD2026%')");
+            jdbcTemplate.update("DELETE FROM order_project_snapshot WHERE order_id BETWEEN 6000 AND 6999 OR order_id IN (SELECT id FROM service_order WHERE order_no LIKE 'ORD2026%')");
+            jdbcTemplate.update("DELETE FROM order_address_snapshot WHERE order_id BETWEEN 6000 AND 6999 OR order_id IN (SELECT id FROM service_order WHERE order_no LIKE 'ORD2026%')");
+            jdbcTemplate.update("DELETE FROM service_order WHERE id BETWEEN 6000 AND 6999 OR order_no LIKE 'ORD2026%'");
+        } finally {
+            jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 1");
+        }
 
         settingMapper.upsertSetting("mock.data.enabled", "false", "Mock数据开关");
         settingMapper.upsertSetting("mock.data.last.reset", LocalDateTime.now().toString().replace('T', ' '), "最后清理时间");

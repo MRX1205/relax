@@ -27,3 +27,16 @@ export function updateServiceArea(id: string, status: "ENABLED" | "DISABLED"): P
     data: { status },
   });
 }
+
+export function getTechnicianServiceAreas(): Promise<string[]> {
+  return request<string[]>({ url: "/api/v1/technician/service-areas" });
+}
+
+export function updateTechnicianServiceAreas(areaIds: string[]): Promise<string[]> {
+  return request<string[]>({
+    url: "/api/v1/technician/service-areas",
+    method: "PUT",
+    data: areaIds,
+  });
+}
+

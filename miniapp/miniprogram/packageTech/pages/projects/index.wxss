@@ -467,3 +467,42 @@
   padding: 24rpx;
   border-radius: 16rpx;
 }
+
+.p-item-select-dot--active {
+  background: #E54D42 !important;
+  border-color: #E54D42 !important;
+  color: #FFFFFF !important;
+}
+
+.price-box-input {
+  background: #FFFFFF !important;
+  border: 2rpx solid #E5E5EA !important;
+  height: 84rpx;
+  border-radius: 14rpx;
+  padding: 0 20rpx;
+  font-size: 30rpx;
+  color: #1A1A1A;
+  box-sizing: border-box;
+}
+
+.edit-proj-info {
+  background: #F8F9FA;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 24rpx;
+  border: 2rpx solid #EBECEF;
+}
+
+.edit-p-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+  display: block;
+  margin-bottom: 6rpx;
+}
+
+.edit-p-dur {
+  font-size: 22rpx;
+  color: #8E8E93;
+}
+

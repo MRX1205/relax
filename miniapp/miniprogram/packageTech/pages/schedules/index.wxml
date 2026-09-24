@@ -1,46 +1,196 @@
 <view class="page">
-  <view class="list-header">
-    <view class="page-title">我的排班</view>
-    <view class="add-btn" bindtap="handleAdd">+ 新增</view>
+  <!-- Top Navigation & View Switcher -->
+  <view class="top-nav">
+    <view class="view-switch">
+      <view
+        class="switch-item {{viewMode === 'day' ? 'switch-item--active' : ''}}"
+        data-mode="day"
+        bindtap="switchViewMode"
+      >
+        按日排班
+      </view>
+      <view
+        class="switch-item {{viewMode === 'list' ? 'switch-item--active' : ''}}"
+        data-mode="list"
+        bindtap="switchViewMode"
+      >
+        排班总览
+      </view>
+    </view>
   </view>
 
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <ui-state wx:if="{{loading}}" title="加载排班中" kind="loading" />
 
   <block wx:else>
-    <view wx:if="{{showForm}}" class="surface form-card">
-      <view class="form-row">
-        <text class="form-label">日期</text>
-        <picker mode="date" value="{{formDate}}" start="{{today}}" bindchange="handleDateChange">
-          <view class="picker-val">{{formDate || '选择日期'}}</view>
-        </picker>
+    <!-- Day View -->
+    <view wx:if="{{viewMode === 'day'}}" class="day-view-container">
+      <!-- 7-Day Horizontal Calendar Strip -->
+      <view class="calendar-strip">
+        <view
+          wx:for="{{calendarDays}}"
+          wx:key="dateStr"
+          class="cal-day {{selectedDate === item.dateStr ? 'cal-day--active' : ''}}"
+          data-date="{{item.dateStr}}"
+          bindtap="handleSelectDate"
+        >
+          <text class="cal-name">{{item.dayName}}</text>
+          <text class="cal-num">{{item.dayNum}}</text>
+          <view class="cal-dot {{item.hasSchedule ? 'cal-dot--active' : ''}}"></view>
+        </view>
       </view>
-      <view class="form-row">
-        <text class="form-label">开始时间</text>
-        <picker mode="time" value="{{formStart}}" bindchange="handleStartChange">
-          <view class="picker-val">{{formStart}}</view>
-        </picker>
+
+      <!-- Selected Date Info Card -->
+      <view class="date-summary-card">
+        <view class="date-summary-left">
+          <text class="summary-date">{{selectedDate}} ({{selectedDayInfo.dayName}})</text>
+          <text class="summary-hours">当日累计服务时长：<text class="hours-num">{{currentDayTotalHours}}</text> 小时</text>
+        </view>
+        <view class="summary-badge {{currentDaySchedules.length > 0 ? 'badge-work' : 'badge-rest'}}">
+          {{currentDaySchedules.length > 0 ? '正常出勤' : '暂未排班'}}
+        </view>
       </view>
-      <view class="form-row">
-        <text class="form-label">结束时间</text>
-        <picker mode="time" value="{{formEnd}}" bindchange="handleEndChange">
-          <view class="picker-val">{{formEnd}}</view>
-        </picker>
+
+      <!-- Quick Shift Presets Card -->
+      <view class="presets-card">
+        <view class="card-header">
+          <text class="card-title">⚡ 一键快捷排班</text>
+          <text class="card-subtitle">点击即可快速应用或切换当日班次</text>
+        </view>
+        <view class="preset-grid">
+          <view class="preset-btn preset-full" data-preset="full" bindtap="applyPreset">
+            <text class="preset-icon">🌟</text>
+            <view class="preset-info">
+              <text class="preset-name">全天班</text>
+              <text class="preset-time">09:00 - 22:00</text>
+            </view>
+          </view>
+          <view class="preset-btn preset-morning" data-preset="morning" bindtap="applyPreset">
+            <text class="preset-icon">🌅</text>
+            <view class="preset-info">
+              <text class="preset-name">早班</text>
+              <text class="preset-time">09:00 - 15:00</text>
+            </view>
+          </view>
+          <view class="preset-btn preset-evening" data-preset="evening" bindtap="applyPreset">
+            <text class="preset-icon">🌇</text>
+            <view class="preset-info">
+              <text class="preset-name">晚班</text>
+              <text class="preset-time">15:00 - 22:00</text>
+            </view>
+          </view>
+          <view class="preset-btn preset-rest" data-preset="rest" bindtap="applyPreset">
+            <text class="preset-icon">☕</text>
+            <view class="preset-info">
+              <text class="preset-name">今日休息</text>
+              <text class="preset-time">清除所有时段</text>
+            </view>
+          </view>
+        </view>
       </view>
-      <view class="form-actions">
-        <ui-button label="取消" variant="secondary" bind:action="handleCancel" />
-        <ui-button label="保存" loading="{{saving}}" bind:action="handleSave" />
+
+      <!-- Current Day Slots List -->
+      <view class="slots-section">
+        <view class="slots-header">
+          <text class="slots-title">当日可接单时段 ({{currentDaySchedules.length}})</text>
+          <view class="add-slot-link" bindtap="openCustomModal">+ 自定义时段</view>
+        </view>
+
+        <view wx:if="{{currentDaySchedules.length === 0}}" class="empty-slots-card">
+          <text class="empty-slots-icon">📅</text>
+          <text class="empty-slots-text">当天未设置排班时段，用户将无法预约此时段服务</text>
+          <button class="empty-add-btn" bindtap="openCustomModal">添加排班时段</button>
+        </view>
+
+        <view wx:else class="slots-list">
+          <view wx:for="{{currentDaySchedules}}" wx:key="id" class="slot-item">
+            <view class="slot-left">
+              <view class="slot-time-range">
+                <text class="slot-start">{{item.startTime}}</text>
+                <text class="slot-arrow">→</text>
+                <text class="slot-end">{{item.endTime}}</text>
+              </view>
+              <view class="slot-tags">
+                <text class="slot-status-pill">开放预约</text>
+              </view>
+            </view>
+            <view class="slot-delete-btn" data-id="{{item.id}}" bindtap="handleDeleteSlot">
+              删除
+            </view>
+          </view>
+        </view>
       </view>
     </view>
 
-    <view class="schedule-list">
-      <view wx:for="{{schedules}}" wx:key="id" class="surface schedule-item">
-        <view class="schedule-main" data-item="{{item}}" bindtap="handleEdit">
-          <view class="schedule-date">{{item.scheduleDate}}</view>
-          <view class="schedule-time">{{item.startTime}} - {{item.endTime}}</view>
-        </view>
-        <view class="schedule-delete" data-id="{{item.id}}" bindtap="handleDelete">删除</view>
+    <!-- List View (All Schedules) -->
+    <view wx:else class="list-view-container">
+      <view class="list-summary-bar">
+        <text class="list-summary-txt">共找到 {{schedules.length}} 条有效排班</text>
+        <view class="add-slot-link" bindtap="openCustomModal">+ 新增时段</view>
       </view>
-      <view wx:if="{{schedules.length === 0}}" class="empty-tip">暂无排班，请添加可服务时段</view>
+
+      <view wx:if="{{schedules.length === 0}}" class="empty-slots-card">
+        <text class="empty-slots-icon">📅</text>
+        <text class="empty-slots-text">暂无任何已设排班，请在按日排班中设置</text>
+      </view>
+
+      <view wx:else class="all-schedules-list">
+        <view wx:for="{{schedules}}" wx:key="id" class="all-sched-card">
+          <view class="sched-date-col">
+            <text class="sched-date-main">{{item.scheduleDate}}</text>
+            <text class="sched-tag">接单时段</text>
+          </view>
+          <view class="sched-time-col">
+            <text class="sched-time-txt">{{item.startTime}} ~ {{item.endTime}}</text>
+          </view>
+          <view class="sched-del-col" data-id="{{item.id}}" bindtap="handleDeleteSlot">
+            <text class="del-text">删除</text>
+          </view>
+        </view>
+      </view>
     </view>
   </block>
+
+  <!-- Custom Slot Modal Sheet -->
+  <view wx:if="{{showModal}}" class="modal-backdrop" bindtap="closeCustomModal">
+    <view class="modal-sheet" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">添加服务时段</text>
+        <text class="modal-close" bindtap="closeCustomModal">✕</text>
+      </view>
+
+      <view class="modal-body">
+        <view class="modal-field">
+          <text class="field-label">服务日期</text>
+          <view class="field-static-value">{{selectedDate}} ({{selectedDayInfo.dayName}})</view>
+        </view>
+
+        <view class="modal-field">
+          <text class="field-label">开始时间</text>
+          <picker mode="time" value="{{formStart}}" bindchange="handleStartChange">
+            <view class="picker-box">
+              <text class="picker-text">{{formStart}}</text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="modal-field">
+          <text class="field-label">结束时间</text>
+          <picker mode="time" value="{{formEnd}}" bindchange="handleEndChange">
+            <view class="picker-box">
+              <text class="picker-text">{{formEnd}}</text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="modal-actions">
+        <button class="m-btn m-btn--cancel" bindtap="closeCustomModal">取消</button>
+        <button class="m-btn m-btn--confirm" loading="{{saving}}" disabled="{{saving}}" bindtap="handleSaveCustom">
+          确认保存
+        </button>
+      </view>
+    </view>
+  </view>
 </view>

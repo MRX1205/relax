@@ -74,17 +74,24 @@
 }
 
 .input-wrap {
-  background: #F8F9FA;
+  background: #FFFFFF;
   border-radius: 16rpx;
   padding: 0 24rpx;
   height: 88rpx;
   display: flex;
   align-items: center;
-  border: 1.5rpx solid rgba(0, 0, 0, 0.05);
+  border: 2rpx solid #E5E5EA;
+  box-sizing: border-box;
+}
+
+.input-wrap:focus-within {
+  border-color: #007AFF;
 }
 
 .name-input {
   flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
   font-size: 30rpx;
   font-weight: 600;
   color: #1A1A1A;

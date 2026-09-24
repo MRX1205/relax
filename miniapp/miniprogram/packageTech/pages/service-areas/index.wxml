@@ -1,37 +1,89 @@
 <view class="page">
-  <view class="header-box">
-    <view class="page-title">我的接单服务片区</view>
-    <view class="page-subtitle">您可以自定义开启或关闭以下片区，关闭后系统将不再向您派发对应区域的预约订单。</view>
+  <!-- Header Overview Card -->
+  <view class="hero-card">
+    <view class="hero-top">
+      <view class="hero-title-box">
+        <text class="hero-title">服务接单区域</text>
+        <text class="hero-desc">自定义接单片区，关闭的片区将不向您派送上门订单</text>
+      </view>
+      <view class="stat-pill">
+        <text class="stat-num">{{selectedCount}}</text>
+        <text class="stat-total">/{{totalCount}}</text>
+      </view>
+    </view>
+    <view class="hero-footer">
+      <view class="hero-tip">
+        <text class="tip-icon">💡</text>
+        <text class="tip-text">建议至少开启 3 个以上核心商圈片区以保障单量</text>
+      </view>
+    </view>
   </view>
 
-  <ui-state wx:if="{{loading}}" title="加载中" kind="loading" />
+  <!-- Zone Filter Tabs -->
+  <scroll-view class="zone-tabs" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="*this"
+      class="zone-tab {{activeTab === item ? 'zone-tab--active' : ''}}"
+      data-tab="{{item}}"
+      bindtap="handleTabClick"
+    >
+      <text class="zone-tab-text">{{item}}</text>
+    </view>
+  </scroll-view>
+
+  <ui-state wx:if="{{loading}}" title="加载片区中" kind="loading" />
 
   <block wx:else>
-    <view class="actions-bar">
-      <text class="select-hint">已选 {{selectedIds.length}} / {{areas.length}} 个片区</text>
-      <text class="select-all-btn" bindtap="handleSelectAll">全部开启</text>
+    <!-- Batch Actions -->
+    <view class="batch-bar">
+      <text class="batch-info">当前片区显示 {{displayedAreas.length}} 个镇街</text>
+      <view class="batch-btns">
+        <view class="batch-btn batch-btn--open" bindtap="handleSelectAllCurrent">全开本片区</view>
+        <view class="batch-btn batch-btn--close" bindtap="handleDeselectCurrent">关闭本片区</view>
+      </view>
     </view>
 
+    <!-- Areas Grid -->
     <view class="area-grid">
       <view
-        wx:for="{{areas}}"
+        wx:for="{{displayedAreas}}"
         wx:key="id"
-        class="area-card {{selectedIds.includes(item.id) ? 'area-card--active' : ''}}"
+        class="area-card {{item.selected ? 'area-card--selected' : ''}}"
         data-id="{{item.id}}"
         bindtap="handleToggleArea"
       >
-        <view class="area-check-dot">
-          <text wx:if="{{selectedIds.includes(item.id)}}">✓</text>
+        <view class="card-left">
+          <view class="check-box {{item.selected ? 'check-box--active' : ''}}">
+            <text wx:if="{{item.selected}}" class="check-mark">✓</text>
+          </view>
+          <view class="card-content">
+            <text class="card-title">{{item.name}}</text>
+            <view class="card-badges">
+              <text class="zone-badge">{{item.zone}}</text>
+              <text class="status-badge {{item.status === 'ENABLED' ? 'status-badge--on' : 'status-badge--off'}}">
+                {{item.status === 'ENABLED' ? '平台开放' : '暂未开放'}}
+              </text>
+            </view>
+          </view>
         </view>
-        <view class="area-info">
-          <text class="area-name">{{item.name}}</text>
-          <text class="area-status-txt">{{item.status === 'ENABLED' ? '平台正常运营' : '暂停服务'}}</text>
+        <view class="card-status-text {{item.selected ? 'status-active' : 'status-inactive'}}">
+          {{item.selected ? '接单中' : '未开启'}}
         </view>
       </view>
     </view>
 
-    <view class="save-bar">
-      <button class="save-btn" bindtap="handleSave">保存片区设置</button>
+    <!-- Empty state if none match tab -->
+    <view wx:if="{{displayedAreas.length === 0}}" class="empty-box">
+      <text class="empty-icon">📍</text>
+      <text class="empty-text">该片区暂无可配置镇街</text>
     </view>
   </block>
+
+  <!-- Bottom Save Bar with Safe Area -->
+  <view class="save-bar-wrapper">
+    <button class="save-btn" loading="{{saving}}" disabled="{{saving}}" bindtap="handleSave">
+      保存接单片区设置 (已开启 {{selectedCount}} 个)
+    </button>
+  </view>
 </view>

@@ -2,6 +2,28 @@
 /* Apple HIG (Human Interface Guidelines) 全局设计规范系统         */
 /* ═════════════════════════════════════════════════════════════ */
 
+/* 全局基础重置与排版对齐保障 */
+view, text, scroll-view, swiper, button, input, textarea, label, navigator, image {
+  box-sizing: border-box;
+}
+
+button {
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  line-height: normal;
+  font-size: inherit;
+  color: inherit;
+}
+button::after {
+  border: none;
+}
+
+input, textarea {
+  font-family: inherit;
+}
+
 page {
   /* 苹果核心调色盘 (Apple Color Palette) */
   --ios-bg: #F5F5F7;                       /* 苹果签名灰白画布背景 */

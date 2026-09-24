@@ -178,20 +178,21 @@
   <!-- ════ 5. 新增技师弹窗 ════ -->
   <view wx:if="{{showAddModal}}" class="modal-container">
     <view class="modal-mask" catchtouchmove="true" bindtap="closeAddModal"></view>
-    <view class="modal-body" catchtap="noop">
+    <view class="modal-body">
       <view class="modal-header">
         <text class="modal-title">新增技师账号</text>
         <text class="modal-close ios-touch-active" bindtap="closeAddModal">✕</text>
       </view>
       <text class="modal-sub">录入后将自动生成技师档案，技师可直接使用该手机号与密码登录服务端接单。</text>
 
-      <scroll-view scroll-y style="max-height: 55vh;">
+      <view class="modal-form-scroll" style="max-height: 58vh; overflow-y: auto; -webkit-overflow-scrolling: touch;">
         <view class="modal-form">
           <view class="m-field">
             <text class="m-label">登录手机号 <text class="req">*</text></text>
             <input
               class="m-input"
               type="number"
+              always-embed="{{true}}"
               maxlength="11"
               placeholder="11位手机号码（登录账号）"
               value="{{addForm.phone}}"
@@ -207,6 +208,7 @@
             <input
               class="m-input"
               password
+              always-embed="{{true}}"
               placeholder="不少于6位登录密码"
               value="{{addForm.password}}"
               data-field="password"
@@ -220,6 +222,7 @@
             <text class="m-label">服务艺名 <text class="req">*</text></text>
             <input
               class="m-input"
+              always-embed="{{true}}"
               placeholder="顾客端展示名，如: 欣欣技师"
               value="{{addForm.serviceName}}"
               data-field="serviceName"
@@ -233,6 +236,7 @@
             <text class="m-label">真实姓名</text>
             <input
               class="m-input"
+              always-embed="{{true}}"
               placeholder="用于实名档案核验"
               value="{{addForm.realName}}"
               data-field="realName"
@@ -247,6 +251,7 @@
             <input
               class="m-input"
               type="number"
+              always-embed="{{true}}"
               placeholder="从业年限（默认 3 年）"
               value="{{addForm.experienceYears}}"
               data-field="experienceYears"
@@ -260,6 +265,7 @@
             <text class="m-label">擅长简介</text>
             <input
               class="m-input"
+              always-embed="{{true}}"
               placeholder="擅长项目及手法介绍"
               value="{{addForm.intro}}"
               data-field="intro"
@@ -269,7 +275,7 @@
             />
           </view>
         </view>
-      </scroll-view>
+      </view>
 
       <view class="modal-footer">
         <button class="m-btn-cancel ios-touch-active" bindtap="closeAddModal">取消</button>
@@ -283,7 +289,7 @@
   <!-- ════ 6. 重置密码弹窗 ════ -->
   <view wx:if="{{showResetModal}}" class="modal-container">
     <view class="modal-mask" catchtouchmove="true" bindtap="closeResetModal"></view>
-    <view class="modal-body" catchtap="noop">
+    <view class="modal-body">
       <view class="modal-header">
         <text class="modal-title">重置技师密码</text>
         <text class="modal-close ios-touch-active" bindtap="closeResetModal">✕</text>
@@ -296,6 +302,7 @@
           <input
             class="m-input"
             password
+            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
             placeholder="请输入不少于6位的新密码"
@@ -317,7 +324,7 @@
   <!-- ════ 7. 驳回弹窗 ════ -->
   <view wx:if="{{showReject}}" class="modal-container">
     <view class="modal-mask" catchtouchmove="true" bindtap="hideReject"></view>
-    <view class="modal-body" catchtap="noop">
+    <view class="modal-body">
       <view class="modal-header">
         <text class="modal-title">驳回入驻申请</text>
         <text class="modal-close ios-touch-active" bindtap="hideReject">✕</text>
@@ -327,6 +334,7 @@
           <text class="m-label">驳回原因</text>
           <textarea
             class="m-textarea"
+            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
             placeholder="请输入驳回原因，方便技师修改后重提（如：资质信息模糊、电话有误等）"
@@ -345,7 +353,7 @@
   <!-- ════ 8. 技师详细资料卡片弹窗 ════ -->
   <view wx:if="{{showDetailModal && selectedTech}}" class="modal-container">
     <view class="modal-mask" catchtouchmove="true" bindtap="closeDetailModal"></view>
-    <view class="modal-body tech-detail-modal" catchtap="noop">
+    <view class="modal-body tech-detail-modal">
       <view class="modal-header">
         <view class="modal-title-col">
           <text class="modal-title">技师详细档案</text>

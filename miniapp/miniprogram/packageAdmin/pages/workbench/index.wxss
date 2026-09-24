@@ -784,6 +784,13 @@
   gap: 20rpx;
 }
 
+.modal-scroll-body {
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4rpx 2rpx 16rpx;
+}
+
 .m-field {
   display: flex;
   flex-direction: column;
@@ -797,25 +804,35 @@
 }
 
 .m-input {
-  background: #F8F9FA;
-  height: 80rpx;
+  background: #FFFFFF !important;
+  height: 84rpx;
+  line-height: 84rpx;
   border-radius: 16rpx;
-  padding: 0 20rpx;
-  font-size: 26rpx;
-  color: #1C1C1E;
-  border: 1rpx solid rgba(0, 0, 0, 0.05);
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #1C1C1E !important;
+  border: 2rpx solid #E5E5EA !important;
+  box-sizing: border-box;
+}
+
+.m-input:focus {
+  border-color: #007AFF !important;
 }
 
 .m-textarea {
-  background: #F8F9FA;
-  height: 160rpx;
+  background: #FFFFFF !important;
+  height: 180rpx;
   border-radius: 16rpx;
-  padding: 16rpx 20rpx;
-  font-size: 26rpx;
-  color: #1C1C1E;
+  padding: 16rpx 24rpx;
+  font-size: 28rpx;
+  color: #1C1C1E !important;
   width: 100%;
   box-sizing: border-box;
-  border: 1rpx solid rgba(0, 0, 0, 0.05);
+  border: 2rpx solid #E5E5EA !important;
+}
+
+.m-textarea:focus {
+  border-color: #007AFF !important;
 }
 
 .target-radio-row {

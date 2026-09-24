@@ -47,7 +47,7 @@ public class CatalogController {
     ApiResponse<CategoryMapper.CategoryView> createCategory(@AuthenticationPrincipal CurrentUser currentUser,
             @Valid @RequestBody CategoryRequest request) {
         return ApiResponse.success(catalogService.createCategory(
-                new CatalogService.CategoryRequest(request.name(), request.sort())));
+                new CatalogService.CategoryRequest(request.name(), request.sort() != null ? request.sort() : 0)));
     }
 
     @PutMapping("/admin/categories/{id}")
@@ -55,7 +55,7 @@ public class CatalogController {
     ApiResponse<CategoryMapper.CategoryView> updateCategory(@AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable long id, @Valid @RequestBody CategoryRequest request) {
         return ApiResponse.success(catalogService.updateCategory(id,
-                new CatalogService.CategoryRequest(request.name(), request.sort())));
+                new CatalogService.CategoryRequest(request.name(), request.sort() != null ? request.sort() : 0)));
     }
 
     @PutMapping("/admin/categories/{id}/status")
@@ -77,18 +77,22 @@ public class CatalogController {
     @PreAuthorize("hasAuthority('project:write') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<ProjectMapper.ProjectView> createProject(@AuthenticationPrincipal CurrentUser currentUser,
             @Valid @RequestBody ProjectRequest request) {
+        int duration = request.durationMinutes() != null ? request.durationMinutes() : 60;
+        int sort = request.sort() != null ? request.sort() : 0;
         return ApiResponse.success(catalogService.createProject(new CatalogService.ProjectRequest(
-                request.categoryId(), request.name(), request.durationMinutes(), request.basePrice(),
-                request.description(), request.notice(), request.coverFileId(), request.sort())));
+                request.categoryId(), request.name(), duration, request.basePrice(),
+                request.description(), request.notice(), request.coverFileId(), sort)));
     }
 
     @PutMapping("/admin/projects/{id}")
     @PreAuthorize("hasAuthority('project:write') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ApiResponse<ProjectMapper.ProjectView> updateProject(@AuthenticationPrincipal CurrentUser currentUser,
             @PathVariable long id, @Valid @RequestBody ProjectRequest request) {
+        int duration = request.durationMinutes() != null ? request.durationMinutes() : 60;
+        int sort = request.sort() != null ? request.sort() : 0;
         return ApiResponse.success(catalogService.updateProject(id, new CatalogService.ProjectRequest(
-                request.categoryId(), request.name(), request.durationMinutes(), request.basePrice(),
-                request.description(), request.notice(), request.coverFileId(), request.sort())));
+                request.categoryId(), request.name(), duration, request.basePrice(),
+                request.description(), request.notice(), request.coverFileId(), sort)));
     }
 
     @PutMapping("/admin/projects/{id}/status")
@@ -105,19 +109,20 @@ public class CatalogController {
         return ApiResponse.success(null);
     }
 
-    public record CategoryRequest(@NotBlank @Size(max = 64) String name, @Min(0) int sort) {
+    public record CategoryRequest(@NotBlank @Size(max = 64) String name, @Min(0) Integer sort) {
     }
 
     public record ProjectRequest(
             @NotNull Long categoryId,
             @NotBlank @Size(max = 100) String name,
-            @Min(1) int durationMinutes,
+            @NotNull @Min(1) Integer durationMinutes,
             @NotNull @DecimalMin("0.01") BigDecimal basePrice,
             @Size(max = 1000) String description,
             @Size(max = 500) String notice,
             Long coverFileId,
-            @Min(0) int sort) {
+            @Min(0) Integer sort) {
     }
+
 
     public record StatusRequest(@NotBlank @Pattern(regexp = "ENABLED|DISABLED|DRAFT|ON_SHELF|OFF_SHELF") String status) {
     }

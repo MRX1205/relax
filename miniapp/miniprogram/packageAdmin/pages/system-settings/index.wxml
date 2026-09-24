@@ -19,6 +19,7 @@
     <view class="input-wrap">
       <input
         class="name-input"
+        always-embed="{{true}}"
         value="{{appName}}"
         placeholder="例如: 东莞到家"
         bindinput="handleAppNameInput"
@@ -39,6 +40,7 @@
     <view class="input-wrap">
       <input
         class="name-input"
+        always-embed="{{true}}"
         value="{{servicePhone}}"
         placeholder="例如: 400-800-6688 或 手机号"
         bindinput="handleServicePhoneInput"
@@ -87,6 +89,7 @@
       <input
         class="name-input"
         type="digit"
+        always-embed="{{true}}"
         value="{{inviteRewardAmount}}"
         placeholder="30.00"
         bindinput="handleInviteRewardInput"

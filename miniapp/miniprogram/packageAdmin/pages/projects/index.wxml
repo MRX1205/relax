@@ -153,7 +153,7 @@
   <!-- ════ 4. 新增 / 编辑项目弹窗 (Apple HIG Modal) ════ -->
   <view wx:if="{{showModal}}" class="modal-container">
     <view class="modal-mask" catchtouchmove="true" bindtap="closeModal"></view>
-    <view class="modal-sheet" catchtap="noop">
+    <view class="modal-sheet">
       <view class="modal-header">
         <view class="modal-title-col">
           <text class="modal-title">{{isEditing ? '编辑服务项目' : '新增服务项目'}}</text>
@@ -162,7 +162,7 @@
         <view class="modal-close-btn ios-touch-active" bindtap="closeModal">✕</view>
       </view>
 
-      <scroll-view scroll-y style="max-height: 60vh;">
+      <view class="modal-form-scroll">
         <view class="modal-form-content">
           <!-- 分类选择 -->
           <view class="form-row">
@@ -280,7 +280,7 @@
             ></textarea>
           </view>
         </view>
-      </scroll-view>
+      </view>
 
       <!-- 弹窗底部操作 -->
       <view class="modal-footer-actions">

@@ -72,7 +72,8 @@
         "pages/audit-logs/index",
         "pages/system-settings/index",
         "pages/coupons/index",
-        "pages/stats/index"
+        "pages/stats/index",
+        "pages/mock-data/index"
       ]
     }
   ],

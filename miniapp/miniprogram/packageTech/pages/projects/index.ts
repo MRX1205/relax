@@ -17,22 +17,11 @@ Page({
     platformProjects: [] as PlatformProjectItem[],
 
     // Modals
-    showCustomModal: false,
     showPlatformModal: false,
     showEditModal: false,
 
-    // Custom Project Form
-    customForm: {
-      name: "",
-      categoryId: 101,
-      durationMinutes: "60",
-      basePrice: "198",
-      description: "",
-      notice: "请保持室内通风，服务前请勿过饱饮食",
-      onShelf: true,
-    },
-
     // Join Platform Form
+    selectedPlatformId: "",
     selectedPlatformProject: null as PlatformProjectItem | null,
     joinPrice: "",
 
@@ -79,18 +68,18 @@ Page({
 
   // === 上架 / 下架 切换 ===
   async handleToggleStatus(e: WechatMiniprogram.TouchEvent) {
-    const id = e.currentTarget.dataset.id as number;
-    const current = this.data.projects.find(p => p.id === id);
+    const id = e.currentTarget.dataset.id;
+    const current = this.data.projects.find(p => String(p.id) === String(id));
     if (!current) return;
 
     const actionText = current.status === "ENABLED" ? "下架" : "上架";
     try {
       wx.showLoading({ title: `${actionText}中...` });
-      const updated = await toggleProjectStatus(id);
+      const updated = await toggleProjectStatus(Number(current.id));
       wx.hideLoading();
       wx.showToast({ title: `已${actionText}`, icon: "success" });
 
-      const updatedList = this.data.projects.map(p => (p.id === id ? updated : p));
+      const updatedList = this.data.projects.map(p => (String(p.id) === String(id) ? updated : p));
       this.setData({ projects: updatedList });
     } catch (err: any) {
       wx.hideLoading();
@@ -100,8 +89,8 @@ Page({
 
   // === 删除 / 移除项目 ===
   async handleDelete(e: WechatMiniprogram.TouchEvent) {
-    const id = e.currentTarget.dataset.id as number;
-    const project = this.data.projects.find(p => p.id === id);
+    const id = e.currentTarget.dataset.id;
+    const project = this.data.projects.find(p => String(p.id) === String(id));
     if (!project) return;
 
     const isCustom = project.creatorType === "TECHNICIAN";
@@ -119,11 +108,11 @@ Page({
 
     try {
       wx.showLoading({ title: "移除中..." });
-      await deleteProject(id);
+      await deleteProject(Number(project.id));
       wx.hideLoading();
       wx.showToast({ title: "已移除", icon: "success" });
       this.setData({
-        projects: this.data.projects.filter(p => p.id !== id),
+        projects: this.data.projects.filter(p => String(p.id) !== String(id)),
       });
     } catch (err: any) {
       wx.hideLoading();
@@ -136,80 +125,25 @@ Page({
     wx.navigateTo({ url: "/packageTech/pages/project-edit/index?mode=create" });
   },
 
-  closeCustomModal() {
-    this.setData({ showCustomModal: false });
-  },
-
-  handleCustomInput(e: WechatMiniprogram.Input) {
-    const field = e.currentTarget.dataset.field as string;
-    this.setData({
-      [`customForm.${field}`]: e.detail.value,
-    });
-  },
-
-  handleCustomShelfChange(e: any) {
-    this.setData({
-      "customForm.onShelf": e.detail.value,
-    });
-  },
-
-  async handleSaveCustom() {
-    const { name, durationMinutes, basePrice, description, notice, onShelf } = this.data.customForm;
-    if (!name.trim()) {
-      wx.showToast({ title: "请输入项目名称", icon: "none" });
-      return;
-    }
-    const duration = parseInt(durationMinutes, 10);
-    if (isNaN(duration) || duration <= 0) {
-      wx.showToast({ title: "请输入有效时长", icon: "none" });
-      return;
-    }
-    const price = parseFloat(basePrice);
-    if (isNaN(price) || price <= 0) {
-      wx.showToast({ title: "请输入有效价格", icon: "none" });
-      return;
-    }
-
-    this.setData({ submitting: true });
-    try {
-      wx.showLoading({ title: "创建中..." });
-      await createCustomProject({
-        categoryId: 101,
-        name: name.trim(),
-        durationMinutes: duration,
-        basePrice: price,
-        description: description.trim(),
-        notice: notice.trim(),
-        onShelf,
-      });
-      wx.hideLoading();
-      wx.showToast({ title: "创建成功", icon: "success" });
-      this.setData({ showCustomModal: false, submitting: false });
-      await this.loadData();
-    } catch (err: any) {
-      wx.hideLoading();
-      this.setData({ submitting: false });
-      wx.showToast({ title: err?.message || "创建失败", icon: "none" });
-    }
-  },
-
   // === 从平台项目库加入弹窗 ===
   openPlatformModal() {
     this.setData({
       showPlatformModal: true,
+      selectedPlatformId: "",
       selectedPlatformProject: null,
       joinPrice: "",
     });
   },
 
   closePlatformModal() {
-    this.setData({ showPlatformModal: false });
+    this.setData({ showPlatformModal: false, selectedPlatformId: "", selectedPlatformProject: null });
   },
 
   selectPlatformItem(e: WechatMiniprogram.TouchEvent) {
-    const id = e.currentTarget.dataset.id as number;
-    const item = this.data.platformProjects.find(p => p.id === id) || null;
+    const id = String(e.currentTarget.dataset.id);
+    const item = this.data.platformProjects.find(p => String(p.id) === id) || null;
     this.setData({
+      selectedPlatformId: id,
       selectedPlatformProject: item,
       joinPrice: item ? String(item.basePrice) : "",
     });
@@ -220,23 +154,25 @@ Page({
   },
 
   async handleConfirmJoin() {
-    if (!this.data.selectedPlatformProject) {
+    const { selectedPlatformProject, selectedPlatformId, joinPrice } = this.data;
+    if (!selectedPlatformProject && !selectedPlatformId) {
       wx.showToast({ title: "请先选择平台项目", icon: "none" });
       return;
     }
-    const price = parseFloat(this.data.joinPrice);
+    const price = parseFloat(joinPrice);
     if (isNaN(price) || price <= 0) {
-      wx.showToast({ title: "请输入有效价格", icon: "none" });
+      wx.showToast({ title: "请输入有效接单价格", icon: "none" });
       return;
     }
 
+    const projectId = Number(selectedPlatformProject?.id || selectedPlatformId);
     this.setData({ submitting: true });
     try {
       wx.showLoading({ title: "加入中..." });
-      await joinPlatformProject(this.data.selectedPlatformProject.id, price);
+      await joinPlatformProject(projectId, price);
       wx.hideLoading();
       wx.showToast({ title: "加入成功", icon: "success" });
-      this.setData({ showPlatformModal: false, submitting: false });
+      this.setData({ showPlatformModal: false, submitting: false, selectedPlatformId: "", selectedPlatformProject: null });
       await this.loadData();
     } catch (err: any) {
       wx.hideLoading();
@@ -247,12 +183,12 @@ Page({
 
   // === 编辑项目 ===
   openEditModal(e: WechatMiniprogram.TouchEvent) {
-    const id = e.currentTarget.dataset.id as number;
-    const project = this.data.projects.find(p => p.id === id);
+    const id = e.currentTarget.dataset.id;
+    const project = this.data.projects.find(p => String(p.id) === String(id));
     if (!project) return;
 
     if (project.creatorType === "TECHNICIAN") {
-      wx.navigateTo({ url: `/packageTech/pages/project-edit/index?mode=edit&id=${id}` });
+      wx.navigateTo({ url: `/packageTech/pages/project-edit/index?mode=edit&id=${project.id}` });
       return;
     }
 
@@ -274,18 +210,6 @@ Page({
     this.setData({ editPrice: e.detail.value });
   },
 
-  handleEditNameInput(e: WechatMiniprogram.Input) {
-    this.setData({ editName: e.detail.value });
-  },
-
-  handleEditDurationInput(e: WechatMiniprogram.Input) {
-    this.setData({ editDuration: e.detail.value });
-  },
-
-  handleEditDescInput(e: WechatMiniprogram.Input) {
-    this.setData({ editDescription: e.detail.value });
-  },
-
   async handleSaveEdit() {
     if (!this.data.editingProject) return;
     const price = parseFloat(this.data.editPrice);
@@ -294,16 +218,11 @@ Page({
       return;
     }
 
-    const isCustom = this.data.editingProject.creatorType === "TECHNICIAN";
     this.setData({ submitting: true });
-
     try {
       wx.showLoading({ title: "保存中..." });
-      await updateProject(this.data.editingProject.id, {
+      await updateProject(Number(this.data.editingProject.id), {
         overridePrice: price,
-        name: isCustom ? this.data.editName.trim() : undefined,
-        durationMinutes: isCustom ? parseInt(this.data.editDuration, 10) || undefined : undefined,
-        description: isCustom ? this.data.editDescription.trim() : undefined,
       });
       wx.hideLoading();
       wx.showToast({ title: "保存成功", icon: "success" });
@@ -315,6 +234,4 @@ Page({
       wx.showToast({ title: err?.message || "保存失败", icon: "none" });
     }
   },
-
-  noop() {},
 });

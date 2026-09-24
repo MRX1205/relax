@@ -239,19 +239,20 @@
   <!-- ════ 8. 发布系统消息与全员广播弹窗 (Solid White) ════ -->
   <view wx:if="{{showBroadcastModal}}" class="modal-container">
     <view class="modal-mask" catchtouchmove="true" bindtap="closeBroadcastModal"></view>
-    <view class="modal-body" catchtap="noop">
+    <view class="modal-body">
       <view class="modal-header">
         <text class="modal-title">发布系统通知与公告</text>
         <text class="modal-close ios-touch-active" bindtap="closeBroadcastModal">✕</text>
       </view>
       <text class="modal-sub">消息发布后将实时推送至顾客端「消息通知」列表。</text>
 
-      <scroll-view scroll-y class="modal-scroll-body" style="max-height: 55vh;">
+      <view class="modal-scroll-body">
         <view class="modal-form">
           <view class="m-field">
             <text class="m-label">消息标题 *</text>
             <input
               class="m-input"
+              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="如：平台周年庆优惠券已派发"
@@ -309,6 +310,7 @@
             <input
               class="m-input"
               type="number"
+              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="请输入目标用户数字ID"
@@ -317,7 +319,7 @@
             />
           </view>
         </view>
-      </scroll-view>
+      </view>
 
       <view class="modal-footer">
         <button class="m-btn-cancel ios-touch-active" bindtap="closeBroadcastModal">取消</button>

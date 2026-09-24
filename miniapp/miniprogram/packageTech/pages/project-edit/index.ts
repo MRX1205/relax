@@ -120,7 +120,7 @@ Page({
       wx.showToast({ title: "请输入有效接单价格", icon: "none" });
       return;
     }
-    const categoryId = (categoryIndex >= 0 && categories[categoryIndex]) ? categories[categoryIndex].id : 101;
+    const categoryId = (categoryIndex >= 0 && categories[categoryIndex]) ? Number(categories[categoryIndex].id) : 101;
 
     this.setData({ submitting: true });
     try {

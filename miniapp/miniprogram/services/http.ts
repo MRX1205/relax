@@ -186,27 +186,56 @@ export function downloadAndOpenDocument(
     wx.showLoading({ title: "正在导出..." });
     const token = getAccessToken();
     const url = `${environment.apiBaseUrl}${path}`;
-    const safeAsciiName = `order_export_${Date.now()}.${fileType}`;
-    const targetFilePath = `${wx.env.USER_DATA_PATH}/${safeAsciiName}`;
 
-    wx.request({
+    wx.downloadFile({
       url,
-      method: "GET",
-      responseType: "arraybuffer",
       header: {
         Authorization: token ? `Bearer ${token}` : "",
       },
       success: (res) => {
-        if (res.statusCode === 200 && res.data) {
+        wx.hideLoading();
+        if (res.statusCode === 200 && res.tempFilePath) {
+          const tempPath = res.tempFilePath;
           const fs = wx.getFileSystemManager();
-          fs.writeFile({
-            filePath: targetFilePath,
-            data: res.data as ArrayBuffer,
-            encoding: "binary",
-            success: () => {
-              wx.hideLoading();
+          const safeName = `export_${Date.now()}.${fileType}`;
+          const targetPath = `${wx.env.USER_DATA_PATH}/${safeName}`;
+
+          fs.saveFile({
+            tempFilePath: tempPath,
+            filePath: targetPath,
+            success: (saveRes) => {
               wx.openDocument({
-                filePath: targetFilePath,
+                filePath: saveRes.savedFilePath || targetPath,
+                fileType,
+                showMenu: true,
+                success: () => {
+                  wx.showToast({ title: "已打开报表", icon: "success" });
+                  resolve();
+                },
+                fail: () => {
+                  wx.openDocument({
+                    filePath: tempPath,
+                    fileType,
+                    showMenu: true,
+                    success: () => {
+                      wx.showToast({ title: "已打开报表", icon: "success" });
+                      resolve();
+                    },
+                    fail: () => {
+                      wx.showModal({
+                        title: "报表导出成功",
+                        content: "报表已保存至小程序本地沙箱，可在微信文件管理中发送或查看。",
+                        showCancel: false,
+                      });
+                      resolve();
+                    },
+                  });
+                },
+              });
+            },
+            fail: () => {
+              wx.openDocument({
+                filePath: tempPath,
                 fileType,
                 showMenu: true,
                 success: () => {
@@ -219,24 +248,19 @@ export function downloadAndOpenDocument(
                 },
               });
             },
-            fail: (err) => {
-              wx.hideLoading();
-              wx.showToast({ title: "保存报表失败", icon: "none" });
-              reject(err);
-            },
           });
         } else {
-          wx.hideLoading();
           wx.showToast({ title: `导出失败(${res.statusCode})`, icon: "none" });
-          reject(new Error(`Export failed with status ${res.statusCode}`));
+          reject(new Error(`Download failed with status ${res.statusCode}`));
         }
       },
       fail: (err) => {
         wx.hideLoading();
-        wx.showToast({ title: "下载失败，请检查网络", icon: "none" });
+        wx.showToast({ title: "网络连接失败", icon: "none" });
         reject(err);
       },
     });
   });
 }
+
 

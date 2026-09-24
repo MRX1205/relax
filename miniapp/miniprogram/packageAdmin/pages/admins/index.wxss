@@ -340,12 +340,19 @@
 }
 
 .m-input {
-  height: 80rpx;
-  background: #F2F2F7;
+  height: 84rpx;
+  line-height: 84rpx;
+  background: #FFFFFF !important;
+  border: 2rpx solid #E5E5EA !important;
   border-radius: 16rpx;
-  padding: 0 20rpx;
+  padding: 0 24rpx;
   font-size: 28rpx;
-  color: #1D1D1F;
+  color: #1D1D1F !important;
+  box-sizing: border-box;
+}
+
+.m-input:focus {
+  border-color: #007AFF !important;
 }
 
 .modal-footer {

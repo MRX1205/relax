@@ -377,23 +377,35 @@
 }
 
 .m-input {
-  height: 80rpx;
-  background: #F2F2F7;
+  height: 84rpx;
+  line-height: 84rpx;
+  background: #FFFFFF !important;
+  border: 2rpx solid #E5E5EA !important;
   border-radius: 16rpx;
-  padding: 0 20rpx;
+  padding: 0 24rpx;
   font-size: 28rpx;
-  color: #1D1D1F;
+  color: #1D1D1F !important;
+  box-sizing: border-box;
+}
+
+.m-input:focus {
+  border-color: #007AFF !important;
 }
 
 .m-textarea {
   width: 100%;
-  height: 160rpx;
-  background: #F2F2F7;
+  height: 180rpx;
+  background: #FFFFFF !important;
+  border: 2rpx solid #E5E5EA !important;
   border-radius: 16rpx;
-  padding: 16rpx 20rpx;
+  padding: 16rpx 24rpx;
   box-sizing: border-box;
-  font-size: 26rpx;
-  color: #1D1D1F;
+  font-size: 28rpx;
+  color: #1D1D1F !important;
+}
+
+.m-textarea:focus {
+  border-color: #007AFF !important;
 }
 
 .modal-footer {

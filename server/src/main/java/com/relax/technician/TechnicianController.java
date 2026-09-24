@@ -39,15 +39,17 @@ public class TechnicianController {
     private final TechnicianPricingMapper pricingMapper;
     private final TechnicianPhotoMapper photoMapper;
     private final ProjectMapper projectMapper;
+    private final TechnicianServiceAreaMapper serviceAreaMapper;
 
     TechnicianController(TechnicianService technicianService, TechnicianAuditMapper auditMapper,
             TechnicianPricingMapper pricingMapper, TechnicianPhotoMapper photoMapper,
-            ProjectMapper projectMapper) {
+            ProjectMapper projectMapper, TechnicianServiceAreaMapper serviceAreaMapper) {
         this.technicianService = technicianService;
         this.auditMapper = auditMapper;
         this.pricingMapper = pricingMapper;
         this.photoMapper = photoMapper;
         this.projectMapper = projectMapper;
+        this.serviceAreaMapper = serviceAreaMapper;
     }
 
     private long getTechnicianId(long userId) {
@@ -113,6 +115,33 @@ public class TechnicianController {
         long techId = getTechnicianId(currentUser.id());
         auditMapper.updateOnlineStatus(techId, request.onlineStatus());
         return ApiResponse.success(null);
+    }
+
+    // === 技师接单服务片区 ===
+
+    @GetMapping("/service-areas")
+    ApiResponse<List<String>> listMyServiceAreas(@AuthenticationPrincipal CurrentUser currentUser) {
+        long techId = getTechnicianId(currentUser.id());
+        List<Long> ids = serviceAreaMapper.findAreaIdsByTechnician(techId);
+        return ApiResponse.success(ids.stream().map(String::valueOf).toList());
+    }
+
+    @PutMapping("/service-areas")
+    @Transactional
+    ApiResponse<List<String>> updateMyServiceAreas(@AuthenticationPrincipal CurrentUser currentUser,
+            @RequestBody List<String> areaIds) {
+        long techId = getTechnicianId(currentUser.id());
+        serviceAreaMapper.deleteByTechnician(techId);
+        if (areaIds != null) {
+            for (String idStr : areaIds) {
+                try {
+                    long areaId = Long.parseLong(idStr.trim());
+                    serviceAreaMapper.insert(techId, areaId);
+                } catch (Exception ignored) {}
+            }
+        }
+        List<Long> ids = serviceAreaMapper.findAreaIdsByTechnician(techId);
+        return ApiResponse.success(ids.stream().map(String::valueOf).toList());
     }
 
     // === 技师生活相册管理 ===

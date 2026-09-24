@@ -28,7 +28,7 @@ export function uploadDirectFile(filePath: string, purpose: string = "IMAGE"): P
         if (res.statusCode >= 200 && res.statusCode < 300) {
           try {
             const data = JSON.parse(res.data);
-            if (data.code === "SUCCESS" && data.data && data.data.url) {
+            if ((data.code === "OK" || data.code === "SUCCESS") && data.data && data.data.url) {
               const resultUrl = data.data.url.startsWith("http")
                 ? data.data.url
                 : `${environment.apiBaseUrl}${data.data.url}`;

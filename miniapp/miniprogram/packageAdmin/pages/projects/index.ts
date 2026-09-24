@@ -1,5 +1,5 @@
 import { request } from "../../../services/http";
-import { uploadPrivateFile } from "../../../services/file";
+import { uploadDirectFile } from "../../../services/file";
 import { getProjectCover } from "../../../utils/assets";
 
 interface Category {
@@ -217,8 +217,8 @@ Page({
       let coverFileId: string | null = null;
       if (coverPath && (coverPath.startsWith("http://tmp") || coverPath.startsWith("wxfile://"))) {
         wx.showLoading({ title: "上传封面中..." });
-        const file = await uploadPrivateFile(coverPath, "PROJECT_COVER");
-        coverFileId = file.id;
+        const file = await uploadDirectFile(coverPath, "PROJECT_COVER");
+        coverFileId = String(file.id);
         wx.hideLoading();
       }
 

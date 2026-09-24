@@ -29,7 +29,7 @@ public class AuthController {
 
     @PostMapping("/auth/wechat-login")
     ApiResponse<AuthService.LoginResult> login(@Valid @RequestBody LoginRequest request) {
-        return ApiResponse.success(authService.login(request.code()));
+        return ApiResponse.success(authService.login(request.code(), request.deviceId()));
     }
 
     @PostMapping("/auth/phone-login")
@@ -95,7 +95,7 @@ public class AuthController {
         return ApiResponse.success(true);
     }
 
-    public record LoginRequest(@NotBlank @Size(max = 200) String code) {
+    public record LoginRequest(@NotBlank @Size(max = 200) String code, String deviceId) {
     }
 
     public record PhoneLoginRequest(@NotBlank @Pattern(regexp = "1\\d{10}") String phone) {

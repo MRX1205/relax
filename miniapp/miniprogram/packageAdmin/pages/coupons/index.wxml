@@ -79,7 +79,6 @@
           <text class="m-label">优惠券名称 *</text>
           <input
             class="m-input"
-            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
             placeholder="如：全场通用减20元券"
@@ -94,7 +93,6 @@
             <input
               class="m-input"
               type="digit"
-              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="如：20"
@@ -107,7 +105,6 @@
             <input
               class="m-input"
               type="digit"
-              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="0为无门槛"
@@ -122,7 +119,6 @@
           <input
             class="m-input"
             type="number"
-            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
             placeholder="如：500"
@@ -157,7 +153,6 @@
           <input
             class="m-input"
             type="number"
-            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
             placeholder="在「用户会员管理」中查看UID"

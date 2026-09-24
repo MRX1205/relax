@@ -9,6 +9,19 @@
         <text>基本信息</text>
       </view>
 
+      <!-- 头像上传 -->
+      <view class="avatar-edit-row" bindtap="handleChooseAvatar">
+        <view class="avatar-preview-wrap">
+          <image class="avatar-img" src="{{avatarUrl || '/assets/images/tech-wang.jpg'}}" mode="aspectFill" />
+          <view class="avatar-badge">📷 更换</view>
+        </view>
+        <view class="avatar-tip-wrap">
+          <text class="avatar-title">技师个人头像</text>
+          <text class="avatar-sub">点击上传真实清晰的生活或工作正装照</text>
+        </view>
+        <text class="avatar-arrow">›</text>
+      </view>
+
       <view class="field-row">
         <text class="field-label">服务艺名 *</text>
         <input class="field-input" value="{{serviceName}}" data-field="serviceName" placeholder="如：小雅理疗师" bindinput="handleInput" />

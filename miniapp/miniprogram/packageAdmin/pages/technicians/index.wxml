@@ -193,7 +193,6 @@
               class="m-input"
               type="number"
               maxlength="11"
-              always-embed="{{true}}"
               placeholder="11位手机号码（登录账号）"
               value="{{addForm.phone}}"
               data-field="phone"
@@ -208,7 +207,6 @@
             <input
               class="m-input"
               password
-              always-embed="{{true}}"
               placeholder="不少于6位登录密码"
               value="{{addForm.password}}"
               data-field="password"
@@ -222,7 +220,6 @@
             <text class="m-label">服务艺名 <text class="req">*</text></text>
             <input
               class="m-input"
-              always-embed="{{true}}"
               placeholder="顾客端展示名，如: 欣欣技师"
               value="{{addForm.serviceName}}"
               data-field="serviceName"
@@ -236,7 +233,6 @@
             <text class="m-label">真实姓名</text>
             <input
               class="m-input"
-              always-embed="{{true}}"
               placeholder="用于实名档案核验"
               value="{{addForm.realName}}"
               data-field="realName"
@@ -251,7 +247,6 @@
             <input
               class="m-input"
               type="number"
-              always-embed="{{true}}"
               placeholder="从业年限（默认 3 年）"
               value="{{addForm.experienceYears}}"
               data-field="experienceYears"
@@ -265,7 +260,6 @@
             <text class="m-label">擅长简介</text>
             <input
               class="m-input"
-              always-embed="{{true}}"
               placeholder="擅长项目及手法介绍"
               value="{{addForm.intro}}"
               data-field="intro"
@@ -302,7 +296,6 @@
           <input
             class="m-input"
             password
-            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
             placeholder="请输入不少于6位的新密码"
@@ -334,7 +327,6 @@
           <text class="m-label">驳回原因</text>
           <textarea
             class="m-textarea"
-            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
             placeholder="请输入驳回原因，方便技师修改后重提（如：资质信息模糊、电话有误等）"

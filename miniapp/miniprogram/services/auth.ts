@@ -2,6 +2,16 @@ import { environment } from "../config/environment";
 import { clearAccessToken, getAccessToken, request, setAccessToken } from "./http";
 
 const ACCOUNT_KEY = "relax.account";
+const DEVICE_ID_KEY = "relax.device_client_id";
+
+export function getOrCreateDeviceId(): string {
+  let deviceId = wx.getStorageSync<string>(DEVICE_ID_KEY);
+  if (!deviceId) {
+    deviceId = "dev_" + Math.random().toString(36).substring(2, 12) + Date.now().toString(36);
+    wx.setStorageSync(DEVICE_ID_KEY, deviceId);
+  }
+  return deviceId;
+}
 
 export function getCachedAccount(): Account | null {
   return wx.getStorageSync<Account>(ACCOUNT_KEY) || null;
@@ -10,7 +20,9 @@ export function getCachedAccount(): Account | null {
 export function cacheAccount(account: Account): Account {
   wx.setStorageSync(ACCOUNT_KEY, account);
   const app = getApp<RelaxAppOption>();
-  app.globalData.account = account;
+  if (app && app.globalData) {
+    app.globalData.account = account;
+  }
   return account;
 }
 
@@ -30,15 +42,15 @@ export async function getWxLoginCode(): Promise<string> {
 }
 
 export async function loginWithWechat(customCode?: string): Promise<LoginResult> {
-  // 开发模式若未指定code则使用开发默认
   let code = customCode;
   if (!code) {
     code = await getWxLoginCode();
   }
+  const deviceId = getOrCreateDeviceId();
   const result = await request<LoginResult>({
     url: "/api/v1/auth/wechat-login",
     method: "POST",
-    data: { code },
+    data: { code, deviceId },
   });
   setAccessToken(result.accessToken);
   cacheAccount(result.account);

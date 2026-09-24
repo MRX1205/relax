@@ -20,10 +20,11 @@ Page({
 
       // 丰富技师展示数据（保证照片、认证、评价等现代UI正常展现）
       const tech = detail.technician;
+      const rawPhotos = (detail.photos && detail.photos.length > 0) ? detail.photos : (tech.photos || []);
       const enrichedTech = {
         ...tech,
         avatarUrl: getTechAvatar(tech.serviceName, tech.avatarUrl),
-        photos: getTechPhotos(tech.photos),
+        photos: getTechPhotos(rawPhotos),
         rating: tech.rating || 4.9,
         annualOrders: tech.annualOrders || 480,
         ageTag: tech.ageTag || "95后",

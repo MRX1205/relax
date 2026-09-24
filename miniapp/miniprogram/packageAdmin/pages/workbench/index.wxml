@@ -252,7 +252,6 @@
             <text class="m-label">消息标题 *</text>
             <input
               class="m-input"
-              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="如：平台周年庆优惠券已派发"
@@ -265,7 +264,6 @@
             <text class="m-label">通知正文内容 *</text>
             <textarea
               class="m-textarea"
-              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="请输入详细通知内容..."
@@ -311,7 +309,6 @@
             <input
               class="m-input"
               type="number"
-              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="请输入目标用户数字ID"

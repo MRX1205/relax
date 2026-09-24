@@ -1,19 +1,33 @@
+import { environment } from "../config/environment";
+
 /**
  * Asset resolution helper:
  * - If backend uploaded an image (coverFileId / coverUrl / avatarUrl / photos), display the uploaded image.
  * - Otherwise, display modern Apple-style default graphics.
  */
 
+export function resolveAssetUrl(url?: string | null): string {
+  if (!url) return "";
+  const str = String(url).trim();
+  if (str.startsWith("http://") || str.startsWith("https://") || str.startsWith("/assets/")) {
+    return str;
+  }
+  if (str.startsWith("/")) {
+    return `${environment.apiBaseUrl}${str}`;
+  }
+  return `${environment.apiBaseUrl}/${str}`;
+}
+
 export function getProjectCover(name = "", categoryName = "", coverFileId?: string | number | null, coverUrl?: string | null): string {
   if (coverUrl && String(coverUrl).trim().length > 0) {
-    return String(coverUrl);
+    return resolveAssetUrl(coverUrl);
   }
   if (coverFileId && String(coverFileId).trim().length > 0) {
     const fileIdStr = String(coverFileId);
     if (fileIdStr.startsWith("http") || fileIdStr.startsWith("/assets/")) {
       return fileIdStr;
     }
-    return `/api/v1/public/files/${fileIdStr}`;
+    return `${environment.apiBaseUrl}/api/v1/public/files/${fileIdStr}`;
   }
 
   const combined = (name + " " + categoryName).toLowerCase();
@@ -39,14 +53,14 @@ export function getProjectCover(name = "", categoryName = "", coverFileId?: stri
 
 export function getTechAvatar(serviceName = "", avatarUrl?: string | null): string {
   if (avatarUrl && String(avatarUrl).trim().length > 0) {
-    return String(avatarUrl);
+    return resolveAssetUrl(avatarUrl);
   }
   return "/assets/images/tech-wang.jpg";
 }
 
 export function getTechPhotos(photos?: string[] | null): string[] {
   if (photos && photos.length > 0) {
-    return photos;
+    return photos.map(p => resolveAssetUrl(p)).filter(Boolean);
   }
   return [
     "/assets/images/project-massage.jpg",
@@ -55,3 +69,4 @@ export function getTechPhotos(photos?: string[] | null): string[] {
     "/assets/images/banner-luxury.jpg",
   ];
 }
+

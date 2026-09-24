@@ -1,5 +1,5 @@
 import { getPublicSystemSettings, updateSystemSettings } from "../../../services/system";
-import { uploadPrivateFile } from "../../../services/file";
+import { uploadImageFile } from "../../../services/file";
 import { environment } from "../../../config/environment";
 
 Page({
@@ -61,8 +61,7 @@ Page({
       const filePath = res.tempFiles[0].tempFilePath;
       this.setData({ uploadingQr: true });
       wx.showLoading({ title: "上传二维码中…" });
-      const fileAsset = await uploadPrivateFile(filePath, "BANNER_IMAGE");
-      const url = `${environment.apiBaseUrl}/api/v1/public/files/${fileAsset.id}`;
+      const url = await uploadImageFile(filePath, "QR_CODE");
       this.setData({ customerQrUrl: url });
       wx.showToast({ title: "上传成功", icon: "success" });
     } catch (err: any) {

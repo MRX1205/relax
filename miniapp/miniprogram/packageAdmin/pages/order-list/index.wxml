@@ -207,7 +207,6 @@
             value="{{noteInput}}"
             bindinput="handleNoteInput"
             placeholder="输入跟进备注或特殊要求"
-            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
           />

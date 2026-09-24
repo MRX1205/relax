@@ -10,7 +10,7 @@ import com.relax.common.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/v1/admin/mock")
-@PreAuthorize("hasAuthority('admin:manage')")
+@PreAuthorize("hasAuthority('admin:manage') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
 public class MockDataController {
 
     private final MockDataService mockDataService;
@@ -34,4 +34,17 @@ public class MockDataController {
         mockDataService.resetMockData();
         return ApiResponse.success(null);
     }
+
+    @PostMapping("/clean")
+    ApiResponse<Void> clean() {
+        mockDataService.cleanMockData();
+        return ApiResponse.success(null);
+    }
+
+    @PostMapping("/seed")
+    ApiResponse<Void> seed() {
+        mockDataService.seedMockData();
+        return ApiResponse.success(null);
+    }
 }
+

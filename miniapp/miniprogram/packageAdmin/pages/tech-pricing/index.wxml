@@ -125,7 +125,6 @@
           <input
             class="m-input"
             type="digit"
-            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
             placeholder="如：238"

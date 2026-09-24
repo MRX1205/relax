@@ -186,7 +186,6 @@
             <text class="f-label">项目名称 <text class="req">*</text></text>
             <input
               class="f-input"
-              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="如：全身精油SPA 60分钟"
@@ -203,7 +202,6 @@
               <input
                 class="f-input"
                 type="digit"
-                always-embed="{{true}}"
                 adjust-position="{{true}}"
                 cursor-spacing="30"
                 placeholder="如：198"
@@ -217,7 +215,6 @@
               <input
                 class="f-input"
                 type="number"
-                always-embed="{{true}}"
                 adjust-position="{{true}}"
                 cursor-spacing="30"
                 placeholder="默认 60"
@@ -246,7 +243,6 @@
             <input
               class="f-input"
               type="number"
-              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="0"
@@ -261,7 +257,6 @@
             <text class="f-label">项目简介</text>
             <textarea
               class="f-textarea"
-              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="简述项目调理手法、适合人群及服务流程..."
@@ -276,7 +271,6 @@
             <text class="f-label">预约须知</text>
             <textarea
               class="f-textarea"
-              always-embed="{{true}}"
               adjust-position="{{true}}"
               cursor-spacing="30"
               placeholder="如：请提前1小时预约、饭后半小时内不宜理疗等..."

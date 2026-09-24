@@ -9,6 +9,30 @@
   box-sizing: border-box;
 }
 
+/* ── 统一连续化苹果级面板容器 ── */
+.unified-booking-card {
+  background: #FFFFFF !important;
+  border-radius: 36rpx;
+  box-shadow: 0 4rpx 28rpx rgba(0, 0, 0, 0.05);
+  border: 1rpx solid #EBEBF0;
+  overflow: hidden;
+  margin-bottom: 24rpx;
+}
+
+.booking-section {
+  padding: 32rpx;
+  background: #FFFFFF !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.booking-section-divider {
+  height: 1rpx;
+  background: #F2F2F7;
+  margin: 0 32rpx;
+}
+
 /* ── 通用卡片头部 ── */
 .card-header {
   display: flex;

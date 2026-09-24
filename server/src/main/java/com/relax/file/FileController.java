@@ -38,6 +38,22 @@ public class FileController {
         this.fileService = fileService;
     }
 
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<FileService.DirectUploadView> uploadDirect(
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @org.springframework.web.bind.annotation.RequestParam("file") org.springframework.web.multipart.MultipartFile file,
+            @org.springframework.web.bind.annotation.RequestParam(value = "purpose", required = false, defaultValue = "IMAGE") String purpose) {
+        if (file.isEmpty()) {
+            throw new com.relax.common.api.BusinessException("FILE_EMPTY", "上传文件不能为空");
+        }
+        try {
+            Long userId = currentUser != null ? currentUser.id() : 0L;
+            return ApiResponse.success(fileService.uploadDirect(userId, file.getOriginalFilename(), file.getContentType(), file.getBytes(), purpose));
+        } catch (java.io.IOException e) {
+            throw new com.relax.common.api.BusinessException("FILE_READ_FAILED", "读取上传文件失败: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/upload-policies")
     ApiResponse<FileService.UploadPolicy> createUploadPolicy(@AuthenticationPrincipal CurrentUser currentUser,
             @Valid @RequestBody UploadPolicyRequest request) {

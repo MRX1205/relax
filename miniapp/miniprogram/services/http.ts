@@ -186,34 +186,49 @@ export function downloadAndOpenDocument(
     wx.showLoading({ title: "正在导出..." });
     const token = getAccessToken();
     const url = `${environment.apiBaseUrl}${path}`;
-    const safeName = fileName || `export_${Date.now()}.${fileType}`;
-    const targetFilePath = `${wx.env.USER_DATA_PATH}/${safeName}`;
+    const safeAsciiName = `order_export_${Date.now()}.${fileType}`;
+    const targetFilePath = `${wx.env.USER_DATA_PATH}/${safeAsciiName}`;
 
-    wx.downloadFile({
+    wx.request({
       url,
-      filePath: targetFilePath,
+      method: "GET",
+      responseType: "arraybuffer",
       header: {
         Authorization: token ? `Bearer ${token}` : "",
       },
       success: (res) => {
-        wx.hideLoading();
-        if (res.statusCode === 200) {
-          wx.openDocument({
-            filePath: res.filePath || targetFilePath,
-            fileType,
-            showMenu: true,
+        if (res.statusCode === 200 && res.data) {
+          const fs = wx.getFileSystemManager();
+          fs.writeFile({
+            filePath: targetFilePath,
+            data: res.data as ArrayBuffer,
+            encoding: "binary",
             success: () => {
-              wx.showToast({ title: "已打开报表", icon: "success" });
-              resolve();
+              wx.hideLoading();
+              wx.openDocument({
+                filePath: targetFilePath,
+                fileType,
+                showMenu: true,
+                success: () => {
+                  wx.showToast({ title: "已打开报表", icon: "success" });
+                  resolve();
+                },
+                fail: (err) => {
+                  wx.showToast({ title: "打开报表失败", icon: "none" });
+                  reject(err);
+                },
+              });
             },
             fail: (err) => {
-              wx.showToast({ title: "打开文件失败", icon: "none" });
+              wx.hideLoading();
+              wx.showToast({ title: "保存报表失败", icon: "none" });
               reject(err);
             },
           });
         } else {
+          wx.hideLoading();
           wx.showToast({ title: `导出失败(${res.statusCode})`, icon: "none" });
-          reject(new Error(`Download failed with status ${res.statusCode}`));
+          reject(new Error(`Export failed with status ${res.statusCode}`));
         }
       },
       fail: (err) => {

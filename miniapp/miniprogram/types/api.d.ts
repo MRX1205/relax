@@ -193,6 +193,7 @@ interface TechnicianDetail {
   projects: { id: string; projectId: string; projectName: string; durationMinutes: number; price: number; coverUrl: string | null }[];
   availability: { scheduleDate: string; startTime: string; endTime: string }[];
   reviews: { id: string; score: number; content: string; userName: string; createdAt: string }[];
+  photos?: string[];
 }
 
 interface OrderPreview {

@@ -1,6 +1,63 @@
 import { environment } from "../config/environment";
 import { getAccessToken, request } from "./http";
 
+export interface DirectUploadResult {
+  id: number;
+  url: string;
+  fileName: string;
+}
+
+export function uploadDirectFile(filePath: string, purpose: string = "IMAGE"): Promise<DirectUploadResult> {
+  const token = getAccessToken();
+  const url = `${environment.apiBaseUrl}/api/v1/files/upload`;
+  const header: Record<string, string> = {};
+  if (token) {
+    header.Authorization = `Bearer ${token}`;
+  }
+
+  return new Promise((resolve, reject) => {
+    wx.uploadFile({
+      url,
+      filePath,
+      name: "file",
+      formData: {
+        purpose,
+      },
+      header,
+      success(res) {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            const data = JSON.parse(res.data);
+            if (data.code === "SUCCESS" && data.data && data.data.url) {
+              const resultUrl = data.data.url.startsWith("http")
+                ? data.data.url
+                : `${environment.apiBaseUrl}${data.data.url}`;
+              resolve({
+                id: Number(data.data.id),
+                url: resultUrl,
+                fileName: data.data.fileName,
+              });
+              return;
+            }
+            reject(new Error(data.message || "上传失败"));
+          } catch (e) {
+            reject(new Error("解析上传响应失败"));
+          }
+        } else {
+          reject(new Error(`上传失败(${res.statusCode})`));
+        }
+      },
+      fail(err) {
+        reject(new Error(err.errMsg || "网络异常，上传失败"));
+      },
+    });
+  });
+}
+
+export function uploadImageFile(filePath: string, purpose: string = "IMAGE"): Promise<string> {
+  return uploadDirectFile(filePath, purpose).then(res => res.url);
+}
+
 export async function uploadPrivateFile(filePath: string, purpose: FilePurpose): Promise<FileAssetView> {
   const mimeType = mimeTypeFor(filePath);
   const content = await readFile(filePath);

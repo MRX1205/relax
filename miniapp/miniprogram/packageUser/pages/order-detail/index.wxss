@@ -64,6 +64,31 @@
   margin-top: -16rpx;
 }
 
+/* ── 统一连续化苹果级面板容器 ── */
+.unified-detail-card {
+  background: #FFFFFF !important;
+  border-radius: 36rpx;
+  box-shadow: 0 4rpx 28rpx rgba(0, 0, 0, 0.05);
+  border: 1rpx solid #EBEBF0;
+  overflow: hidden;
+  margin-bottom: 30rpx;
+}
+
+.detail-section {
+  padding: 32rpx;
+  background: #FFFFFF !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.detail-section-divider {
+  height: 1rpx;
+  background: #F2F2F7;
+  margin: 0 32rpx;
+}
+
 /* ── 通用标题行 ── */
 .section-title-row {
   display: flex;

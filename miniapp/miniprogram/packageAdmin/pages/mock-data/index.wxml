@@ -1,66 +1,91 @@
-<view class="container">
-  <view wx:if="{{loading}}" class="loading">
-    <text>加载中...</text>
-  </view>
-  
-  <view wx:else>
-    <!-- Mock数据开关 -->
-    <view class="section">
-      <view class="section-title">Mock数据管理</view>
-      <view class="switch-row">
-        <view class="switch-info">
-          <text class="switch-label">开启Mock数据</text>
-          <text class="switch-desc">开启后，用户端和技师端将显示测试数据</text>
-        </view>
-        <switch checked="{{status.enabled}}" bindchange="toggleMock" color="#ff6b6b"/>
+<view class="page">
+  <ui-state wx:if="{{loading}}" title="加载状态中" kind="loading" />
+
+  <block wx:else>
+    <!-- 顶部说明卡片 -->
+    <view class="hero-banner ios-card">
+      <view class="hero-tag">DATA ISOLATION</view>
+      <view class="hero-title">业务数据与演示隔离</view>
+      <view class="hero-desc">
+        开启/关闭演示数据，避免测试单污染平台财务大盘与实际运营报表；正式营业时请保持关闭。
       </view>
     </view>
 
-    <!-- 状态信息 -->
-    <view class="section">
-      <view class="section-title">状态信息</view>
-      <view class="info-row">
-        <text class="info-label">当前状态</text>
-        <text class="info-value {{status.enabled ? 'status-on' : 'status-off'}}">
-          {{status.enabled ? '已开启' : '已关闭'}}
-        </text>
-      </view>
-      <view class="info-row" wx:if="{{status.lastReset}}">
-        <text class="info-label">最后重置</text>
-        <text class="info-value">{{status.lastReset}}</text>
-      </view>
-    </view>
-
-    <!-- 操作按钮 -->
-    <view class="section">
-      <view class="section-title">操作</view>
-      <button class="btn-reset" bindtap="resetMockData">重置Mock数据</button>
-      <view class="tip">
-        <text>重置将重新生成所有测试数据，包括用户、技师、项目、订单等</text>
+    <!-- 1. 核心开关卡片 -->
+    <view class="ios-card switch-card">
+      <view class="switch-main">
+        <view class="switch-icon-box {{status.enabled ? 'icon-box-active' : 'icon-box-idle'}}">
+          {{status.enabled ? '🧪' : '🛡️'}}
+        </view>
+        <view class="switch-text-col">
+          <text class="switch-title">Mock 模拟演示数据</text>
+          <text class="switch-sub">
+            {{status.enabled ? '当前处于【演示模式】，各端展示测试订单与模拟评价' : '当前处于【纯净真实模式】，仅显示真实顾客下单数据'}}
+          </text>
+        </view>
+        <switch checked="{{status.enabled}}" disabled="{{actionLoading}}" color="#34C759" bindchange="toggleMock" />
       </view>
     </view>
 
-    <!-- 说明 -->
-    <view class="section">
-      <view class="section-title">说明</view>
-      <view class="desc-list">
-        <view class="desc-item">
-          <text class="desc-num">1.</text>
-          <text class="desc-text">开启Mock数据后，用户端可以看到测试项目和技师</text>
+    <!-- 2. 数据量对比面板 -->
+    <view class="ios-card metrics-card">
+      <view class="card-head">
+        <text class="card-head-title">当前系统订单统计</text>
+        <text class="card-head-sub">实时统计数据库记录</text>
+      </view>
+      <view class="metrics-grid">
+        <view class="metric-item">
+          <text class="metric-num text-orange">{{status.mockOrdersCount}}</text>
+          <text class="metric-label">Mock 演示订单</text>
         </view>
-        <view class="desc-item">
-          <text class="desc-num">2.</text>
-          <text class="desc-text">技师端可以看到测试订单和收入</text>
-        </view>
-        <view class="desc-item">
-          <text class="desc-num">3.</text>
-          <text class="desc-text">管理员端可以看到测试统计数据</text>
-        </view>
-        <view class="desc-item">
-          <text class="desc-num">4.</text>
-          <text class="desc-text">关闭Mock数据后，所有端将只显示真实数据</text>
+        <view class="metric-divider"></view>
+        <view class="metric-item">
+          <text class="metric-num text-green">{{status.realOrdersCount}}</text>
+          <text class="metric-label">真实顾客订单</text>
         </view>
       </view>
     </view>
-  </view>
+
+    <!-- 3. 管理员账号保障说明 -->
+    <view class="ios-card admin-protect-card">
+      <view class="protect-head">
+        <text class="protect-icon">👑</text>
+        <text class="protect-title">超级管理员账号保障</text>
+      </view>
+      <view class="protect-body">
+        <text class="protect-txt">平台管理员账号不受 Mock 开关与重置影响：</text>
+        <view class="admin-pill">
+          <text class="pill-label">专属超管账号：</text>
+          <text class="pill-val">13926700205</text>
+          <text class="pill-tag">核心保护</text>
+        </view>
+        <text class="protect-tip">初始登录密码同手机号，拥有平台全量最高管理权限。</text>
+      </view>
+    </view>
+
+    <!-- 4. 快速运维动作 -->
+    <view class="ios-card action-card">
+      <view class="card-head">
+        <text class="card-head-title">快速运维操作</text>
+      </view>
+
+      <view class="action-btn-row">
+        <button class="action-btn btn-danger ios-touch-active" bindtap="cleanMockData">
+          🗑️ 清空所有 Mock 演示数据
+        </button>
+        <button class="action-btn btn-primary ios-touch-active" bindtap="seedMockData">
+          ✨ 重新注入演示数据包
+        </button>
+      </view>
+    </view>
+
+    <!-- 5. 规则与指引 -->
+    <view class="ios-card guide-card">
+      <view class="guide-title">💡 数据管理指引</view>
+      <view class="guide-item">• <strong>关闭演示数据</strong>：测试订单、模拟理疗评价将立即在全端隐藏或物理移除，大盘数据纯净无污染。</view>
+      <view class="guide-item">• <strong>导出 Excel</strong>：在订单调度页面导出的报表只包含当前生效状态的真实账单。</view>
+      <view class="guide-item">• <strong>真实下单</strong>：小程序体验版中任何用户微信下单均自动沉淀为【真实顾客订单】。</view>
+    </view>
+  </block>
 </view>
+

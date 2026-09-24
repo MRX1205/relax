@@ -5,6 +5,8 @@ import {
   deletePhoto,
   TechPhotoItem,
 } from "../../services/profile";
+import { uploadImageFile } from "../../../services/file";
+import { getTechAvatar } from "../../../utils/assets";
 
 const DEFAULT_TAGS = ["实名认证", "持证理疗师", "安心服务", "五年老店", "手法娴熟", "热情周到"];
 const AGE_TAGS = ["95后", "90后", "00后", "85后", "80后"];
@@ -206,6 +208,32 @@ Page({
     }
   },
 
+  async handleChooseAvatar() {
+    const res = await new Promise<WechatMiniprogram.ChooseMediaSuccessCallbackResult | null>(r => {
+      wx.chooseMedia({
+        count: 1,
+        mediaType: ["image"],
+        sourceType: ["album", "camera"],
+        success: s => r(s),
+        fail: () => r(null),
+      });
+    });
+
+    if (!res || !res.tempFiles || res.tempFiles.length === 0) return;
+    const tempPath = res.tempFiles[0].tempFilePath;
+
+    try {
+      wx.showLoading({ title: "上传头像中..." });
+      const uploadedUrl = await uploadImageFile(tempPath, "AVATAR");
+      wx.hideLoading();
+      this.setData({ avatarUrl: uploadedUrl });
+      wx.showToast({ title: "头像已上传，点击下方保存生效", icon: "none" });
+    } catch (err: any) {
+      wx.hideLoading();
+      wx.showToast({ title: err?.message || "头像上传失败", icon: "none" });
+    }
+  },
+
   async handleAddPhoto() {
     const res = await new Promise<WechatMiniprogram.ChooseMediaSuccessCallbackResult | null>(r => {
       wx.chooseMedia({
@@ -221,20 +249,19 @@ Page({
     const tempPath = res.tempFiles[0].tempFilePath;
 
     try {
-      wx.showLoading({ title: "上传保存中..." });
-      // 在本地开发或真机模拟中，直接使用图片临时或预设直链存储
-      const photoUrl = tempPath;
+      wx.showLoading({ title: "上传风采照中..." });
+      const photoUrl = await uploadImageFile(tempPath, "TECHNICIAN_PHOTO");
       const updatedPhotos = await addPhoto({
         fileUrl: photoUrl,
         photoType: "LIFE",
         sort: this.data.photos.length,
       });
       wx.hideLoading();
-      wx.showToast({ title: "上传成功", icon: "success" });
+      wx.showToast({ title: "照片已成功添加", icon: "success" });
       this.setData({ photos: updatedPhotos || [] });
-    } catch {
+    } catch (err: any) {
       wx.hideLoading();
-      wx.showToast({ title: "上传失败", icon: "none" });
+      wx.showToast({ title: err?.message || "上传失败", icon: "none" });
     }
   },
 

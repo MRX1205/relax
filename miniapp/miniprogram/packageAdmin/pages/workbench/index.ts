@@ -2,7 +2,7 @@ import { bindCurrentWechat, getCachedAccount, loadCurrentAccount, logout } from 
 import { requireRole } from "../../../utils/auth-guard";
 import { request } from "../../../services/http";
 import { getPublicPaymentMode, PaymentModeInfo } from "../../services/payment";
-import { uploadPrivateFile } from "../../../services/file";
+import { uploadImageFile } from "../../../services/file";
 import { environment } from "../../../config/environment";
 
 interface StatsOverview {
@@ -63,6 +63,7 @@ Page({
     systemMenus: [
       { code: "payment", name: "支付与结算模式", desc: "现场 / 微信 / 模拟", icon: "pay", url: "/packageAdmin/pages/payment-config/index", badge: "核心" },
       { code: "system", name: "系统基本设置", desc: "品牌名 · 客服电话 · 二维码", icon: "setting", url: "/packageAdmin/pages/system-settings/index", badge: "" },
+      { code: "mock", name: "数据隔离与管理", desc: "Mock演示数据开关 · 真实数据保护", icon: "shield", url: "/packageAdmin/pages/mock-data/index", badge: "重点" },
       { code: "audit", name: "安全审计日志", desc: "操作留痕 · IP溯源", icon: "shield", url: "/packageAdmin/pages/audit-logs/index", badge: "" },
     ],
 
@@ -218,8 +219,7 @@ Page({
       const filePath = res.tempFiles[0].tempFilePath;
       this.setData({ uploadingBroadcastImage: true });
       wx.showLoading({ title: "上传配图中…" });
-      const fileAsset = await uploadPrivateFile(filePath, "BANNER_IMAGE");
-      const url = `${environment.apiBaseUrl}/api/v1/public/files/${fileAsset.id}`;
+      const url = await uploadImageFile(filePath, "BANNER_IMAGE");
       this.setData({ broadcastImageUrl: url });
       wx.showToast({ title: "配图上传成功", icon: "success" });
     } catch (err: any) {

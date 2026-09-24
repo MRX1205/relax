@@ -111,7 +111,6 @@
               class="m-input"
               type="number"
               maxlength="11"
-              always-embed="{{true}}"
               placeholder="11位手机号码（登录账号）"
               value="{{addForm.phone}}"
               data-field="phone"
@@ -126,7 +125,6 @@
             <input
               class="m-input"
               password
-              always-embed="{{true}}"
               placeholder="不少于6位登录密码"
               value="{{addForm.password}}"
               data-field="password"
@@ -140,7 +138,6 @@
             <text class="m-label">姓名 / 备注</text>
             <input
               class="m-input"
-              always-embed="{{true}}"
               placeholder="如: 张经理（订单运营）"
               value="{{addForm.nickname}}"
               data-field="nickname"
@@ -243,7 +240,6 @@
           <input
             class="m-input"
             password
-            always-embed="{{true}}"
             adjust-position="{{true}}"
             cursor-spacing="30"
             placeholder="不少于6位新密码"

@@ -49,7 +49,7 @@ public class CatalogPublicService {
         List<TechnicianPublicMapper.TechnicianProjectItem> projects = techMapper.findProjectsForTechnician(id);
         List<TechnicianPublicMapper.AvailabilitySlot> availability = techMapper.findAvailability(id, LocalDate.now());
         List<String> photos = photoMapper.findByTechnician(id).stream()
-                .map(p -> p.fileUrl() != null && !p.fileUrl().isBlank() ? p.fileUrl() : "/api/v1/files/public/" + p.fileId())
+                .map(p -> p.fileUrl() != null && !p.fileUrl().isBlank() ? p.fileUrl() : "/api/v1/public/files/" + p.fileId())
                 .filter(url -> !url.endsWith("/0"))
                 .toList();
         return new TechnicianDetail(tech, projects, availability, photos);

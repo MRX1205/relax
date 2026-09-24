@@ -253,6 +253,12 @@
         </view>
       </view>
 
+      <!-- 微信官方客服快捷通道 -->
+      <button class="cs-native-chat-btn ios-touch-active" open-type="contact">
+        <text class="cs-native-chat-icon">💬</text>
+        <text class="cs-native-chat-text">接入微信在线客服对话</text>
+      </button>
+
       <view class="sheet-done-btn ios-touch-active" bindtap="closeCustomerService">完成</view>
     </view>
   </view>
@@ -275,7 +281,6 @@
           password
           type="number"
           maxlength="10"
-          always-embed="{{true}}"
           adjust-position="{{true}}"
           cursor-spacing="30"
           value="{{adminPinInput}}"

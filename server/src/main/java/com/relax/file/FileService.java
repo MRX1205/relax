@@ -105,6 +105,24 @@ public class FileService {
         return toView(requireAsset(id));
     }
 
+    @Transactional
+    public DirectUploadView uploadDirect(Long userId, String originalFilename, String contentType, byte[] bytes, String purpose) {
+        long id = IdWorker.getId();
+        String safeName = (originalFilename != null && !originalFilename.isBlank()) ? originalFilename : "image.jpg";
+        String safeType = (contentType != null && !contentType.isBlank()) ? contentType : "image/jpeg";
+        String safePurpose = (purpose != null && !purpose.isBlank()) ? purpose.toUpperCase() : "IMAGE";
+        String objectKey = safePurpose.toLowerCase() + "/" + (userId != null ? userId : 0L) + "/" + id + "-" + safeName;
+
+        FileAsset asset = new FileAsset(id, userId != null ? userId : 0L, safePurpose, "DATABASE", objectKey,
+                safeName, safeType, (long) bytes.length, (long) bytes.length, "READY",
+                null, null, LocalDateTime.now(), LocalDateTime.now());
+        fileMapper.insert(asset);
+        storage.storeLocal(asset, bytes);
+        return new DirectUploadView(id, "/api/v1/public/files/" + id, safeName);
+    }
+
+    public record DirectUploadView(long id, String url, String fileName) {}
+
     public List<FileView> files(long userId) {
         return fileMapper.findByOwner(userId).stream().map(this::toView).toList();
     }

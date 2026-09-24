@@ -22,6 +22,13 @@ class MockWechatGateway implements WechatGateway {
         return new WechatIdentity("mock:" + sha256(code).substring(0, 32), null);
     }
 
+    public WechatIdentity exchangeLoginCodeWithDevice(String code, String deviceId) {
+        if (deviceId != null && !deviceId.isBlank()) {
+            return new WechatIdentity("mock:device:" + sha256(deviceId.trim()).substring(0, 24), null);
+        }
+        return exchangeLoginCode(code);
+    }
+
     @Override
     public String exchangePhoneCode(String code) {
         if (code != null && code.startsWith("mock-phone-")) {
